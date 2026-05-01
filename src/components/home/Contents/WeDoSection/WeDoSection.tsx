@@ -1,43 +1,123 @@
-import { motion } from "framer-motion";
+"use client";
+
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import { dur, ease, stagger } from "@/lib/motion";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export const WeDoSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      // Parallax: WE drifts up, DO drifts down
+      gsap.fromTo(
+        ".wedo-we",
+        { y: 60 },
+        {
+          y: -60,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        },
+      );
+
+      gsap.fromTo(
+        ".wedo-do",
+        { y: -60 },
+        {
+          y: 60,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        },
+      );
+
+      // Entrance timeline
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      tl.from(".wedo-we", {
+        x: -100,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power4.out",
+      });
+
+      tl.from(
+        ".wedo-do",
+        { x: 100, opacity: 0, duration: 0.8, ease: "power4.out" },
+        "<",
+      );
+
+      tl.from(
+        ".wedo-body",
+        { y: 40, opacity: 0, duration: 0.7, ease: "power3.out" },
+        "-=0.5",
+      );
+
+      // Sentence-by-sentence mask reveal
+      tl.from(
+        ".wedo-sentence",
+        {
+          y: "105%",
+          duration: dur.base,
+          ease: ease.out,
+          stagger: stagger.normal,
+        },
+        "-=0.4",
+      );
+    },
+    { scope: sectionRef },
+  );
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
+    <div ref={sectionRef}>
       <div className="flex flex-row justify-between items-center w-full px-8 gap-x-6 py-24">
         <div>
-          <h2 className="text-[250px] font-bold mb-8 text-secondary/60 dark:text-accent leading-none">
+          <h2 className="wedo-we text-[250px] font-bold mb-8 text-secondary/60 dark:text-accent leading-none">
             WE
           </h2>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <p className="text-lg leading-relaxed dark:text-base text-(--color-fg)">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-            ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-            consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate
-            velit esse molestie consequat, vel illum dolore eu feugiat nulla
-            facilisis at vero eros et accumsan et iusto odio dignissim qui
-            blandit praesent luptatum zzril delenit augue duis dolore te feugait
-            nulla facilisi. Lorem ipsum dolor sit amet, cons ectetuer adipiscing
-            elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore
-            magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
-            nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip
-            ex ea commodo consequat.
-          </p>
+        <div className="wedo-body flex flex-col gap-4 max-w-xs">
+          {[
+            "We connect ambitious creators with forward-thinking brands to craft content that actually moves people.",
+            "No forced campaigns. No fake filters. Just raw, human stories that spark real conversations.",
+            "Every collaboration on Idols is built on trust, creativity, and a shared desire to make something iconic.",
+          ].map((sentence, i) => (
+            <div key={i} className="overflow-hidden">
+              <p
+                className="wedo-sentence text-base leading-relaxed"
+                style={{ color: "var(--fg)", opacity: 0.8 }}
+              >
+                {sentence}
+              </p>
+            </div>
+          ))}
         </div>
         <div>
-          <h2 className="text-[250px] font-bold mb-8 text-primary/60 leading-none">
+          <h2 className="wedo-do text-[250px] font-bold mb-8 text-primary/60 leading-none">
             DO
           </h2>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };

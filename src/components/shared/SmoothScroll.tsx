@@ -2,6 +2,10 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const SmoothScroll = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
@@ -26,22 +30,22 @@ export const SmoothScroll = ({ children }: { children: React.ReactNode }) => {
       infinite: false,
     });
 
+    // ── Sync Lenis with GSAP ScrollTrigger ──
+    // Drive lenis via gsap.ticker so both share the same clock.
+    // This eliminates the jank caused by Lenis and ScrollTrigger
+    // running on separate rAF loops.
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0); // prevent GSAP lag compensation fighting Lenis
+
     lenis.on("scroll", revealScrollbar);
-    window.addEventListener("scroll", revealScrollbar, { passive: true });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    const rafId = requestAnimationFrame(raf);
 
     return () => {
       if (scrollTimeout) clearTimeout(scrollTimeout);
+      lenis.off("scroll", ScrollTrigger.update);
       lenis.off("scroll", revealScrollbar);
+      gsap.ticker.remove((time) => lenis.raf(time * 1000));
       lenis.destroy();
-      window.removeEventListener("scroll", revealScrollbar);
-      cancelAnimationFrame(rafId);
     };
   }, []);
 

@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import Head from "next/head";
 import Application from "@/components/Application";
 import { SmoothScroll } from "@/components/shared/SmoothScroll";
+import { PageTransition } from "@/components/shared/PageTransition";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -19,12 +20,6 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <title>idols - UGC Creator Platform</title>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
       </Head>
       <ThemeProvider
         attribute="data-theme"
@@ -32,7 +27,9 @@ export default function App({ Component, pageProps }: AppProps) {
         enableSystem={false}
       >
         <SmoothScroll>
-          <Application Component={Component} pageProps={pageProps} />
+          <PageTransition>
+            <Application Component={Component} pageProps={pageProps} />
+          </PageTransition>
         </SmoothScroll>
       </ThemeProvider>
     </>
