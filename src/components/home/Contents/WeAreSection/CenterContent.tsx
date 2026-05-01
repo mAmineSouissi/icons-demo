@@ -1,99 +1,180 @@
+"use client";
+
 import { PixelImage } from "@/components/ui/shadcn-io/pixel-image";
 import { cn } from "@/lib/utils";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 interface LeftContentProps {
   className?: string;
 }
 
 export const CenterContent = ({ className }: LeftContentProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const weRef = useRef<HTMLDivElement>(null);
+  const areRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
-  const weX = useTransform(scrollYProgress, [0, 0.5, 1], [-100, 0, 100]);
-  const areX = useTransform(scrollYProgress, [0, 0.5, 1], [100, 0, -100]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
-  const imageRotate = useTransform(scrollYProgress, [0, 0.5, 1], [-5, 0, 5]);
+  useGSAP(
+    () => {
+      // Parallax: WE drifts left-to-right, ARE drifts right-to-left
+      gsap.fromTo(
+        weRef.current,
+        { x: -100 },
+        {
+          x: 100,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        },
+      );
+
+      gsap.fromTo(
+        areRef.current,
+        { x: 100 },
+        {
+          x: -100,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        },
+      );
+
+      // Image scale + rotation parallax
+      gsap.fromTo(
+        imageRef.current,
+        { scale: 0.8, rotation: -5 },
+        {
+          scale: 1,
+          rotation: 5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.8,
+          },
+        },
+      );
+
+      // Entrance: WE text slides in from left
+      gsap.from(".center-we-heading", {
+        x: -120,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Entrance: ARE text slides in from right
+      gsap.from(".center-are-heading", {
+        x: 120,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Entrance: sub-text fades up
+      gsap.from(".center-sub", {
+        y: 25,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Entrance: image pops in
+      gsap.from(imageRef.current, {
+        scale: 0.5,
+        opacity: 0,
+        duration: 0.8,
+        ease: "back.out(1.4)",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    },
+    { scope: containerRef },
+  );
 
   return (
     <div
-      ref={ref}
+      ref={containerRef}
       className="flex flex-row w-full justify-between items-center px-4 py-20"
     >
-      <motion.div
+      <div
+        ref={weRef}
         className={cn("shrink-0 px-12", className)}
-        style={{ x: weX }}
+        style={{ willChange: "transform" }}
       >
-        <motion.h1
-          className="text-[180px] md:text-[240px] leading-none font-bold text-bg-foreground dark:text-accent-2"
-          initial={{ opacity: 0, x: -100 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-        >
+        <h1 className="center-we-heading text-[180px] md:text-[240px] leading-none font-bold text-bg-foreground dark:text-accent-2">
           WE
-        </motion.h1>
-        <motion.div
-          className="mt-8 max-w-xs"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        </h1>
+        <div className="center-sub mt-8 max-w-xs">
           <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
             NO LIMITS (01)
           </p>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
             JUST IMPACT
           </p>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      <motion.div
+      <div
+        ref={imageRef}
         className="flex justify-center"
-        style={{ scale: imageScale, rotate: imageRotate }}
-        initial={{ opacity: 0, scale: 0.5 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+        style={{ willChange: "transform" }}
       >
-        <motion.div
-          whileHover={{ scale: 1.05, rotate: 2 }}
-          transition={{ duration: 0.3 }}
-        >
+        <div>
           <PixelImage src="/dwayneJoson.jpg" grid="6x4" />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      <motion.div className="shrink px-12" style={{ x: areX }}>
-        <motion.h2
-          className="text-[180px] md:text-[240px] leading-none font-bold text-bg-foreground dark:text-accent"
-          initial={{ opacity: 0, x: 100 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-        >
+      <div
+        ref={areRef}
+        className="shrink px-12"
+        style={{ willChange: "transform" }}
+      >
+        <h2 className="center-are-heading text-[180px] md:text-[240px] leading-none font-bold text-bg-foreground dark:text-accent">
           ARE
-        </motion.h2>
-        <motion.div
-          className="mt-8 max-w-xs text-right"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        </h2>
+        <div className="center-sub mt-8 max-w-xs text-right">
           <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
             (02) BOLD IDEAS
           </p>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
             KILLER EXECUTION
           </p>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };

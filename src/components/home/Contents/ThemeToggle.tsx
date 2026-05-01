@@ -38,7 +38,7 @@ export const ThemeToggle = ({ onThemeChange }: ThemeToggleProps) => {
             }}
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
               animate={{ x: ["-100%", "100%"] }}
               transition={{
                 duration: 1.5,
@@ -63,7 +63,7 @@ export const ThemeToggle = ({ onThemeChange }: ThemeToggleProps) => {
       <motion.button
         onClick={() => handleToggle("light")}
         className={cn(
-          "px-8 py-3 rounded-full font-semibold transition-all relative overflow-hidden"
+          "px-8 py-3 rounded-full font-semibold transition-all relative overflow-hidden",
         )}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -79,7 +79,7 @@ export const ThemeToggle = ({ onThemeChange }: ThemeToggleProps) => {
             }}
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
               animate={{ x: ["-100%", "100%"] }}
               transition={{
                 duration: 1.5,

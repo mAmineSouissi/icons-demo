@@ -1,13 +1,16 @@
 "use client";
-import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { Peep, type PeepConfig, type Stage } from "@/types/peep";
 import {
   randomRange,
   removeRandomFromArray,
   removeItemFromArray,
 } from "@/lib/utils";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const config: PeepConfig = {
   src: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/175711/open-peeps-sheet.png",
@@ -73,7 +76,7 @@ export const CrowdedPeeps = () => {
           yoyo: true,
           y: startY - 10,
         },
-        0
+        0,
       );
 
       return tl;
@@ -126,7 +129,7 @@ export const CrowdedPeeps = () => {
               rectWidth,
               rectHeight,
             ],
-          })
+          }),
         );
       }
     };
@@ -161,15 +164,31 @@ export const CrowdedPeeps = () => {
       crowd.forEach((peep) => peep.walk?.kill());
     };
   }, []);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.from(wrapperRef.current, {
+        x: 80,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: wrapperRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    },
+    { scope: wrapperRef },
+  );
+
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+    <div
+      ref={wrapperRef}
       className="relative w-1/2 lg:w-1/2 h-[400px] rounded-md mx-4 lg:h-auto bg-linear-to-br from-accent/5 to-accent-2/5 overflow-hidden"
     >
       <canvas ref={canvasRef} id="canvas" className="w-full h-full" />
-    </motion.div>
+    </div>
   );
 };

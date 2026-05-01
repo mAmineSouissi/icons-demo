@@ -1,58 +1,77 @@
+"use client";
+
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import { dur, ease, stagger } from "@/lib/motion";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 interface UpperContentProps {
   className?: string;
 }
 
 const textLines = [
-  { text: "WE ARE WE ARE", size: "text-sm" },
-  { text: "IDOLS IDOLS", size: "text-2xl" },
-  { text: "AND WE'RE AND WE'RE", size: "text-sm" },
-  { text: "HERE TO HERE TO", size: "text-sm" },
-  { text: "STEAL THE STEAL THE", size: "text-sm" },
-  { text: "SPOTLIGHT. SPOTLIGHT.", size: "text-sm" },
+  { text: "WE ARE WE ARE", size: "text-sm", tracking: "tracking-[0.3em]" },
+  { text: "IDOLS IDOLS", size: "text-3xl", tracking: "tracking-tight" },
+  {
+    text: "AND WE'RE AND WE'RE",
+    size: "text-sm",
+    tracking: "tracking-[0.3em]",
+  },
+  { text: "HERE TO HERE TO", size: "text-sm", tracking: "tracking-[0.3em]" },
+  {
+    text: "STEAL THE STEAL THE",
+    size: "text-sm",
+    tracking: "tracking-[0.3em]",
+  },
+  {
+    text: "SPOTLIGHT. SPOTLIGHT.",
+    size: "text-sm",
+    tracking: "tracking-[0.3em]",
+  },
 ];
 
 export const UpperContent = ({ className }: UpperContentProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      // Reveal each line's inner span from below its overflow-hidden mask
+      gsap.from(".upper-line-inner", {
+        y: "110%",
+        duration: dur.slow,
+        ease: ease.cinematic,
+        stagger: stagger.normal,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    },
+    { scope: containerRef },
+  );
+
   return (
     <div
+      ref={containerRef}
       className={cn("justify-center content-center items-center", className)}
     >
-      <motion.div
-        className="text-center mb-4 space-y-1"
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={{
-          initial: {},
-          animate: {
-            transition: {
-              staggerChildren: 0.08,
-            },
-          },
-        }}
-      >
+      <div className="text-center mb-4 space-y-1">
         {textLines.map((line, index) => (
-          <motion.p
-            key={index}
-            className={`${line.size} font-bold text-(--color-fg)`}
-            variants={{
-              initial: { opacity: 0, y: 20 },
-              animate: {
-                opacity: 1,
-                y: 0,
-                transition: {
-                  duration: 0.5,
-                  ease: [0.25, 0.1, 0.25, 1],
-                },
-              },
-            }}
-          >
-            {line.text}
-          </motion.p>
+          // overflow-hidden acts as the mask; inner span slides up into view
+          <div key={index} className="overflow-hidden leading-[1.2]">
+            <p
+              className={`upper-line-inner inline-block ${line.size} ${line.tracking} font-bold text-(--color-fg)`}
+            >
+              {line.text}
+            </p>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 };
