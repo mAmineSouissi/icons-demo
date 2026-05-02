@@ -1,14 +1,13 @@
-import { useTheme } from "next-themes";
 import { useEffect, useState, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { Navbar } from "@/components/layout/navbar/NavBar";
 import { HeroSection } from "@/components/home/Contents/HeroSection";
 import { WeAreSection } from "@/components/home/Contents/WeAreSection/WeAreSection";
 import { ScrollingCardsSection } from "@/components/home/Contents/ScrollingCardsSection/ScrollingCardsSection";
 import { HowSection } from "@/components/home/Contents/HowSection/HowSection";
 import { WeDoSection } from "@/components/home/Contents/WeDoSection/WeDoSection";
 import { AboutSection } from "@/components/home/Contents/AboutUs/AboutSection";
+// import { CreatorReelSection } from "@/components/home/Contents/CreatorReelSection";
 import { SkillsSection } from "@/components/home/Contents/SkillsSection";
 import { PlatformSection } from "@/components/home/Contents/PlatformSection/PlatformSection";
 import { LogoSection } from "./Contents/LogoSection";
@@ -18,7 +17,6 @@ import { CustomCursor } from "@/components/shared/CustomCursor";
 gsap.registerPlugin(useGSAP);
 
 export const HomePage = () => {
-  const { setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,10 +84,6 @@ export const HomePage = () => {
     return null;
   }
 
-  const handleThemeChange = (newTheme: "dark" | "light") => {
-    setTheme(newTheme);
-  };
-
   return (
     <>
       {/* Custom cursor — pointer devices only */}
@@ -114,9 +108,6 @@ export const HomePage = () => {
           }}
         />
 
-        {/* Navbar */}
-        <Navbar />
-
         {/* Ambient background effect — GSAP floating */}
         <div className="fixed inset-0 pointer-events-none opacity-30">
           <div className="ambient-orb-1 absolute top-0 left-1/4 w-96 h-96 bg-(--color-accent) rounded-full blur-[120px]" />
@@ -124,7 +115,7 @@ export const HomePage = () => {
         </div>
 
         <main className="relative z-10">
-          <HeroSection onThemeChange={handleThemeChange} />
+          <HeroSection />
 
           <WeAreSection />
 
@@ -133,6 +124,8 @@ export const HomePage = () => {
           <HowSection />
 
           <WeDoSection />
+
+          {/* <CreatorReelSection /> */}
 
           <AboutSection />
 

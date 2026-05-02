@@ -9,36 +9,18 @@ import { dur, ease, stagger } from "@/lib/motion";
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const skills = [
-  {
-    title: ["Creator", "Matching"],
-    image: "/card1.jpg",
-  },
-  {
-    title: ["Campaign", "Management"],
-    image: "/card2.jpg",
-  },
-  {
-    title: ["Analytics", "& Insights"],
-    image: "/card3.jpg",
-  },
-  {
-    title: ["Content", "Strategy"],
-    image: "/card1.jpg",
-  },
+  { title: ["Creator", "Matching"], image: "/card1.jpg" },
+  { title: ["Campaign", "Management"], image: "/card2.jpg" },
+  { title: ["Analytics", "& Insights"], image: "/card3.jpg" },
+  { title: ["Content", "Strategy"], image: "/card1.jpg" },
 ];
 
 export const SkillsSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const imgInnerRef = useRef<HTMLImageElement>(null);
-  const xTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
-  const yTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
 
   useGSAP(
     () => {
-      // ── Per-word mask reveal ──
-      // Each .skill-word-inner starts at y:"100%" (hidden below its mask),
-      // animates up when its row's trigger enters viewport.
+      // ── Per-word mask reveal on scroll ──
       gsap.utils.toArray<HTMLElement>(".skills-row").forEach((row) => {
         const words = row.querySelectorAll(".skill-word-inner");
         const index = row.querySelector(".skill-index");
@@ -55,7 +37,6 @@ export const SkillsSection = () => {
           },
         });
 
-        // Index number counts up 0 → i+1
         if (index) {
           gsap.from(index, {
             innerText: 0,
@@ -72,7 +53,7 @@ export const SkillsSection = () => {
         }
       });
 
-      // Divider lines draw in from center
+      // Divider lines draw in
       gsap.from(".skills-divider", {
         scaleX: 0,
         duration: dur.base,
@@ -85,92 +66,108 @@ export const SkillsSection = () => {
           toggleActions: "play none none reverse",
         },
       });
-
-      // quickTo for floating hover image
-      if (imageRef.current) {
-        xTo.current = gsap.quickTo(imageRef.current, "x", {
-          duration: 0.45,
-          ease: "power3",
-        });
-        yTo.current = gsap.quickTo(imageRef.current, "y", {
-          duration: 0.45,
-          ease: "power3",
-        });
-      }
     },
     { scope: sectionRef },
   );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!sectionRef.current || !xTo.current || !yTo.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    xTo.current(e.clientX - rect.left - 180);
-    yTo.current(e.clientY - rect.top - 130);
+  // ── Split + reveal ────────────────────────────────────────────────────────
+  const handleRowEnter = useCallback((row: HTMLLIElement) => {
+    const wraps = row.querySelectorAll<HTMLElement>(".skill-word-wrap");
+    const reveal = row.querySelector<HTMLElement>(".skill-reveal-img");
+
+    if (wraps.length >= 2) {
+      gsap.to(wraps[0], {
+        x: "-14vw",
+        duration: 0.6,
+        ease: "expo.out",
+        overwrite: "auto",
+      });
+      gsap.to(wraps[1], {
+        x: "14vw",
+        duration: 0.6,
+        ease: "expo.out",
+        overwrite: "auto",
+      });
+    }
+
+    if (reveal) {
+      gsap.fromTo(
+        reveal,
+        { clipPath: "inset(50% 0 50% 0)" },
+        {
+          clipPath: "inset(0% 0 0% 0)",
+          duration: 0.6,
+          ease: "expo.out",
+          overwrite: "auto",
+        },
+      );
+    }
   }, []);
 
-  const handleRowEnter = useCallback((image: string) => {
-    if (!imageRef.current || !imgInnerRef.current) return;
-    imgInnerRef.current.src = image;
-    gsap.to(imageRef.current, {
-      opacity: 1,
-      scale: 1,
-      rotation: 0,
-      duration: 0.4,
-      ease: ease.out,
-    });
-  }, []);
+  const handleRowLeave = useCallback((row: HTMLLIElement) => {
+    const wraps = row.querySelectorAll<HTMLElement>(".skill-word-wrap");
+    const reveal = row.querySelector<HTMLElement>(".skill-reveal-img");
 
-  const handleRowLeave = useCallback(() => {
-    if (!imageRef.current) return;
-    gsap.to(imageRef.current, {
-      opacity: 0,
-      scale: 0.88,
-      rotation: -3,
-      duration: 0.3,
-      ease: "power3.in",
-    });
+    if (wraps.length >= 2) {
+      gsap.to(wraps[0], {
+        x: 0,
+        duration: 0.55,
+        ease: "expo.inOut",
+        overwrite: "auto",
+      });
+      gsap.to(wraps[1], {
+        x: 0,
+        duration: 0.55,
+        ease: "expo.inOut",
+        overwrite: "auto",
+      });
+    }
+
+    if (reveal) {
+      gsap.to(reveal, {
+        clipPath: "inset(50% 0 50% 0)",
+        duration: 0.4,
+        ease: "expo.in",
+        overwrite: "auto",
+      });
+    }
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="py-32 px-6 relative overflow-hidden"
-      onMouseMove={handleMouseMove}
-    >
-      {/* Floating hover image */}
-      <div
-        ref={imageRef}
-        className="pointer-events-none absolute z-20 w-[360px] h-[260px] rounded-xl overflow-hidden shadow-2xl"
-        style={
-          {
-            opacity: 0,
-            scale: 0.88,
-            rotation: -3,
-            willChange: "transform, opacity",
-          } as React.CSSProperties
-        }
-      >
-        <img
-          ref={imgInnerRef}
-          src=""
-          alt=""
-          className="w-full h-full object-cover scale-105"
-        />
-      </div>
-
+    <section ref={sectionRef} className="py-32 px-6 relative overflow-hidden">
       <div className="mx-auto w-full">
-        {/* Top divider */}
         <div className="skills-divider h-px bg-(--color-border)" />
 
         <ul className="list-none p-0 m-0">
           {skills.map((skill, i) => (
             <li
               key={i}
-              className="skills-row group"
-              onMouseEnter={() => handleRowEnter(skill.image)}
-              onMouseLeave={handleRowLeave}
+              className="skills-row group relative"
+              onMouseEnter={(e) => handleRowEnter(e.currentTarget)}
+              onMouseLeave={(e) => handleRowLeave(e.currentTarget)}
             >
-              <div className="flex items-center justify-between py-8 md:py-10 cursor-pointer">
+              {/* ── Center reveal image (behind content) ── */}
+              <div
+                className="skill-reveal-img absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+                style={{ clipPath: "inset(50% 0 50% 0)" }}
+              >
+                <div
+                  className="rounded-xl overflow-hidden shadow-2xl"
+                  style={{
+                    width: "clamp(200px, 18vw, 320px)",
+                    height: "clamp(120px, 12vw, 210px)",
+                  }}
+                >
+                  <img
+                    src={skill.image}
+                    alt={skill.title.join(" ")}
+                    className="w-full h-full object-cover scale-105"
+                  />
+                </div>
+              </div>
+
+              {/* ── Row content (above image) ── */}
+              <div className="relative z-10 flex items-center justify-between py-8 md:py-10 cursor-pointer">
                 {/* Index counter */}
                 <span
                   className="skill-index hidden md:block text-xs tabular-nums tracking-widest shrink-0 w-8"
@@ -182,15 +179,15 @@ export const SkillsSection = () => {
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
-                {/* Words — each inside an overflow-hidden mask */}
+                {/* Words — each outer span is the split target */}
                 <div className="flex items-center justify-center gap-4 md:gap-6 flex-1">
                   {skill.title.map((word, j) => (
                     <span
                       key={j}
-                      className="inline-block overflow-hidden leading-[0.9]"
+                      className="skill-word-wrap inline-block overflow-hidden leading-[0.9]"
                     >
                       <span
-                        className="skill-word-inner inline-block transition-colors duration-500 group-hover:text-(--color-accent)"
+                        className="skill-word-inner inline-block"
                         style={{
                           fontFamily: "'DM Serif Display', serif",
                           fontSize: "clamp(3rem, 8vw, 11rem)",
@@ -203,7 +200,7 @@ export const SkillsSection = () => {
                   ))}
                 </div>
 
-                {/* Arrow — appears on hover */}
+                {/* Arrow */}
                 <span
                   className="hidden md:block shrink-0 w-8 text-right opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-(--color-accent)"
                   style={{ fontSize: "1.25rem" }}
@@ -212,8 +209,8 @@ export const SkillsSection = () => {
                 </span>
               </div>
 
-              {/* Row divider */}
-              <div className="skills-divider h-px bg-(--color-border)" />
+              {/* Divider */}
+              <div className="skills-divider h-px bg-(--color-border) relative z-10" />
             </li>
           ))}
         </ul>

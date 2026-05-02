@@ -18,7 +18,7 @@ const config: PeepConfig = {
   cols: 7,
 };
 
-export const CrowdedPeeps = () => {
+export const CrowdedPeeps = ({ className }: { className?: string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -186,9 +186,12 @@ export const CrowdedPeeps = () => {
   return (
     <div
       ref={wrapperRef}
-      className="relative w-1/2 lg:w-1/2 h-[400px] rounded-md mx-4 lg:h-auto bg-linear-to-br from-accent/5 to-accent-2/5 overflow-hidden"
+      className={
+        className ??
+        "relative w-1/2 lg:w-1/2 h-[400px] rounded-md mx-4 lg:h-auto bg-linear-to-br from-accent/5 to-accent-2/5 overflow-hidden"
+      }
     >
-      <canvas ref={canvasRef} id="canvas" className="w-full h-full" />
+      <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );
 };

@@ -1,62 +1,129 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import gsap from "gsap";
 import { dur, ease } from "@/lib/motion";
 
-/**
- * PageTransition — full-screen clip-path curtain that wipes on route change.
- * Place once inside _app.tsx, wrapping <Component />.
- *
- * Enter: curtain wipes UP (reveals page)
- * Exit:  curtain drops DOWN (covers page before navigation)
- */
 export const PageTransition = ({ children }: { children: React.ReactNode }) => {
   const curtainRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     const curtain = curtainRef.current;
-    if (!curtain) return;
+    const logo = logoRef.current;
+    if (!curtain || !logo) return;
 
-    // ── Page enter: reveal from bottom ──
-    gsap.fromTo(
-      curtain,
-      { clipPath: "inset(0 0 0% 0)" }, // fully covering
-      {
-        clipPath: "inset(0 0 100% 0)", // wipes upward, revealing content
-        duration: dur.epic,
-        ease: ease.cinematic,
-        delay: 0.05,
-      },
-    );
+    // ── Initial page load: curtain is visible, logo spins in, then wipe reveals page ──
+    gsap.set(logo, { scale: 0, rotation: -45, opacity: 0 });
+    gsap.set(curtain, { clipPath: "inset(0 0 0% 0)" });
 
-    // ── Route change start: drop curtain over current page ──
-    const onRouteStart = () => {
-      gsap.fromTo(
+    const entryTl = gsap.timeline();
+    entryTl
+      // Logo springs in
+      .to(logo, {
+        scale: 1,
+        rotation: 0,
+        opacity: 1,
+        duration: 0.55,
+        ease: "back.out(2.5)",
+        delay: 0.1,
+      })
+      // Logo does one full spin while visible
+      .to(logo, {
+        rotation: "+=360",
+        duration: 0.7,
+        ease: "power2.inOut",
+      })
+      // Curtain wipes upward — page is revealed
+      .to(
         curtain,
-        { clipPath: "inset(100% 0 0% 0)" }, // starts from top edge (invisible)
-        {
-          clipPath: "inset(0% 0 0% 0)", // drops down, covering page
-          duration: dur.slow,
-          ease: ease.cinematic,
-        },
-      );
-    };
-
-    // ── Route change complete: wipe away ──
-    const onRouteComplete = () => {
-      gsap.fromTo(
-        curtain,
-        { clipPath: "inset(0 0 0% 0)" },
         {
           clipPath: "inset(0 0 100% 0)",
           duration: dur.epic,
           ease: ease.cinematic,
-          delay: 0.1,
         },
+        "-=0.15",
+      )
+      // Logo scales out as curtain wipes
+      .to(
+        logo,
+        {
+          scale: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.in",
+        },
+        "-=0.55",
       );
+
+    // ── Route change start: curtain drops, logo spins in ──
+    const onRouteStart = () => {
+      gsap.killTweensOf([curtain, logo]);
+      gsap.set(curtain, { clipPath: "inset(100% 0 0% 0)" });
+      gsap.set(logo, { scale: 0, rotation: 0, opacity: 0 });
+
+      const tl = gsap.timeline();
+      tl.to(curtain, {
+        clipPath: "inset(0% 0 0% 0)",
+        duration: dur.slow,
+        ease: ease.cinematic,
+      })
+        .to(
+          logo,
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.35,
+            ease: "back.out(2)",
+          },
+          "-=0.35",
+        )
+        .to(
+          logo,
+          {
+            rotation: "+=720",
+            duration: 0.65,
+            ease: "power3.inOut",
+          },
+          "<",
+        );
+    };
+
+    // ── Route change complete: logo spins out, curtain wipes away ──
+    const onRouteComplete = () => {
+      const tl = gsap.timeline();
+      tl
+        // Final spin
+        .to(logo, {
+          rotation: "+=360",
+          duration: 0.4,
+          ease: "power2.inOut",
+        })
+        // Curtain wipes upward
+        .to(
+          curtain,
+          {
+            clipPath: "inset(0 0 100% 0)",
+            duration: dur.epic,
+            ease: ease.cinematic,
+            delay: 0.05,
+          },
+          "-=0.1",
+        )
+        // Logo shrinks out mid-wipe
+        .to(
+          logo,
+          {
+            scale: 0,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+          },
+          "-=0.5",
+        );
     };
 
     router.events.on("routeChangeStart", onRouteStart);
@@ -72,27 +139,25 @@ export const PageTransition = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      {/* Curtain overlay — sits above everything, below cursor */}
       <div
         ref={curtainRef}
-        className="fixed inset-0 z-190 pointer-events-none flex items-center justify-center"
-        style={{
-          clipPath: "inset(0 0 0% 0)",
-          backgroundColor: "var(--bg)",
-        }}
+        className="fixed inset-0 z-190 pointer-events-none flex items-center justify-center overflow-hidden"
+        style={{ clipPath: "inset(0 0 0% 0)", backgroundColor: "var(--bg)" }}
       >
-        {/* Logo shown during transition */}
-        <span
+        <div
+          ref={logoRef}
           className="select-none"
-          style={{
-            fontFamily: "'DM Serif Display', serif",
-            fontSize: "clamp(2.5rem, 6vw, 4rem)",
-            color: "var(--fg)",
-            opacity: 0.6,
-          }}
+          style={{ willChange: "transform, opacity" }}
         >
-          idols<span style={{ color: "var(--accent)" }}>.</span>
-        </span>
+          <Image
+            src="/logo_icons.svg"
+            alt="Icons"
+            width={80}
+            height={80}
+            priority
+            draggable={false}
+          />
+        </div>
       </div>
 
       {children}
