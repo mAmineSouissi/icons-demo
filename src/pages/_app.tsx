@@ -12,13 +12,13 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <meta
           name="description"
-          content="idols - UGC Creator Platform - Connect with brands and create amazing content"
+          content="icons - UGC Creator Platform - Connect with brands and create amazing content"
         />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
-        <title>idols - UGC Creator Platform</title>
+        <title>icons - UGC Creator Platform</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ThemeProvider

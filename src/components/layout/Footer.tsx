@@ -12,12 +12,12 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const navLinks = ["Work", "Creators", "Brands", "About"];
 
 const marqueeWords = [
-  "idols",
+  "icons",
   "creators",
   "brands",
   "content",
   "impact",
-  "idols",
+  "icons",
   "creators",
   "brands",
   "content",
@@ -240,7 +240,7 @@ export const Footer = () => {
                 href="/"
                 className="text-xl font-normal text-(--color-fg) shrink-0 hover:text-accent transition-colors duration-300"
               >
-                idols<span className="text-accent">.</span>
+                icons<span className="text-accent">.</span>
               </Link>
 
               {/* Nav links — centered */}
@@ -260,7 +260,7 @@ export const Footer = () => {
 
               {/* Copyright */}
               <p className="text-[11px] text-(--color-muted-fg) shrink-0 tracking-wide">
-                &copy; {new Date().getFullYear()} idols.
+                &copy; {new Date().getFullYear()} icons.
               </p>
             </div>
           </div>

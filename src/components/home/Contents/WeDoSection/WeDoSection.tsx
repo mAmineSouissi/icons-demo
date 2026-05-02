@@ -100,7 +100,7 @@ export const WeDoSection = () => {
           {[
             "We connect ambitious creators with forward-thinking brands to craft content that actually moves people.",
             "No forced campaigns. No fake filters. Just raw, human stories that spark real conversations.",
-            "Every collaboration on Idols is built on trust, creativity, and a shared desire to make something iconic.",
+            "Every collaboration on Icons is built on trust, creativity, and a shared desire to make something iconic.",
           ].map((sentence, i) => (
             <div key={i} className="overflow-hidden">
               <p

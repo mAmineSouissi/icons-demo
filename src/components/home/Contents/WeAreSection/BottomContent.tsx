@@ -47,14 +47,14 @@ export const BottomContent = ({ className }: BottomContentProps) => {
   return (
     <div ref={ref} className={cn("mt-4 bg-black p-6", className)}>
       <p className="bottom-text text-2xl font-extrabold text-black dark:text-white mb-3">
-        IDOLS IS
+        ICONS IS
       </p>
       <p className="bottom-text text-sm font-bold uppercase text-black dark:text-white leading-relaxed mb-4">
         A CREATIVE PLAYGROUND WHERE IDEAS, STORIES, AND COLLABORATIONS COME TO
         LIFE
       </p>
       <p className="bottom-text text-xs font-bold text-muted-foreground leading-tight mb-3 border-t border-primary pt-3">
-        AT IDOLS, WE DON'T FAKE IT — WE CREATE IT. BUILDING A SPACE WHERE REAL
+        AT ICONS, WE DON'T FAKE IT — WE CREATE IT. BUILDING A SPACE WHERE REAL
         CREATORS AND REAL BRANDS MEET THROUGH GENUINE CONTENT THAT ACTUALLY
         CONNECTS.
       </p>

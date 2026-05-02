@@ -137,7 +137,7 @@ export const PlatformSection = () => {
         {/* Subtitle */}
         <p className="platform-sub text-lg text-(--color-muted-fg) mb-10 max-w-lg mx-auto">
           Join thousands of creators and brands building authentic content
-          together on Idols.
+          together on Icons.
         </p>
 
         {/* CTA Button — magnetic + liquid fill */}
