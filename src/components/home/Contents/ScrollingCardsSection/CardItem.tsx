@@ -292,7 +292,7 @@ export const CardItem = ({
                 src={src}
                 alt={title ?? ""}
                 className="
-                  relative z-10
+                  relative 
 
                   h-full
                   w-full

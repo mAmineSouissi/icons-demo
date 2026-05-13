@@ -76,7 +76,7 @@ export const ScrollingCardsSection = () => {
       {/* Horizontal track */}
       <div
         ref={trackRef}
-        className="flex items-center gap-8 px-[5vw] py-12"
+        className="flex items-stretch gap-8 px-[5vw] py-12"
         style={{ width: "max-content", willChange: "transform" }}
       >
         {/* Leading spacer for centered start */}

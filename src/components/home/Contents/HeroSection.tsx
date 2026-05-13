@@ -1,12 +1,14 @@
 import { ChevronDown } from "lucide-react";
-import { useRef } from "react";
-import { TreatedImage } from "@/components/shared/TreatedImage";
+import React, { useRef, useState } from "react";
 import TextType from "@/components/shared/TextType";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { dur, ease, stagger } from "@/lib/motion";
 import { CrowdedPeeps } from "./HowSection/CrowdedPeeps";
+import { cn } from "@/lib/utils";
+import { ThemeSwitcher } from "@/components/shared/ThemeSwitcher";
+import FloatingLines from "@/components/ui/FloatingLines";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -15,14 +17,52 @@ const HERO_CHARS = ["I", "c", "o", "n", "s"];
 
 export const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const bgVideoRef = useRef<HTMLVideoElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<"dark" | "light" | "system">("system");
+
+  React.useEffect(() => {
+    const root = document.documentElement;
+
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "dark" | "light" | null;
+
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+  }, []);
+
+  const handleThemeChange = (nextTheme: "dark" | "light" | "system") => {
+    setTheme(nextTheme as "dark" | "light");
+  };
 
   useGSAP(
     () => {
       const tl = gsap.timeline({ delay: 0.15 });
+
+      // Subtle parallax for background video (matches previous TreatedImage parallax)
+      if (bgVideoRef.current) {
+        gsap.to(bgVideoRef.current, {
+          yPercent: -(0.25 * 30),
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
 
       // ── Character-by-character reveal ──
       // Each .hero-char sits inside an overflow-hidden mask wrapper.
@@ -102,33 +142,27 @@ export const HeroSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
+      className={cn(
+        "min-h-screen flex flex-col items-center justify-center relative isolate overflow-hidden transition-colors duration-700",
+      )}
     >
-      {/* ── Deep cinematic background image ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: -1 }}
-      >
-        <TreatedImage
-          src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1920&h=1080&fit=crop&q=80"
-          alt=""
-          wrapperClassName="w-full h-full"
-          filter="brightness(0.22) contrast(1.2) saturate(0.4)"
-          grainOpacity={0.18}
-          accentOverlay={true}
-          vignette={true}
-          parallax={0.25}
-        />
-        {/* Bottom fade to bg colour so the next section is seamless */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to top, var(--bg) 0%, transparent 100%)",
-          }}
+      {/* FloatingLines background with accent colors */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <FloatingLines
+          enabledWaves={["top", "middle", "bottom"]}
+          lineCount={[8, 12, 16]}
+          lineDistance={[8, 6, 4]}
+          bendRadius={3.0}
+          bendStrength={-1.2}
+          mouseDamping={0.08}
+          interactive={true}
+          parallax={true}
+          parallaxStrength={0.3}
+          linesGradient={["#d7ff2f", "#ff5a3c", "#96c0ce"]}
+          animationSpeed={1.0}
+          mixBlendMode="screen"
         />
       </div>
-
       {/* Gradient background */}
       <div
         ref={bgRef}
@@ -142,20 +176,6 @@ export const HeroSection = () => {
         />
       </div>
 
-      {/* Peeps — ambient walking figures at the bottom, blended into the scene */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-[45%] pointer-events-none z-1"
-        style={{ opacity: 0.22, mixBlendMode: "screen" }}
-      >
-        <CrowdedPeeps className="relative w-full h-full overflow-hidden" />
-      </div>
-
-      {/* Photo overlay */}
-      <div className="absolute inset-0 opacity-28 pointer-events-none">
-        <div className="absolute left-0 top-0 h-full w-2/5 bg-linear-to-r from-bg from-10% via-bg via-50% to-transparent" />
-        <div className="absolute right-0 top-0 h-full w-2/5 bg-linear-to-l from-bg from-10% via-bg via-50% to-transparent" />
-      </div>
-
       <div
         ref={contentRef}
         className="text-center mb-10 z-10"
@@ -165,26 +185,21 @@ export const HeroSection = () => {
         <h1
           className="flex items-end justify-center leading-none mb-4"
           style={{
-            fontFamily: "'DM Serif Display', serif",
-            fontSize: "clamp(5rem, 14vw, 11rem)",
+            fontFamily: '"fat", sans-serif',
+            fontWeight: 800,
           }}
           aria-label="Icons"
         >
           {HERO_CHARS.map((char, i) => (
             // overflow-hidden masks the y:"110%" starting position
             <span key={i} className="inline-block overflow-hidden leading-none">
-              <span
-                className="hero-char inline-block"
-                style={{ color: "var(--fg)" }}
-              >
-                {char}
-              </span>
+              <span className="hero-char inline-block text-[7vh]">{char}</span>
             </span>
           ))}
           {/* Accent dot */}
           <span className="inline-block overflow-hidden leading-none ml-0.5">
             <span
-              className="hero-dot inline-block"
+              className="hero-dot inline-block text-[5vh]"
               style={{ color: "var(--accent)", lineHeight: "inherit" }}
             >
               .
@@ -194,13 +209,16 @@ export const HeroSection = () => {
 
         {/* Subtitle typewriter */}
         <div
-          className="hero-typewriter"
-          style={{ clipPath: "inset(0 100% 0 0)" }}
+          style={{
+            fontFamily: '"snaga-unicase-display", sans-serif',
+            fontWeight: 300,
+            fontStyle: "normal",
+          }}
         >
           <TextType
             text={[
               "The UGC platform",
-              "Where creativity meets opportunity.",
+              "where every face is an icon.",
               "Join us today!",
             ]}
             typingSpeed={75}
@@ -209,6 +227,9 @@ export const HeroSection = () => {
             className="text-[clamp(1.2rem,3vw,2rem)]"
             cursorCharacter="|"
           />
+          <div className="mt-8 flex justify-center">
+            <ThemeSwitcher onChange={handleThemeChange} />
+          </div>
         </div>
       </div>
 
