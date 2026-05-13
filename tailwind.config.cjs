@@ -7,7 +7,12 @@ module.exports = {
   ],
   darkMode: ['class', '[data-theme="dark"]'],
   theme: {
-    extend: {},
+    extend: {
+       fontFamily: {
+        sans: ["Poppins", "sans-serif"],
+        display: ["Playfair Display", "serif"],
+      },
+    },
   },
   plugins: [],
 };
