@@ -13,6 +13,7 @@ import { PlatformSection } from "@/components/home/Contents/PlatformSection/Plat
 import { LogoSection } from "./Contents/LogoSection";
 import { Preloader } from "@/components/shared/Preloader";
 import { CustomCursor } from "@/components/shared/CustomCursor";
+import FloatingLines from "@/components/ui/FloatingLines";
 
 gsap.registerPlugin(useGSAP);
 
@@ -20,6 +21,7 @@ export const HomePage = () => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const floatingLinesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setMounted(true));
@@ -76,6 +78,19 @@ export const HomePage = () => {
           scrub: 3,
         },
       });
+
+      // Blur and fade out FloatingLines when scrolling down
+      gsap.to(floatingLinesRef.current, {
+        opacity: 0,
+        filter: "blur(20px)",
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "+=800",
+          scrub: true,
+        },
+      });
     },
     { scope: containerRef },
   );
@@ -97,6 +112,22 @@ export const HomePage = () => {
         className="min-h-screen relative overflow-hidden bg-(--color-bg) text-(--color-fg) transition-colors duration-500"
         style={{ visibility: loading ? "hidden" : "visible" }}
       >
+        <div ref={floatingLinesRef} className="fixed inset-0 pointer-events-none z-0">
+          <FloatingLines
+            enabledWaves={["top", "middle", "bottom"]}
+            lineCount={[8, 12, 16]}
+            lineDistance={[8, 6, 4]}
+            bendRadius={3.0}
+            bendStrength={-1.2}
+            mouseDamping={0.08}
+            interactive={true}
+            parallax={true}
+            parallaxStrength={0.3}
+            linesGradient={["#ff0000", "#0000ff", "#ffff00"]}
+            animationSpeed={1.0}
+          />
+        </div>
+
         {/* ── Film grain overlay ── */}
         <div
           className="fixed inset-0 pointer-events-none z-150"

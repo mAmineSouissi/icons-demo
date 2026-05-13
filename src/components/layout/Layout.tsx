@@ -1,6 +1,6 @@
 import { Footer } from "./Footer";
 import { cn } from "@/lib/utils";
-import BubbleMenu from "./navbar/BubbleMenu";
+import Navbar from "./navbar/Navbar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -53,20 +53,11 @@ export default function Layout({ children, className }: LayoutProps) {
         className,
       )}
     >
-      <BubbleMenu
+      <Navbar
         logo={<img src="/logo_icons.svg" alt="Icons" className="h-7 w-auto" />}
         items={navItems}
-        menuAriaLabel="Toggle navigation"
-        menuBg="#0f0f0f"
-        menuContentColor="#ffffff"
-        pillBg="#f0f0f0"
-        pillColor="#0a0a0a"
-        useFixedPosition={true}
-        animationEase="expo.out"
-        animationDuration={0.45}
-        staggerDelay={0.08}
       />
-      <main className={cn("relative z-10")}>{children}</main>
+      <main className={cn("relative z-10 pt-24")}>{children}</main>
       <Footer />
     </div>
   );

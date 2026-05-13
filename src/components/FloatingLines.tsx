@@ -265,8 +265,7 @@ export default function FloatingLines({
   bendStrength = -0.5,
   mouseDamping = 0.05,
   parallax = true,
-  parallaxStrength = 0.2,
-  mixBlendMode = 'screen'
+  parallaxStrength = 0.2
 }: FloatingLinesProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const targetMouseRef = useRef<Vector2>(new Vector2(-1000, -1000));
@@ -435,8 +434,8 @@ export default function FloatingLines({
     };
 
     if (interactive) {
-      renderer.domElement.addEventListener('pointermove', handlePointerMove);
-      renderer.domElement.addEventListener('pointerleave', handlePointerLeave);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerleave', handlePointerLeave);
     }
 
     let raf = 0;
@@ -471,8 +470,8 @@ export default function FloatingLines({
       if (ro) ro.disconnect();
 
       if (interactive) {
-        renderer.domElement.removeEventListener('pointermove', handlePointerMove);
-        renderer.domElement.removeEventListener('pointerleave', handlePointerLeave);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerleave', handlePointerLeave);
       }
 
       geometry.dispose();
@@ -504,9 +503,6 @@ export default function FloatingLines({
     <div
       ref={containerRef}
       className="relative w-full h-full overflow-hidden floating-lines-container"
-      style={{
-        mixBlendMode: mixBlendMode
-      }}
     />
   );
 }

@@ -7,8 +7,6 @@ import { useGSAP } from "@gsap/react";
 import { dur, ease, stagger } from "@/lib/motion";
 import { CrowdedPeeps } from "./HowSection/CrowdedPeeps";
 import { cn } from "@/lib/utils";
-import { ThemeSwitcher } from "@/components/shared/ThemeSwitcher";
-import FloatingLines from "@/components/ui/FloatingLines";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -22,28 +20,6 @@ export const HeroSection = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState<"dark" | "light" | "system">("system");
-
-  React.useEffect(() => {
-    const root = document.documentElement;
-
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "dark" | "light" | null;
-
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-  }, []);
-
-  const handleThemeChange = (nextTheme: "dark" | "light" | "system") => {
-    setTheme(nextTheme as "dark" | "light");
-  };
 
   useGSAP(
     () => {
@@ -146,39 +122,9 @@ export const HeroSection = () => {
         "min-h-screen flex flex-col items-center justify-center relative isolate overflow-hidden transition-colors duration-700",
       )}
     >
-      {/* FloatingLines background with accent colors */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <FloatingLines
-          enabledWaves={["top", "middle", "bottom"]}
-          lineCount={[8, 12, 16]}
-          lineDistance={[8, 6, 4]}
-          bendRadius={3.0}
-          bendStrength={-1.2}
-          mouseDamping={0.08}
-          interactive={true}
-          parallax={true}
-          parallaxStrength={0.3}
-          linesGradient={["#d7ff2f", "#ff5a3c", "#96c0ce"]}
-          animationSpeed={1.0}
-          mixBlendMode="screen"
-        />
-      </div>
-      {/* Gradient background */}
-      <div
-        ref={bgRef}
-        className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{ willChange: "transform, opacity" }}
-      >
-        <div className="absolute top-1/4 left-1/4 w-[380px] h-[380px] bg-(--color-accent) rounded-md blur-[120px] animate-pulse" />
-        <div
-          className="absolute bottom-1/4 right-1/4 w-[380px] h-[380px] bg-(--color-accent-2) rounded-md blur-[120px] animate-pulse"
-          style={{ animationDelay: "2s" }}
-        />
-      </div>
-
       <div
         ref={contentRef}
-        className="text-center mb-10 z-10"
+        className="text-center mb-10 z-10 text-white"
         style={{ willChange: "clip-path", clipPath: "inset(0 0 0% 0)" }}
       >
         {/* ── Split-character heading ── */}
@@ -227,9 +173,6 @@ export const HeroSection = () => {
             className="text-[clamp(1.2rem,3vw,2rem)]"
             cursorCharacter="|"
           />
-          <div className="mt-8 flex justify-center">
-            <ThemeSwitcher onChange={handleThemeChange} />
-          </div>
         </div>
       </div>
 
