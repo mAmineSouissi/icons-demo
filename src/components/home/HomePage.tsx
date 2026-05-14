@@ -12,7 +12,6 @@ import { SkillsSection } from "@/components/home/Contents/SkillsSection";
 import { PlatformSection } from "@/components/home/Contents/PlatformSection/PlatformSection";
 import { LogoSection } from "./Contents/LogoSection";
 import { Preloader } from "@/components/shared/Preloader";
-import { CustomCursor } from "@/components/shared/CustomCursor";
 import FloatingLines from "@/components/ui/FloatingLines";
 
 gsap.registerPlugin(useGSAP);
@@ -101,9 +100,6 @@ export const HomePage = () => {
 
   return (
     <>
-      {/* Custom cursor — pointer devices only */}
-      <CustomCursor />
-
       {/* Preloader — unmounts itself via onComplete */}
       {loading && <Preloader onComplete={handlePreloaderComplete} />}
 
@@ -112,7 +108,10 @@ export const HomePage = () => {
         className="min-h-screen relative overflow-hidden bg-(--color-bg) text-(--color-fg) transition-colors duration-500"
         style={{ visibility: loading ? "hidden" : "visible" }}
       >
-        <div ref={floatingLinesRef} className="fixed inset-0 pointer-events-none z-0">
+        <div
+          ref={floatingLinesRef}
+          className="fixed inset-0 pointer-events-none z-0"
+        >
           <FloatingLines
             enabledWaves={["top", "middle", "bottom"]}
             lineCount={[8, 12, 16]}
