@@ -40,7 +40,7 @@ export const TreatedImage = ({
   parallax = 0,
 }: TreatedImageProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const imgRef    = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     if (!parallax || !imgRef.current || !wrapperRef.current) return;
@@ -51,17 +51,23 @@ export const TreatedImage = ({
       scrollTrigger: {
         trigger: wrapperRef.current,
         start: "top bottom",
-        end:   "bottom top",
+        end: "bottom top",
         scrub: true,
         invalidateOnRefresh: true,
       },
     });
 
-    return () => { tween.scrollTrigger?.kill(); tween.kill(); };
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+    };
   }, [parallax]);
 
   return (
-    <div ref={wrapperRef} className={`relative overflow-hidden ${wrapperClassName}`}>
+    <div
+      ref={wrapperRef}
+      className={`relative isolate overflow-hidden ${wrapperClassName}`}
+    >
       {/* ── Image ── */}
       <img
         ref={imgRef}

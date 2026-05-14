@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import React from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -10,10 +10,10 @@ import { Sponsors } from "./Sponsors";
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export const PlatformSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const btnXTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
-  const btnYTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
+  const sectionRef = React.useRef<HTMLDivElement>(null);
+  const btnRef = React.useRef<HTMLButtonElement>(null);
+  const btnXTo = React.useRef<ReturnType<typeof gsap.quickTo> | null>(null);
+  const btnYTo = React.useRef<ReturnType<typeof gsap.quickTo> | null>(null);
 
   useGSAP(
     () => {
@@ -82,7 +82,7 @@ export const PlatformSection = () => {
     { scope: sectionRef },
   );
 
-  const handleBtnMove = useCallback((e: React.MouseEvent) => {
+  const handleBtnMove = React.useCallback((e: React.MouseEvent) => {
     if (!btnRef.current || !btnXTo.current || !btnYTo.current) return;
     const rect = btnRef.current.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -91,7 +91,7 @@ export const PlatformSection = () => {
     btnYTo.current((e.clientY - cy) * 0.3);
   }, []);
 
-  const handleBtnEnter = useCallback(() => {
+  const handleBtnEnter = React.useCallback(() => {
     gsap.to(".platform-btn-fill", {
       scaleX: 1,
       duration: 0.45,
@@ -104,7 +104,7 @@ export const PlatformSection = () => {
     });
   }, []);
 
-  const handleBtnLeave = useCallback(() => {
+  const handleBtnLeave = React.useCallback(() => {
     btnXTo.current?.(0);
     btnYTo.current?.(0);
     gsap.to(".platform-btn-fill", {
