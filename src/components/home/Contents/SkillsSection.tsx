@@ -189,7 +189,7 @@ export const SkillsSection = () => {
                       <span
                         className="skill-word-inner inline-block"
                         style={{
-                          fontFamily: "'DM Serif Display', serif",
+                          fontFamily: "var(--font-display)",
                           fontSize: "clamp(3rem, 8vw, 11rem)",
                           color: "var(--fg)",
                         }}
