@@ -16,48 +16,9 @@ export const PageTransition = ({ children }: { children: React.ReactNode }) => {
     const logo = logoRef.current;
     if (!curtain || !logo) return;
 
-    // ── Initial page load: curtain is visible, logo spins in, then wipe reveals page ──
-    gsap.set(logo, { scale: 0, rotation: -45, opacity: 0 });
-    gsap.set(curtain, { clipPath: "inset(0 0 0% 0)" });
-
-    const entryTl = gsap.timeline();
-    entryTl
-      // Logo springs in
-      .to(logo, {
-        scale: 1,
-        rotation: 0,
-        opacity: 1,
-        duration: 0.55,
-        ease: "back.out(2.5)",
-        delay: 0.1,
-      })
-      // Logo does one full spin while visible
-      .to(logo, {
-        rotation: "+=360",
-        duration: 0.7,
-        ease: "power2.inOut",
-      })
-      // Curtain wipes upward — page is revealed
-      .to(
-        curtain,
-        {
-          clipPath: "inset(0 0 100% 0)",
-          duration: dur.epic,
-          ease: ease.cinematic,
-        },
-        "-=0.15",
-      )
-      // Logo scales out as curtain wipes
-      .to(
-        logo,
-        {
-          scale: 0,
-          opacity: 0,
-          duration: 0.3,
-          ease: "power2.in",
-        },
-        "-=0.55",
-      );
+    // ── Initial page load: curtain is already gone, Preloader handles the entry ──
+    gsap.set(logo, { scale: 0, opacity: 0 });
+    gsap.set(curtain, { clipPath: "inset(0 0 100% 0)" });
 
     // ── Route change start: curtain drops, logo spins in ──
     const onRouteStart = () => {
@@ -142,7 +103,7 @@ export const PageTransition = ({ children }: { children: React.ReactNode }) => {
       <div
         ref={curtainRef}
         className="fixed inset-0 z-190 pointer-events-none flex items-center justify-center overflow-hidden"
-        style={{ clipPath: "inset(0 0 0% 0)", backgroundColor: "var(--bg)" }}
+        style={{ clipPath: "inset(0 0 100% 0)", backgroundColor: "var(--bg)" }}
       >
         <div
           ref={logoRef}
