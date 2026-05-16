@@ -13,7 +13,7 @@ function Application({ className, Component, pageProps }: ApplicationProps) {
     <div
       className={cn(
         "min-h-screen relative overflow-hidden bg-(--color-bg) text-(--color-fg) transition-colors duration-500",
-        className
+        className,
       )}
     >
       <Layout className="relative z-10">

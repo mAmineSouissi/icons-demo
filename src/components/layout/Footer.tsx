@@ -1,271 +1,270 @@
-"use client";
-
-import { useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  ArrowUp,
+  Instagram,
+  Youtube,
+  Music,
+  Twitch,
+  Mail,
+} from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { Sparkle } from "@/components/ui/Sparkle";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger);
 
-const navLinks = ["Work", "Creators", "Brands", "About"];
+const SITEMAP = [
+  { label: "Home", href: "/" },
+  { label: "Creators", href: "/creators" },
+  { label: "Brands", href: "/brands" },
+  { label: "About", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+];
 
-const marqueeWords = [
-  "icons",
-  "creators",
-  "brands",
-  "content",
-  "impact",
-  "icons",
-  "creators",
-  "brands",
-  "content",
-  "impact",
+const LEGAL = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Cookies", href: "/cookies" },
+];
+
+const SOCIALS = [
+  { label: "TikTok", href: "https://tiktok.com/@icons", Icon: Music },
+  { label: "Instagram", href: "https://instagram.com/icons", Icon: Instagram },
+  { label: "YouTube", href: "https://youtube.com/@icons", Icon: Youtube },
+  { label: "Twitch", href: "https://twitch.tv/icons", Icon: Twitch },
 ];
 
 export const Footer = () => {
-  const footerRef = useRef<HTMLElement>(null);
-  const ctaBtnRef = useRef<HTMLAnchorElement>(null);
-  const btnXTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
-  const btnYTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
+  const ref = useRef<HTMLElement>(null);
+  const [showFloatTop, setShowFloatTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowFloatTop(window.scrollY > window.innerHeight);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useGSAP(
     () => {
-      // ── Marquee — velocity-reactive speed ──
-      const marqueeTrack = document.querySelector<HTMLElement>(
-        ".footer-marquee-track",
-      );
-      if (marqueeTrack) {
-        const totalWidth = marqueeTrack.scrollWidth / 2;
-
-        // Base tween — drives the loop
-        const marqueeTween = gsap.to(marqueeTrack, {
-          x: -totalWidth,
-          duration: 22,
-          ease: "none",
-          repeat: -1,
-          modifiers: {
-            x: gsap.utils.unitize((x) => parseFloat(x) % totalWidth),
-          },
-        });
-
-        // Speed + skew based on scroll velocity
-        ScrollTrigger.create({
-          start: 0,
-          end: "max",
-          onUpdate(self) {
-            const v = self.getVelocity(); // px/s
-            const normalized = gsap.utils.clamp(-1, 1, v / 2000); // -1..1
-            const speedMult = 1 + Math.abs(normalized) * 3; // 1x–4x
-            const skew = normalized * 6; // ±6deg
-
-            marqueeTween.timeScale(normalized < 0 ? -speedMult : speedMult);
-            gsap.to(marqueeTrack, {
-              skewX: skew,
-              duration: 0.4,
-              ease: "power2.out",
-              overwrite: "auto",
-            });
-          },
-        });
-      }
-
-      // CTA heading reveal
-      const ctaTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".footer-cta",
-          start: "top 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
-
-      ctaTl.from(".footer-cta-line", {
-        scaleX: 0,
-        duration: 0.8,
-        ease: "power4.inOut",
-      });
-
-      ctaTl.from(
-        ".footer-cta-heading span",
-        {
-          yPercent: 120,
-          duration: 1,
-          ease: "power4.out",
-          stagger: 0.08,
-        },
-        "-=0.4",
-      );
-
-      ctaTl.from(
-        ".footer-cta-btn",
-        { scale: 0, opacity: 0, duration: 0.6, ease: "back.out(1.7)" },
-        "-=0.5",
-      );
-
-      gsap.from(".footer-col", {
-        y: 20,
+      gsap.from(".foot-wordmark .foot-letter", {
+        yPercent: 110,
         opacity: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".footer-grid",
-          start: "top 95%",
-          toggleActions: "play none none reverse",
-        },
+        rotate: 8,
+        duration: 0.7,
+        ease: "back.out(1.6)",
+        stagger: 0.05,
+        scrollTrigger: { trigger: ref.current, start: "top 80%" },
       });
 
-      gsap.from(".footer-bottom-line", {
-        scaleX: 0,
-        duration: 0.8,
-        ease: "power4.inOut",
-        scrollTrigger: {
-          trigger: ".footer-bottom",
-          start: "top 95%",
-          toggleActions: "play none none reverse",
-        },
+      gsap.from(".foot-row", {
+        opacity: 0,
+        y: 18,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: "power2.out",
+        scrollTrigger: { trigger: ref.current, start: "top 85%" },
       });
 
-      // Magnetic CTA button
-      if (ctaBtnRef.current) {
-        btnXTo.current = gsap.quickTo(ctaBtnRef.current, "x", {
-          duration: 0.4,
-          ease: "power3",
-        });
-        btnYTo.current = gsap.quickTo(ctaBtnRef.current, "y", {
-          duration: 0.4,
-          ease: "power3",
-        });
-      }
+      gsap.to(".foot-marquee-track", {
+        xPercent: -50,
+        duration: 28,
+        ease: "linear",
+        repeat: -1,
+      });
+
+      gsap.to(".foot-top-star", {
+        rotate: 18,
+        duration: 1.6,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+      });
     },
-    { scope: footerRef },
+    { scope: ref },
   );
 
-  const handleBtnMove = useCallback((e: React.MouseEvent) => {
-    if (!ctaBtnRef.current || !btnXTo.current || !btnYTo.current) return;
-    const rect = ctaBtnRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    btnXTo.current((e.clientX - cx) * 0.35);
-    btnYTo.current((e.clientY - cy) * 0.35);
-  }, []);
-
-  const handleBtnLeave = useCallback(() => {
-    btnXTo.current?.(0);
-    btnYTo.current?.(0);
-  }, []);
+  const marqueeItems = Array.from({ length: 8 }).flatMap((_, i) => [
+    <span
+      key={`w-${i}`}
+      className="font-display italic text-[clamp(3rem,9vw,8rem)] leading-none tracking-[-0.04em] whitespace-nowrap"
+    >
+      icons
+    </span>,
+    <Sparkle
+      key={`s-${i}`}
+      size={48}
+      fill="var(--accent4)"
+      strokeWidth={6}
+      className="shrink-0"
+    />,
+  ]);
 
   return (
-    <footer ref={footerRef} className="relative overflow-hidden">
-      {/* ── Marquee band ── */}
-      <div className="relative py-6 overflow-hidden border-t border-b border-border/20">
-        <div className="footer-marquee-track flex items-center gap-12 whitespace-nowrap w-max">
-          {marqueeWords.map((word, i) => (
-            <span key={i} className="flex items-center gap-12">
-              <span
-                className="text-[6rem] md:text-[8rem] lg:text-[10rem] font-normal leading-none tracking-tight"
-                style={{
-                  fontFamily: "'DM Serif Display', serif",
-                  WebkitTextStroke: "1.5px var(--fg)",
-                  WebkitTextFillColor: "transparent",
-                  opacity: 0.15,
-                }}
-              >
-                {word}
-              </span>
-              <span className="text-accent opacity-30 text-4xl">✦</span>
-            </span>
-          ))}
+    <>
+      <footer
+        ref={ref}
+        className="relative bg-(--color-fg) text-(--color-bg) overflow-hidden"
+      >
+        {/* ── Marquee ────────────────────────────────────────────── */}
+        <div className="border-y-2 border-(--color-bg) overflow-hidden py-5">
+          <div className="foot-marquee-track flex items-center gap-10 w-max">
+            {marqueeItems}
+            {marqueeItems}
+          </div>
         </div>
-      </div>
 
-      {/* ── CTA section ── */}
-      <div className="footer-cta relative px-6 py-28 md:py-36">
-        {/* Radial glow behind CTA */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 50% 60% at 50% 100%, var(--accent) 0%, transparent 70%)",
-            opacity: 0.06,
-          }}
-        />
-
-        <div className="relative z-10 max-w-5xl mx-auto text-center">
-          <div className="footer-cta-line h-px w-20 bg-accent mx-auto mb-10 origin-center" />
-
-          <h2 className="footer-cta-heading text-5xl md:text-8xl lg:text-[7rem] font-normal text-(--color-fg) leading-[0.9] mb-8 overflow-hidden">
-            <span
-              className="inline-block"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              Let&apos;s create
+        {/* ── Top row: CTA headline + Apply button ───────────────── */}
+        <div className="foot-row max-w-7xl mx-auto px-6 md:px-12 pt-14 pb-8 flex flex-wrap items-end justify-between gap-6">
+          <div className="flex flex-col gap-3 min-w-0">
+            <span className="font-mono text-[11px] tracking-[0.32em] uppercase opacity-70">
+              ✦ ready · steady · post ✦
             </span>
-            <br />
-            <span
-              className="inline-block text-accent"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              something iconic
-            </span>
-          </h2>
-
-          <div
-            className="footer-cta-btn inline-block"
-            onMouseMove={handleBtnMove}
-            onMouseLeave={handleBtnLeave}
+            <h3 className="font-display italic text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-[-0.03em]">
+              Got the vibe? Slide in.
+            </h3>
+          </div>
+          <Link
+            href="/contact"
+            className="shrink-0 inline-flex items-center gap-2 pl-5 pr-2 py-2 rounded-full bg-(--color-accent) text-(--color-fg) text-sm font-bold border-2 border-(--color-bg) hover:bg-(--color-accent-4) transition-colors"
+            style={{ boxShadow: "4px 4px 0 0 var(--bg)" }}
           >
-            <Link
-              ref={ctaBtnRef}
-              href="#"
-              className="group inline-flex items-center gap-3 border border-(--color-fg) text-(--color-fg) px-10 py-5 rounded-full text-lg transition-all duration-300 hover:bg-(--color-fg) hover:text-(--color-bg)"
-              style={{ willChange: "transform" }}
-            >
-              Start a project
-              <ArrowUpRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-            </Link>
-          </div>
+            Apply now
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-(--color-fg) text-(--color-bg)">
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </span>
+          </Link>
         </div>
-      </div>
 
-      {/* ── Footer bottom row ── */}
-      <div className="footer-grid relative z-10 px-6 pb-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="footer-bottom">
-            <div className="footer-bottom-line h-px bg-(--color-border) mb-8 origin-center" />
-
-            <div className="footer-col flex flex-col md:flex-row items-center justify-between gap-6">
-              {/* Brand */}
-              <Link
-                href="/"
-                className="text-xl font-normal text-(--color-fg) shrink-0 hover:text-accent transition-colors duration-300"
-              >
-                icons<span className="text-accent">.</span>
-              </Link>
-
-              {/* Nav links — centered */}
-              <nav className="flex items-center gap-8">
-                {[...navLinks, "Twitter", "Instagram", "LinkedIn"].map(
-                  (link) => (
-                    <Link
-                      key={link}
-                      href="#"
-                      className="text-sm text-(--color-muted-fg) hover:text-(--color-fg) transition-colors duration-200"
-                    >
-                      {link}
-                    </Link>
-                  ),
+        {/* ── Sitemap row ────────────────────────────────────────── */}
+        <div className="foot-row max-w-7xl mx-auto px-6 md:px-12 py-5 border-t-2 border-(--color-bg)/20 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span className="font-mono text-[10px] tracking-[0.32em] uppercase opacity-60 shrink-0">
+            ✦ sitemap
+          </span>
+          <nav aria-label="Sitemap" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {SITEMAP.map((n, i) => (
+              <span key={n.href} className="inline-flex items-center gap-5">
+                <Link
+                  href={n.href}
+                  className="font-mono text-xs tracking-[0.22em] uppercase font-semibold hover:text-(--color-accent) transition-colors"
+                >
+                  {n.label}
+                </Link>
+                {i < SITEMAP.length - 1 && (
+                  <span aria-hidden className="opacity-40 text-xs">
+                    ✦
+                  </span>
                 )}
-              </nav>
+              </span>
+            ))}
+          </nav>
+        </div>
 
-              {/* Copyright */}
-              <p className="text-[11px] text-(--color-muted-fg) shrink-0 tracking-wide">
-                &copy; {new Date().getFullYear()} icons.
-              </p>
-            </div>
+        {/* ── Socials + contact row ──────────────────────────────── */}
+        <div className="foot-row max-w-7xl mx-auto px-6 md:px-12 py-5 border-t-2 border-(--color-bg)/20 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-mono text-[10px] tracking-[0.32em] uppercase opacity-60 shrink-0 mr-1">
+              ✦ follow
+            </span>
+            {SOCIALS.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="group inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-(--color-bg) text-(--color-bg) hover:bg-(--color-accent) hover:text-(--color-fg) transition-colors"
+              >
+                <Icon className="w-4 h-4" />
+                <span className="sr-only">{label}</span>
+              </a>
+            ))}
+          </div>
+
+          <a
+            href="mailto:hi@icons.studio"
+            className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-(--color-bg)/30 text-(--color-bg) hover:border-(--color-bg) hover:bg-(--color-bg)/10 transition-colors font-mono text-xs tracking-[0.18em] uppercase"
+          >
+            <Mail className="w-3.5 h-3.5" />
+            hi@icons.studio
+          </a>
+        </div>
+
+        {/* ── Bottom bar: copyright · legal · back-to-top ────────── */}
+        <div className="foot-row max-w-7xl mx-auto px-6 md:px-12 py-4 border-t-2 border-(--color-bg)/20 flex flex-wrap items-center justify-between gap-4">
+          <span className="font-mono text-[10px] tracking-[0.28em] uppercase opacity-60 order-1">
+            © 2026 icons · all rights, no chills
+          </span>
+
+          <ul className="flex items-center gap-5 font-mono text-[10px] tracking-[0.24em] uppercase opacity-60 order-3 md:order-2">
+            {LEGAL.map((l) => (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  className="hover:opacity-100 hover:text-(--color-accent) transition-colors"
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <button
+            type="button"
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="group inline-flex items-center gap-2 pl-3 pr-1.5 py-1 rounded-full border-2 border-(--color-bg) text-(--color-bg) font-mono text-[10px] tracking-[0.28em] uppercase hover:bg-(--color-bg) hover:text-(--color-fg) transition-colors cursor-pointer order-2 md:order-3"
+          >
+            Top
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-(--color-accent) text-(--color-fg) border-2 border-(--color-bg) group-hover:rotate-12 transition-transform">
+              <ArrowUp className="w-3 h-3" strokeWidth={3} />
+            </span>
+          </button>
+        </div>
+
+        {/* ── Wordmark signature ─────────────────────────────────── */}
+        <div className="foot-wordmark text-center pt-6 pb-10 px-6">
+          <div className="font-display italic text-[clamp(4rem,18vw,16rem)] leading-[0.85] tracking-[-0.04em] flex items-center justify-center overflow-hidden">
+            <span className="foot-letter inline-block">I</span>
+            <span className="foot-letter inline-block">C</span>
+            <span className="foot-letter inline-block mx-1 -translate-y-2">
+              <Sparkle size={120} fill="var(--accent4)" strokeWidth={6} />
+            </span>
+            <span className="foot-letter inline-block">N</span>
+            <span className="foot-letter inline-block">S</span>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* ── Floating "back to top" — appears once scrolled past hero ── */}
+      <button
+        type="button"
+        onClick={scrollToTop}
+        aria-label="Back to top"
+        className={`group fixed bottom-6 right-6 z-40 inline-flex items-center justify-center w-12 h-12 rounded-full border-2 border-(--color-fg) bg-(--color-accent) text-(--color-fg) cursor-pointer transition-all duration-300 ${
+          showFloatTop
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
+        style={{ boxShadow: "3px 3px 0 0 var(--fg)" }}
+      >
+        <span className="foot-top-star absolute -top-2 -right-2 pointer-events-none">
+          <Sparkle size={20} fill="var(--accent4)" stroke="var(--fg)" strokeWidth={8} />
+        </span>
+        <ArrowUp
+          className="w-5 h-5 transition-transform duration-200 group-hover:-translate-y-0.5"
+          strokeWidth={3}
+        />
+      </button>
+    </>
   );
 };
