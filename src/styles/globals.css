@@ -4,39 +4,61 @@
 
 @custom-variant dark (&:is([data-theme="dark"] *));
 
-/* Default to brand theme */
+/* Default to brand theme — Icons UGC campaign palette */
 :root,
 [data-theme="brand"] {
-  --bg: #faf8f6;
-  --fg: #1b1b1b;
-  --muted: #5a5a5a;
-  --accent: #f3582a;
-  --accent2: #2a7be4;
+  --bg: #f5f1ea;            /* cream */
+  --fg: #0a0a0a;            /* ink */
+  --muted: #4a4a4a;
+  --muted-fg: #7a756c;
+  --accent: #c5ff3d;        /* acid lime */
+  --accent2: #ff3d8b;       /* hot pink */
+  --accent3: #2d6cff;       /* cobalt */
+  --accent4: #f5c518;       /* sparkle yellow */
+  --accent4-shadow: #c69b00;
   --panel: #ffffff;
-  --border: #e7e7e7;
+  --panel-2: #fff7df;        /* soft cream */
+  --border: #0a0a0a;         /* heavy outline */
+  --border-soft: #e6e1d6;
+  --border-strong: #0a0a0a;
 }
 
 [data-theme="dark"] {
-  --bg: #0b0b0d;
-  --fg: #f0f0f0;
+  --bg: #0a0a0a;             /* ink */
+  --fg: #f5f1ea;             /* cream */
   --muted: #b0b0b0;
-  --accent: #d7ff2f;
-  --accent2: #ff5a3c;
-  --panel: #121216;
-  --border: #26262b;
+  --muted-fg: #9a958c;
+  --accent: #c5ff3d;
+  --accent2: #ff3d8b;
+  --accent3: #2d6cff;
+  --accent4: #f5c518;
+  --accent4-shadow: #c69b00;
+  --panel: #141414;
+  --panel-2: #1a1a1a;
+  --border: #f5f1ea;
+  --border-soft: #2a2a2a;
+  --border-strong: #f5f1ea;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
+  --color-muted-fg: var(--muted-fg);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent2);
+  --color-accent-3: var(--accent3);
+  --color-accent-4: var(--accent4);
   --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
   --color-border: var(--border);
-  --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
-  --font-display: "DM Serif Display", serif;
-  --font-mono: "Fira Code", "Courier New", monospace;
+  --color-border-soft: var(--border-soft);
+  --color-border-strong: var(--border-strong);
+  --font-sans: var(--font-inter), ui-sans-serif, sans-serif, system-ui;
+  --font-display: var(--font-archivo-black), "Archivo Black", ui-sans-serif, sans-serif;
+  --font-grotesque: var(--font-bricolage), ui-sans-serif, sans-serif;
+  --font-script: var(--font-caveat), "Caveat", cursive;
+  --font-mono: var(--font-dm-mono), "DM Mono", ui-monospace, monospace;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 24px;
@@ -69,7 +91,6 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-serif: Playfair Display, ui-serif, serif;
   --radius: 0.625rem;
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
   --tracking-tight: calc(var(--tracking-normal) - 0.025em);
@@ -104,10 +125,16 @@ html,
 body {
   min-height: 100%;
 }
+
+/* Future Cursor Arrow — https://www.cursors-4u.com/cursor/future-cursor-arrow */
+* {
+  cursor: url('https://cdn.cursors-4u.net/previews/normal-9e607e2c-64.webp') 22 20, auto !important;
+}
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: "DM Serif Display", serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
 }
 
 /* Utility: hero grain / vignette for brand (light mode) */
@@ -116,22 +143,22 @@ body {
   overflow: hidden;
 
   background:
-    radial-gradient(circle at 15% 20%,
-      rgba(150, 192, 206, 0.38),
-      transparent 30%),
+    radial-gradient(circle at 18% 22%,
+      rgba(197, 255, 61, 0.55),
+      transparent 32%),
 
-    radial-gradient(circle at 85% 75%,
-      rgba(127, 3, 3, 0.14),
-      transparent 28%),
+    radial-gradient(circle at 82% 78%,
+      rgba(255, 61, 139, 0.30),
+      transparent 32%),
 
     radial-gradient(circle at 50% 50%,
-      rgba(255, 255, 255, 0.22),
+      rgba(45, 108, 255, 0.10),
       transparent 60%),
 
     linear-gradient(135deg,
-      #efe8df 0%,
-      #dcc4a7 42%,
-      #96c0ce 100%);
+      #f5f1ea 0%,
+      #fff7df 50%,
+      #c5ff3d 100%);
 }
 
 .brand-hero::before {
@@ -217,6 +244,274 @@ body {
   mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 60%);
 }
 
+/* ============================================================
+   Editorial design utilities — Icons UGC platform
+   Use these instead of inline styles for consistency.
+   ============================================================ */
+
+/* Display headline — Archivo Black, italicized for Gen-Z campaign feel */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.font-display-italic {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+/* Handwritten script accent ("— that's the platform, bestie") */
+.font-script {
+  font-family: var(--font-script);
+  font-weight: 500;
+}
+
+/* Section eyebrow label — mono, tracked out */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* Corner-bracket frame — like the "03b · APP ICONS" frames in the references */
+.bracket-frame {
+  position: relative;
+}
+.bracket-frame::before,
+.bracket-frame::after {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid currentColor;
+  opacity: 0.6;
+}
+.bracket-frame::before {
+  top: 14px;
+  left: 14px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.bracket-frame::after {
+  bottom: 14px;
+  right: 14px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* Sticker card — heavy black outline + offset shadow, the campaign signature */
+.sticker {
+  background: var(--accent);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  border-radius: 18px;
+  box-shadow: 8px 8px 0 0 var(--fg);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 220ms ease;
+}
+.sticker:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 12px 12px 0 0 var(--fg);
+}
+.sticker[data-tone="pink"] { background: var(--accent2); color: #fff; }
+.sticker[data-tone="blue"] { background: var(--accent3); color: #fff; }
+.sticker[data-tone="yellow"] { background: var(--accent4); }
+.sticker[data-tone="cream"] { background: var(--panel-2); }
+.sticker[data-tone="ink"] { background: var(--fg); color: var(--bg); box-shadow: 8px 8px 0 0 var(--accent); }
+
+/* Dot grid background — like the wordmark/sticker scenes */
+.dot-grid {
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--fg) 22%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 0 0;
+}
+
+/* Offset shadow used on type/badges */
+.shadow-offset {
+  text-shadow: 4px 4px 0 var(--fg);
+}
+.shadow-offset-accent {
+  text-shadow: 4px 4px 0 var(--accent);
+}
+
+/* Muted body text */
+.text-muted-fg { color: var(--muted-fg); }
+
+/* Bordered grid system — 1px hairlines between cells using the border color */
+.grid-divider { background-color: var(--border); }
+.grid-divider > * { background-color: var(--bg); }
+
+/* Pill chip */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--fg);
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.chip[data-tone="accent"] {
+  background: var(--accent);
+  color: var(--fg);
+}
+.chip[data-tone="pink"]   { background: var(--accent2); color: #fff; }
+.chip[data-tone="blue"]   { background: var(--accent3); color: #fff; }
+.chip[data-tone="yellow"] { background: var(--accent4); color: var(--fg); }
+.chip[data-tone="ink"]    { background: var(--fg); color: var(--bg); }
+.chip-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+
+/* Sticker button — primary (acid lime, heavy outline, offset shadow) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.75rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  border: 2px solid var(--fg);
+  box-shadow: 4px 4px 0 0 var(--fg);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 200ms ease,
+              background-color 200ms ease;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--fg);
+  background: var(--accent4);
+}
+.btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--fg);
+}
+.btn-primary:focus-visible {
+  outline: 2px solid var(--accent3);
+  outline-offset: 4px;
+}
+
+/* Sticker button — ghost (transparent, outlined) */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.75rem;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  box-shadow: 4px 4px 0 0 var(--fg);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 200ms ease,
+              background-color 200ms ease;
+  cursor: pointer;
+}
+.btn-ghost:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--fg);
+  background: var(--accent);
+}
+.btn-ghost:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--fg);
+}
+
+/* Marquee strip — used in logo walls */
+.marquee {
+  display: flex;
+  width: max-content;
+  gap: 4rem;
+  animation: marquee-scroll 38s linear infinite;
+}
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Editorial card hover lift */
+.card-hover {
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 220ms ease,
+              border-color 220ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+}
+
+/* Soft accent gradient — used for thumbnails / avatars */
+.gradient-accent {
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--accent) 60%, transparent), transparent 55%),
+    radial-gradient(120% 80% at 100% 100%, color-mix(in srgb, var(--accent-2, var(--accent2)) 55%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--panel-2), var(--panel));
+}
+.gradient-cool {
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--accent2) 55%, transparent), transparent 55%),
+    radial-gradient(120% 80% at 100% 100%, color-mix(in srgb, var(--fg) 25%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--panel-2), var(--panel));
+}
+.gradient-warm {
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 55%),
+    radial-gradient(120% 80% at 100% 100%, color-mix(in srgb, #ffb05b 50%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--panel-2), var(--panel));
+}
+.gradient-mono {
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--fg) 35%, transparent), transparent 55%),
+    linear-gradient(135deg, var(--panel-2), var(--panel));
+}
+
+/* Hairline divider used as section separator */
+.hairline {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+/* Hide scrollbars on horizontal pill rails */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
+
+/* HowSticker card layout — text column | image column, side-by-side from md+ */
+.stack-card-grid {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .stack-card-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
 
 
 :root {
@@ -253,9 +548,6 @@ body {
   --sidebar-border: oklch(0.5538 0.0025 17.2320);
   --sidebar-ring: oklch(0.7058 0 0);
   --destructive-foreground: oklch(1.0000 0 0);
-  --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Playfair Display, ui-serif, serif;
-  --font-mono: "Courier New", Courier, monospace;
   --shadow-color: #000000;
   --shadow-opacity: 0.03;
   --shadow-blur: 5px;
@@ -309,9 +601,6 @@ body {
   --sidebar-ring: oklch(0.8078 0 0);
   --destructive-foreground: oklch(1.0000 0 0);
   --radius: 0.625rem;
-  --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Playfair Display, ui-serif, serif;
-  --font-mono: "Fira Code", "Courier New", monospace;
   --shadow-color: #000000;
   --shadow-opacity: 0.03;
   --shadow-blur: 5px;
@@ -534,4 +823,120 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ── Box Loader ─────────────────────────────────────────────── */
+
+.boxes {
+  --size: 36px;
+  --duration: 800ms;
+  height: calc(var(--size) * 2);
+  width: calc(var(--size) * 3);
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  transform: rotateX(60deg) rotateZ(45deg);
+}
+
+.box {
+  width: var(--size);
+  height: var(--size);
+  top: 0;
+  left: 0;
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.box.box-1 {
+  transform: translate(100%, 0);
+  animation: box1 var(--duration) linear infinite;
+}
+.box.box-2 {
+  transform: translate(0, 100%);
+  animation: box2 var(--duration) linear infinite;
+}
+.box.box-3 {
+  transform: translate(100%, 100%);
+  animation: box3 var(--duration) linear infinite;
+}
+.box.box-4 {
+  transform: translate(200%, 0);
+  animation: box4 var(--duration) linear infinite;
+}
+
+.box .face {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+}
+
+/* Front face — faces the viewer in isometric view */
+.box .face-front {
+  background: var(--accent);
+  transform: translateZ(var(--size));
+}
+
+/* Right face — pivot around the right edge */
+.box .face-right {
+  background: color-mix(in srgb, var(--accent) 65%, #000000);
+  transform-origin: right center;
+  transform: rotateY(90deg);
+}
+
+/* Top face — pivot around the top edge */
+.box .face-top {
+  background: color-mix(in srgb, var(--accent) 85%, #ffffff);
+  transform-origin: top center;
+  transform: rotateX(-90deg);
+}
+
+/* Back face — base/shadow plane */
+.box .face-back {
+  background: color-mix(in srgb, var(--accent) 35%, #000000);
+}
+
+/* ── Box Loader keyframes ───────────────────────────────────── */
+
+@keyframes box1 {
+  0%,
+  50% {
+    transform: translate(100%, 0);
+  }
+  100% {
+    transform: translate(200%, 0);
+  }
+}
+
+@keyframes box2 {
+  0% {
+    transform: translate(0, 100%);
+  }
+  50% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(100%, 0);
+  }
+}
+
+@keyframes box3 {
+  0%,
+  50% {
+    transform: translate(100%, 100%);
+  }
+  100% {
+    transform: translate(0, 100%);
+  }
+}
+
+@keyframes box4 {
+  0% {
+    transform: translate(200%, 0);
+  }
+  50% {
+    transform: translate(200%, 100%);
+  }
+  100% {
+    transform: translate(100%, 100%);
+  }
 }
