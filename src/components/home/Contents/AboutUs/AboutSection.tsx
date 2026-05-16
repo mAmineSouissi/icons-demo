@@ -92,7 +92,7 @@ export const AboutSection = () => {
         <h2
           className="flex flex-wrap gap-x-6 mb-16 leading-none"
           style={{
-            fontFamily: "'DM Serif Display', serif",
+            fontFamily: "var(--font-display)",
             fontSize: "clamp(3.5rem, 10vw, 8rem)",
           }}
           aria-label="About Us"
