@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICONS Blog Cover 2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,900;1,900&family=Space+Mono:wght@400;700&family=Caveat:wght@600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .cover {
+    position: relative;
+    width: 1456px;
+    height: 816px;
+    background-color: #F0EBE0;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Polka dot texture */
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.10) 1.2px, transparent 1.2px);
+    background-size: 22px 22px;
+    z-index: 0;
+  }
+
+  /* ── Sparkle stars ── */
+  .star {
+    position: absolute;
+    z-index: 2;
+  }
+
+  .star svg { display: block; }
+
+  .star-pink  { top: 60px;  left: 90px;  width: 90px; }
+  .star-green { top: 80px;  right: 110px; width: 68px; }
+  .star-blue  { bottom: 90px; left: 130px; width: 78px; }
+  .star-gold  { bottom: 70px; right: 100px; width: 86px; }
+
+  /* ── Card ── */
+  .card-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-4deg);
+    z-index: 3;
+    width: 740px;
+  }
+
+  .card {
+    background: #C8F135;
+    border-radius: 32px;
+    border: 5px solid #000;
+    box-shadow: 8px 10px 0px #000;
+    padding: 44px 52px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: #000;
+    text-transform: uppercase;
+  }
+
+  /* Title block */
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 76px;
+    line-height: 0.88;
+    color: #000;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 10px;
+  }
+
+  /* Inline star replacing the O in ICONS */
+  .star-inline {
+    display: inline-block;
+    width: 68px;
+    height: 68px;
+    vertical-align: middle;
+    margin: 0 -4px;
+    position: relative;
+    top: -4px;
+  }
+
+  .card-sub {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: #000;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* Headline text lines */
+  .headline-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .line {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 68px;
+    line-height: 0.92;
+    color: #000;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  .line .pink { color: #FF3EB5; }
+
+  /* star label row */
+  .star-label-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #000;
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+
+  <!-- Sparkle: pink top-left -->
+  <div class="star star-pink">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#FF3EB5" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Sparkle: lime green top-right -->
+  <div class="star star-green">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#C8F135" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Sparkle: blue bottom-left -->
+  <div class="star star-blue">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#3B8BFF" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Sparkle: gold bottom-right -->
+  <div class="star star-gold">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#F5C518" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Card -->
+  <div class="card-wrap">
+    <div class="card">
+
+      <!-- Label -->
+      <div class="star-label-row">
+        <span>★</span>
+        <span>NEW ICON ALERT</span>
+        <span>★</span>
+      </div>
+
+      <!-- Headline lines -->
+      <div class="headline-wrap">
+        <div class="line">Why Your Last</div>
+        <div class="line"><span class="pink">Influencer</span> Campaign</div>
+        <div class="line">Failed</div>
+      </div>
+
+      <!-- Subtext -->
+      <div class="card-sub">— and how to fix it, bestie</div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

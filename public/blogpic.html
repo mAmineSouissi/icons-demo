@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICONS Blog Cover – Horizontal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,900;1,900&family=Space+Mono:wght@400;700&family=Caveat:wght@600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: sans-serif;
+  }
+
+  .cover {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background-color: #C8F135;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Polka dot texture */
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.18) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+    z-index: 0;
+  }
+
+  /* Corner brackets */
+  .bracket {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    z-index: 3;
+  }
+  .bracket.tl { top: 18px; left: 18px; border-top: 2.5px solid #000; border-left: 2.5px solid #000; }
+  .bracket.tr { top: 18px; right: 18px; border-top: 2.5px solid #000; border-right: 2.5px solid #000; }
+  .bracket.bl { bottom: 18px; left: 18px; border-bottom: 2.5px solid #000; border-left: 2.5px solid #000; }
+  .bracket.br { bottom: 18px; right: 18px; border-bottom: 2.5px solid #000; border-right: 2.5px solid #000; }
+
+  /* Top labels */
+  .top-left-label {
+    position: absolute;
+    top: 20px;
+    left: 48px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #000;
+    z-index: 3;
+  }
+
+  .top-right-label {
+    position: absolute;
+    top: 20px;
+    right: 48px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #000;
+    z-index: 3;
+  }
+
+  /* Main content area */
+  .content {
+    position: absolute;
+    top: 50%;
+    left: 64px;
+    transform: translateY(-50%);
+    z-index: 2;
+    max-width: 700px;
+  }
+
+  .headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 112px;
+    line-height: 0.92;
+    color: #000;
+    text-transform: lowercase;
+    letter-spacing: -0.01em;
+  }
+
+  .headline .pink {
+    color: #FF3EB5;
+  }
+
+  .subline {
+    font-family: 'Caveat', cursive;
+    font-size: 26px;
+    color: #000;
+    margin-top: 18px;
+    font-weight: 600;
+  }
+
+  /* ICONS branding */
+  .branding {
+    position: absolute;
+    bottom: 22px;
+    left: 48px;
+    z-index: 3;
+  }
+
+  .branding .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 38px;
+    color: #000;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .branding .brand-url {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #000;
+    margin-top: 2px;
+  }
+
+  /* Star illustration */
+  .star-wrap {
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
+    z-index: 1;
+  }
+
+  .star-wrap svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <!-- Corner brackets -->
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- Top labels -->
+  <div class="top-left-label">VOL. 04 · MMXXVI</div>
+  <div class="top-right-label">16:9</div>
+
+  <!-- Main headline -->
+  <div class="content">
+    <div class="headline">
+      how to write a<br>
+      <span class="pink">brand brief</span><br>
+      that actually<br>
+      gets you booked.
+    </div>
+    <div class="subline">(some of them on purpose)</div>
+  </div>
+
+  <!-- ICONS branding -->
+  <div class="branding">
+    <div class="brand-name">ICONS</div>
+    <div class="brand-url">ICONS.STUDIO</div>
+  </div>
+
+  <!-- Star -->
+  <div class="star-wrap">
+    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+      <path d="M150 10 C150 10 170 120 260 150 C170 180 150 290 150 290 C150 290 130 180 40 150 C130 120 150 10 150 10Z"
+        fill="#F5C518" stroke="#000" stroke-width="12" stroke-linejoin="round"/>
+      <!-- shine -->
+      <ellipse cx="108" cy="118" rx="18" ry="28" fill="rgba(255,255,255,0.45)" transform="rotate(-30 108 118)"/>
+    </svg>
+  </div>
+</div>
+</body>
+</html>

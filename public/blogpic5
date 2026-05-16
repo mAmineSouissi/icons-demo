@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICONS Blog Cover 6 – Algorithm</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .cover {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background: #F0EBE0;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* dot grid */
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.10) 1.2px, transparent 1.2px);
+    background-size: 22px 22px;
+    z-index: 0;
+  }
+
+  /* ── Big code/data background text ── */
+  .bg-code {
+    position: absolute;
+    top: 0; right: 0;
+    width: 620px;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px 20px;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .code-line {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(0,0,0,0.10);
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .code-line.highlight {
+    color: rgba(255,62,181,0.22);
+    font-weight: 700;
+  }
+
+  .code-line.lime-hl {
+    color: rgba(100,160,0,0.20);
+    font-weight: 700;
+  }
+
+  /* ── Vertical lime bar right edge ── */
+  .right-bar {
+    position: absolute;
+    top: 0; right: 0;
+    width: 16px;
+    height: 100%;
+    background: #C8F135;
+    z-index: 4;
+  }
+
+  /* ── Alert banner top ── */
+  .alert-banner {
+    position: absolute;
+    top: 0; left: 0; right: 16px;
+    height: 46px;
+    background: #0d0d0d;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    padding: 0 44px;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .alert-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #FF3EB5;
+    animation: blink 1.2s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .alert-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: #C8F135;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .alert-sep {
+    color: rgba(255,255,255,0.2);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+
+  .alert-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ── Corner brackets ── */
+  .bracket { position: absolute; width: 20px; height: 20px; z-index: 6; }
+  .bracket.tl { top: 54px; left: 14px; border-top: 2px solid rgba(0,0,0,0.3); border-left: 2px solid rgba(0,0,0,0.3); }
+  .bracket.tr { top: 54px; right: 30px; border-top: 2px solid rgba(0,0,0,0.3); border-right: 2px solid rgba(0,0,0,0.3); }
+  .bracket.bl { bottom: 14px; left: 14px; border-bottom: 2px solid rgba(0,0,0,0.3); border-left: 2px solid rgba(0,0,0,0.3); }
+  .bracket.br { bottom: 14px; right: 30px; border-bottom: 2px solid rgba(0,0,0,0.3); border-right: 2px solid rgba(0,0,0,0.3); }
+
+  /* ── Main content ── */
+  .content {
+    position: absolute;
+    top: 50%;
+    left: 44px;
+    transform: translateY(-46%);
+    z-index: 4;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #000;
+    text-transform: uppercase;
+  }
+
+  .eyebrow-tag {
+    background: #FF3EB5;
+    color: #fff;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 118px;
+    line-height: 0.84;
+    color: #0d0d0d;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .headline .pink   { color: #FF3EB5; }
+  .headline .lime   { color: #5a8a00; }
+  .headline .outline {
+    -webkit-text-stroke: 3px #0d0d0d;
+    color: transparent;
+  }
+  .headline .boxed {
+    background: #0d0d0d;
+    color: #C8F135;
+    padding: 0 12px;
+    display: inline-block;
+    line-height: 0.95;
+  }
+
+  /* glitch line accent */
+  .glitch-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 2px 0;
+  }
+
+  .glitch-seg {
+    height: 6px;
+    border-radius: 1px;
+  }
+
+  .sub-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 4px;
+  }
+
+  .sub-text {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    font-weight: 600;
+    color: #444;
+    line-height: 1.35;
+  }
+
+  /* info cards */
+  .info-cards {
+    display: flex;
+    gap: 10px;
+  }
+
+  .info-card {
+    background: #0d0d0d;
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 110px;
+  }
+
+  .info-card-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 32px;
+    line-height: 1;
+    color: #C8F135;
+  }
+
+  .info-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+  }
+
+  /* ── Sparkles ── */
+  .sparkle { position: absolute; z-index: 5; }
+  .sp-1 { top: 58px;  right: 240px; width: 32px; }
+  .sp-2 { top: 180px; right: 30px;  width: 24px; }
+  .sp-3 { bottom: 60px; right: 200px; width: 28px; }
+  .sp-4 { bottom: 100px; left: 680px; width: 20px; }
+
+  /* ── Branding ── */
+  .branding {
+    position: absolute;
+    bottom: 16px; right: 36px;
+    z-index: 6; text-align: right;
+  }
+  .branding .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-style: italic;
+    font-size: 24px; color: #0d0d0d;
+    text-transform: uppercase; line-height: 1;
+  }
+  .branding .brand-url {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em; color: #FF3EB5;
+  }
+
+  /* ── Bottom ticker ── */
+  .ticker {
+    position: absolute;
+    bottom: 0; left: 0; right: 16px;
+    height: 38px;
+    background: #C8F135;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    padding: 0 44px;
+    gap: 32px;
+    overflow: hidden;
+  }
+
+  .ticker-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: #000;
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .ticker-item::before { content: '★'; color: #FF3EB5; }
+</style>
+</head>
+<body>
+<div class="cover">
+
+  <!-- Background code rain -->
+  <div class="bg-code">
+    <div class="code-line">if (reach &lt; prev_reach) { adjustStrategy(); triggerAlarm(); }</div>
+    <div class="code-line highlight">// ⚠ ALGORITHM UPDATE DETECTED — v4.7.2 → v5.0.0</div>
+    <div class="code-line">const engagement = posts.filter(p => p.format === 'video').reduce(sum);</div>
+    <div class="code-line">platform.feed.weights = { video: 0.72, carousel: 0.18, static: 0.10 };</div>
+    <div class="code-line lime-hl">creator.adapt({ hooks: true, consistency: 'high', niche: 'tight' });</div>
+    <div class="code-line">function calcReach(followers, avgViews) { return avgViews / followers * 100; }</div>
+    <div class="code-line">while (!visible) { postMore(); optimiseHashtags(); testFormats(); }</div>
+    <div class="code-line highlight">// NEW: watch time > 3s now weighted 2.4x vs previous 1.8x</div>
+    <div class="code-line">const signal = { saves: 0.9, shares: 1.4, comments: 1.1, likes: 0.6 };</div>
+    <div class="code-line">if (creator.postFreq &lt; 4) { penalise(creator, 0.3); }</div>
+    <div class="code-line lime-hl">export default { strategy: 'adapt_or_disappear' };</div>
+    <div class="code-line">platform.notify('Feed ranking updated. Old playbooks deprecated.');</div>
+    <div class="code-line">const winners = creators.filter(c => c.adapted === true);</div>
+    <div class="code-line highlight">// ACTION REQUIRED: update content mix before next post cycle</div>
+    <div class="code-line">audit.log({ timestamp: 'MMXXVI', change: 'major', impact: 'critical' });</div>
+    <div class="code-line">return { visibility: 'restored', reach: 'expanding', growth: true };</div>
+  </div>
+
+  <!-- Right lime bar -->
+  <div class="right-bar"></div>
+
+  <!-- Alert banner top -->
+  <div class="alert-banner">
+    <div class="alert-dot"></div>
+    <div class="alert-text">Breaking Update</div>
+    <div class="alert-sep">|</div>
+    <div class="alert-date">VOL. 04 · MMXXVI · ICONS.STUDIO</div>
+  </div>
+
+  <!-- Corner brackets -->
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="eyebrow">
+      <div class="eyebrow-tag">⚠ URGENT</div>
+      Platform Intelligence
+    </div>
+
+    <div class="headline">
+      Algo-<br>
+      <span class="boxed">rithm</span><br>
+      <span class="outline">Chang</span><span class="pink">es.</span>
+    </div>
+
+    <!-- Glitch accent bar -->
+    <div class="glitch-bar">
+      <div class="glitch-seg" style="width:180px; background:#FF3EB5;"></div>
+      <div class="glitch-seg" style="width:60px; background:#C8F135; margin-left:4px;"></div>
+      <div class="glitch-seg" style="width:30px; background:#0d0d0d; margin-left:4px;"></div>
+    </div>
+
+    <div class="sub-row">
+      <div class="sub-text">What creators need to<br>know right now — no fluff,<br>just the real playbook.</div>
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="info-card-num">5.0</div>
+          <div class="info-card-label">New Version</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-num">72%</div>
+          <div class="info-card-label">Video Weight</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sparkles -->
+  <div class="sparkle sp-1">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#C8F135" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-2">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#FF3EB5" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-3">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#F5C518" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-4">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#3B8BFF" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Bottom ticker -->
+  <div class="ticker">
+    <div class="ticker-item">Know the Change</div>
+    <div class="ticker-item">Adapt Your Strategy</div>
+    <div class="ticker-item">Stay Visible</div>
+    <div class="ticker-item">Creators Win</div>
+    <div class="ticker-item">Read Now</div>
+    <div class="ticker-item">Icons.Studio</div>
+  </div>
+
+  <!-- Branding -->
+  <div class="branding">
+    <div class="brand-name">ICONS</div>
+    <div class="brand-url">ICONS.STUDIO</div>
+  </div>
+
+</div>
+</body>
+</html>
