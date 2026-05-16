@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICONS Blog Cover 4 – GlowBeauty</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .cover {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background: #fff;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* ── Background: white with subtle pink dot grid ── */
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,60,180,0.10) 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
+    z-index: 0;
+  }
+
+  /* ── Big diagonal pink slash ── */
+  .slash {
+    position: absolute;
+    top: -60px;
+    left: -40px;
+    width: 560px;
+    height: 900px;
+    background: #FF3EB5;
+    transform: rotate(-8deg);
+    transform-origin: top left;
+    z-index: 1;
+  }
+
+  /* Thin lime accent stripe on slash edge */
+  .slash::after {
+    content: '';
+    position: absolute;
+    top: 0; right: -14px;
+    width: 14px;
+    height: 100%;
+    background: #C8F135;
+  }
+
+  /* ── 3M giant number ── */
+  .big-number {
+    position: absolute;
+    top: -30px;
+    left: -20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 520px;
+    line-height: 1;
+    color: rgba(0,0,0,0.10);
+    z-index: 2;
+    letter-spacing: -0.04em;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* ── Left white text block (on pink) ── */
+  .left-block {
+    position: absolute;
+    top: 50%;
+    left: 44px;
+    transform: translateY(-50%);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 420px;
+  }
+
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: #fff;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .eyebrow::before {
+    content: '★';
+    color: #C8F135;
+    font-size: 10px;
+  }
+
+  .left-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 88px;
+    line-height: 0.86;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .left-headline .lime { color: #C8F135; }
+  .left-headline .black-text { color: #0d0d0d; }
+
+  .left-sub {
+    font-family: 'Caveat', cursive;
+    font-size: 21px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* ── Right side content ── */
+  .right-block {
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  /* Big 3M stat badge */
+  .stat-badge {
+    background: #0d0d0d;
+    border: 4px solid #0d0d0d;
+    border-radius: 20px;
+    padding: 18px 32px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    box-shadow: 6px 6px 0 #FF3EB5;
+  }
+
+  .stat-badge::before {
+    content: '★ CASE STUDY ★';
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #C8F135;
+    margin-bottom: 4px;
+  }
+
+  .stat-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 110px;
+    line-height: 0.85;
+    color: #fff;
+    letter-spacing: -0.03em;
+  }
+
+  .stat-number span {
+    color: #FF3EB5;
+    font-size: 70px;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* Breakdown pill tags */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 2px solid #0d0d0d;
+    background: transparent;
+    color: #0d0d0d;
+  }
+
+  .tag.filled {
+    background: #C8F135;
+    border-color: #C8F135;
+  }
+
+  .tag.dark {
+    background: #0d0d0d;
+    color: #fff;
+    border-color: #0d0d0d;
+  }
+
+  /* Bottom divider line */
+  .right-divider {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, #FF3EB5, #C8F135, transparent);
+    border-radius: 1px;
+  }
+
+  /* Bottom quote */
+  .right-quote {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: #555;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  /* ── Sparkle stars ── */
+  .sparkle {
+    position: absolute;
+    z-index: 5;
+  }
+  .sp-1 { top: 38px;  right: 180px; width: 44px; }
+  .sp-2 { top: 200px; right: 58px;  width: 28px; }
+  .sp-3 { bottom: 110px; right: 200px; width: 36px; }
+  .sp-4 { bottom: 60px;  left: 480px; width: 24px; }
+
+  /* ── Corner brackets ── */
+  .bracket {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    z-index: 6;
+  }
+  .bracket.tl { top: 14px; left: 14px; border-top: 2.5px solid #000; border-left: 2.5px solid #000; }
+  .bracket.tr { top: 14px; right: 14px; border-top: 2.5px solid #000; border-right: 2.5px solid #000; }
+  .bracket.bl { bottom: 14px; left: 14px; border-bottom: 2.5px solid #000; border-left: 2.5px solid #000; }
+  .bracket.br { bottom: 14px; right: 14px; border-bottom: 2.5px solid #000; border-right: 2.5px solid #000; }
+
+  /* ── Top label ── */
+  .top-label {
+    position: absolute;
+    top: 16px;
+    left: 44px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    z-index: 6;
+  }
+
+  .top-right-label {
+    position: absolute;
+    top: 16px;
+    right: 44px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #0d0d0d;
+    z-index: 6;
+  }
+
+  /* ── Branding bottom ── */
+  .branding {
+    position: absolute;
+    bottom: 16px;
+    right: 44px;
+    z-index: 6;
+    text-align: right;
+  }
+  .branding .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 26px;
+    color: #0d0d0d;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .branding .brand-url {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #FF3EB5;
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+
+  <!-- Dot grid bg -->
+  <!-- Corner brackets -->
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- Labels -->
+  <div class="top-label">04 · CASE STUDY</div>
+  <div class="top-right-label">VOL. 04 · MMXXVI</div>
+
+  <!-- Pink diagonal slash -->
+  <div class="slash"></div>
+
+  <!-- Faded 3M behind slash -->
+  <div class="big-number">3M</div>
+
+  <!-- LEFT: text on pink -->
+  <div class="left-block">
+    <div class="eyebrow">Campaign Breakdown</div>
+    <div class="left-headline">
+      Glow<br>
+      <span class="lime">Beauty</span>'s<br>
+      Full<br>
+      Story.
+    </div>
+    <div class="left-sub">How one brand turned<br>3 million impressions<br>into real revenue.</div>
+  </div>
+
+  <!-- RIGHT: stat + tags -->
+  <div class="right-block">
+    <div class="stat-badge">
+      <div class="stat-number">3M<span>+</span></div>
+      <div class="stat-label">Total Impressions</div>
+    </div>
+
+    <div class="tags">
+      <div class="tag filled">Strategy</div>
+      <div class="tag dark">Influencer Mix</div>
+      <div class="tag">Conversion</div>
+      <div class="tag filled">ROI</div>
+      <div class="tag dark">Content</div>
+      <div class="tag">Results</div>
+    </div>
+
+    <div class="right-divider"></div>
+
+    <div class="right-quote">"A full breakdown of what<br>actually worked — and what didn't."</div>
+  </div>
+
+  <!-- Sparkles -->
+  <div class="sparkle sp-1">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#C8F135" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-2">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#FF3EB5" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-3">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#F5C518" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-4">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#3B8BFF" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Branding -->
+  <div class="branding">
+    <div class="brand-name">ICONS</div>
+    <div class="brand-url">ICONS.STUDIO</div>
+  </div>
+
+</div>
+</body>
+</html>

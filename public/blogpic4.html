@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICONS Blog Cover 5 – Negotiate</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .cover {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background: #0d0d0d;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* ── Checkerboard bottom-right accent ── */
+  .checker {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 320px;
+    height: 320px;
+    z-index: 1;
+    opacity: 0.18;
+    background-image:
+      repeating-conic-gradient(#C8F135 0% 25%, transparent 0% 50%);
+    background-size: 40px 40px;
+  }
+
+  /* ── Lime green left thick bar ── */
+  .left-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 100%;
+    background: #C8F135;
+    z-index: 3;
+  }
+
+  /* ── Price tag shape (rotated rectangle) ── */
+  .price-tag {
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%) rotate(6deg);
+    width: 360px;
+    height: 490px;
+    background: #C8F135;
+    border-radius: 24px 24px 24px 24px;
+    border: 5px solid #000;
+    box-shadow: -8px 8px 0 #FF3EB5;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 32px 28px;
+  }
+
+  /* hole at top of price tag */
+  .price-tag::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0d0d0d;
+    border: 5px solid #000;
+  }
+
+  .price-tag-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #000;
+    text-transform: uppercase;
+    margin-top: 28px;
+  }
+
+  .price-tag-amount {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 120px;
+    line-height: 0.85;
+    color: #000;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+
+  .price-tag-amount .dollar {
+    font-size: 70px;
+    vertical-align: top;
+    line-height: 1.1;
+  }
+
+  .price-tag-worth {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  .price-tag-divider {
+    width: 80%;
+    height: 2px;
+    background: #000;
+    margin: 14px 0;
+    opacity: 0.25;
+  }
+
+  .price-tag-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #000;
+    text-align: center;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  /* ── Left content ── */
+  .left-content {
+    position: absolute;
+    left: 52px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #C8F135;
+    text-transform: uppercase;
+  }
+
+  .eyebrow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FF3EB5;
+    flex-shrink: 0;
+  }
+
+  .main-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 130px;
+    line-height: 0.83;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .main-headline .pink  { color: #FF3EB5; }
+  .main-headline .lime  { color: #C8F135; }
+  .main-headline .outline {
+    -webkit-text-stroke: 3px #fff;
+    color: transparent;
+  }
+
+  .sub-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .sub-text {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.3;
+  }
+
+  .sub-badge {
+    background: #FF3EB5;
+    color: #fff;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Step pills ── */
+  .steps {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 6px 16px 6px 8px;
+  }
+
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #C8F135;
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.75);
+    text-transform: uppercase;
+  }
+
+  /* ── Sparkles ── */
+  .sparkle { position: absolute; z-index: 5; }
+  .sp-1 { top: 44px;  left: 340px; width: 36px; }
+  .sp-2 { top: 60px;  right: 420px; width: 26px; }
+  .sp-3 { bottom: 80px; left: 280px; width: 30px; }
+  .sp-4 { bottom: 140px; right: 420px; width: 20px; }
+
+  /* ── Corner brackets ── */
+  .bracket { position: absolute; width: 20px; height: 20px; z-index: 6; }
+  .bracket.tl { top: 14px; left: 32px; border-top: 2px solid rgba(255,255,255,0.3); border-left: 2px solid rgba(255,255,255,0.3); }
+  .bracket.tr { top: 14px; right: 14px; border-top: 2px solid rgba(255,255,255,0.3); border-right: 2px solid rgba(255,255,255,0.3); }
+  .bracket.bl { bottom: 14px; left: 32px; border-bottom: 2px solid rgba(255,255,255,0.3); border-left: 2px solid rgba(255,255,255,0.3); }
+  .bracket.br { bottom: 14px; right: 14px; border-bottom: 2px solid rgba(255,255,255,0.3); border-right: 2px solid rgba(255,255,255,0.3); }
+
+  /* ── Labels ── */
+  .top-label {
+    position: absolute;
+    top: 17px; left: 52px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    z-index: 6;
+  }
+  .top-right-label {
+    position: absolute;
+    top: 17px; right: 44px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    z-index: 6;
+  }
+
+  /* ── Branding ── */
+  .branding {
+    position: absolute;
+    bottom: 16px; left: 52px;
+    z-index: 6;
+  }
+  .branding .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-style: italic;
+    font-size: 24px; color: #fff;
+    text-transform: uppercase; line-height: 1;
+  }
+  .branding .brand-url {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em; color: #C8F135;
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+
+  <!-- Structure -->
+  <div class="left-bar"></div>
+  <div class="checker"></div>
+
+  <!-- Corner brackets -->
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- Labels -->
+  <div class="top-label">05 · MONEY TALK</div>
+  <div class="top-right-label">VOL. 04 · MMXXVI</div>
+
+  <!-- Price tag (right) -->
+  <div class="price-tag">
+    <div class="price-tag-label">Your Rate</div>
+    <div class="price-tag-amount"><span class="dollar">$</span>∞</div>
+    <div class="price-tag-worth">you're worth it,<br>charge accordingly.</div>
+    <div class="price-tag-divider"></div>
+    <div class="price-tag-sub">ICONS.STUDIO</div>
+  </div>
+
+  <!-- Left headline -->
+  <div class="left-content">
+    <div class="eyebrow">
+      <div class="eyebrow-dot"></div>
+      Pro Playbook
+    </div>
+
+    <div class="main-headline">
+      Nego<span class="pink">-</span><br>
+      <span class="outline">tiate</span><br>
+      Like a<br>
+      <span class="lime">Pro.</span>
+    </div>
+
+    <div class="sub-row">
+      <div class="sub-text">Getting paid exactly<br>what you're worth.</div>
+      <div class="sub-badge">★ Must Read</div>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-label">Know Your Value</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-label">Set the Anchor</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-label">Close the Deal</div></div>
+    </div>
+  </div>
+
+  <!-- Sparkles -->
+  <div class="sparkle sp-1">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#C8F135" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-2">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#FF3EB5" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-3">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#F5C518" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="sparkle sp-4">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#3B8BFF" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Branding -->
+  <div class="branding">
+    <div class="brand-name">ICONS</div>
+    <div class="brand-url">ICONS.STUDIO</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICONS Blog Cover 3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,900;1,900&family=Space+Mono:wght@400;700&family=Caveat:wght@600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .cover {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background: radial-gradient(ellipse at 50% 40%, #2a1a4a 0%, #130d22 50%, #0a0812 100%);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Corner brackets */
+  .bracket {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    z-index: 5;
+  }
+  .bracket.tl { top: 16px; left: 16px; border-top: 2px solid rgba(255,255,255,0.4); border-left: 2px solid rgba(255,255,255,0.4); }
+  .bracket.tr { top: 16px; right: 16px; border-top: 2px solid rgba(255,255,255,0.4); border-right: 2px solid rgba(255,255,255,0.4); }
+  .bracket.bl { bottom: 16px; left: 16px; border-bottom: 2px solid rgba(255,255,255,0.4); border-left: 2px solid rgba(255,255,255,0.4); }
+  .bracket.br { bottom: 16px; right: 16px; border-bottom: 2px solid rgba(255,255,255,0.4); border-right: 2px solid rgba(255,255,255,0.4); }
+
+  /* Top label */
+  .top-label {
+    position: absolute;
+    top: 18px;
+    left: 44px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.45);
+    z-index: 5;
+  }
+
+  /* Sparkle stars */
+  .star {
+    position: absolute;
+    z-index: 3;
+  }
+  .star-pink  { top: 60px;  left: 80px;   width: 52px; }
+  .star-blue  { top: 120px; left: 420px;  width: 38px; }
+  .star-green { top: 150px; right: 260px; width: 32px; }
+  .star-gold  { bottom: 200px; left: 200px; width: 28px; }
+
+  /* Glow behind star */
+  .glow {
+    position: absolute;
+    top: 50%;
+    left: 38%;
+    transform: translate(-50%, -58%);
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, rgba(220,160,0,0.55) 0%, rgba(180,90,0,0.18) 50%, transparent 75%);
+    border-radius: 50%;
+    z-index: 1;
+    filter: blur(18px);
+  }
+
+  /* Central star icon */
+  .star-icon {
+    position: absolute;
+    top: 50%;
+    left: 38%;
+    transform: translate(-50%, -58%);
+    width: 260px;
+    height: 260px;
+    z-index: 2;
+  }
+
+  /* Right content */
+  .content {
+    position: absolute;
+    right: 64px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 580px;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 92px;
+    line-height: 0.88;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .headline .yellow { color: #F5C518; }
+  .headline .pink   { color: #FF3EB5; }
+
+  .subline {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: #C8F135;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+  }
+
+  .bottom-text {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: #F5C518;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* ICONS branding bottom-left */
+  .branding {
+    position: absolute;
+    bottom: 18px;
+    left: 44px;
+    z-index: 5;
+  }
+  .branding .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 28px;
+    color: #fff;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .branding .brand-url {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #C8F135;
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+
+  <!-- Corner brackets -->
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- Top label -->
+  <div class="top-label">03b/06 · BLOG</div>
+
+  <!-- Floating sparkle stars -->
+  <div class="star star-pink">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#FF3EB5" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="36" cy="30" rx="7" ry="11" fill="rgba(255,255,255,0.5)" transform="rotate(-30 36 30)"/>
+    </svg>
+  </div>
+
+  <div class="star star-blue">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#3B8BFF" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="36" cy="30" rx="7" ry="11" fill="rgba(255,255,255,0.5)" transform="rotate(-30 36 30)"/>
+    </svg>
+  </div>
+
+  <div class="star star-green">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#C8F135" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="36" cy="30" rx="7" ry="11" fill="rgba(255,255,255,0.5)" transform="rotate(-30 36 30)"/>
+    </svg>
+  </div>
+
+  <div class="star star-gold">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 4 C50 4 58 42 96 50 C58 58 50 96 50 96 C50 96 42 58 4 50 C42 42 50 4 50 4Z"
+        fill="#F5C518" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="36" cy="30" rx="7" ry="11" fill="rgba(255,255,255,0.5)" transform="rotate(-30 36 30)"/>
+    </svg>
+  </div>
+
+  <!-- Glow -->
+  <div class="glow"></div>
+
+  <!-- Central glowing star -->
+  <div class="star-icon">
+    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="starGrad" cx="45%" cy="35%" r="65%">
+          <stop offset="0%"   stop-color="#FFE566"/>
+          <stop offset="55%"  stop-color="#F5C518"/>
+          <stop offset="100%" stop-color="#C87800"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Star shape -->
+      <path d="M150 12 C150 12 172 128 268 150 C172 172 150 288 150 288 C150 288 128 172 32 150 C128 128 150 12 150 12Z"
+        fill="url(#starGrad)" stroke="#000" stroke-width="10" stroke-linejoin="round" filter="url(#glow)"/>
+      <!-- Shine oval -->
+      <ellipse cx="108" cy="108" rx="20" ry="32" fill="rgba(255,255,255,0.50)" transform="rotate(-30 108 108)"/>
+      <!-- Small dot shine -->
+      <circle cx="118" cy="92" r="8" fill="rgba(255,255,255,0.35)"/>
+
+    </svg>
+  </div>
+
+  <!-- Right text content -->
+  <div class="content">
+    <div class="headline">
+      The <span class="yellow">Future</span><br>
+      of Creator<br>
+      <span class="pink">Commerce</span><br>
+      is Here.
+    </div>
+    <div class="subline">— and it's not what you expected</div>
+  </div>
+
+  <!-- Branding -->
+  <div class="branding">
+    <div class="brand-name">ICONS</div>
+    <div class="brand-url">ICONS.STUDIO</div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="bottom-bar">
+    <div class="bottom-text">↑ &nbsp; tap to see who's next &nbsp; ↑</div>
+  </div>
+
+</div>
+</body>
+</html>
