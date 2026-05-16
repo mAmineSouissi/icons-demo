@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { dur, ease } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -25,22 +26,34 @@ export const WeDoDescription = ({ className }: WeDoDescriptionProps) => {
         },
       });
 
-      tl.from(".how-title", {
-        x: -80,
+      tl.from(".how-eyebrow", {
         opacity: 0,
-        duration: 0.9,
-        ease: "power4.out",
+        x: -20,
+        duration: dur.fast,
+        ease: ease.out,
       });
 
       tl.from(
-        ".how-subtitle",
-        { x: -40, opacity: 0, duration: 0.6, ease: "power3.out" },
-        "-=0.5",
+        ".how-title",
+        { y: 40, opacity: 0, duration: dur.slow, ease: ease.cinematic },
+        "-=0.2",
       );
 
       tl.from(
         ".how-body",
-        { y: 25, opacity: 0, duration: 0.6, ease: "power3.out" },
+        { y: 20, opacity: 0, duration: dur.base, ease: ease.out },
+        "-=0.4",
+      );
+
+      tl.from(
+        ".how-stat",
+        {
+          opacity: 0,
+          y: 16,
+          duration: dur.base,
+          ease: ease.out,
+          stagger: 0.1,
+        },
         "-=0.3",
       );
     },
@@ -51,23 +64,47 @@ export const WeDoDescription = ({ className }: WeDoDescriptionProps) => {
     <div
       ref={ref}
       className={cn(
-        "w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center",
+        "flex flex-col justify-center p-8 lg:p-14 gap-6",
         className,
       )}
     >
-      <h2 className="how-title text-[250px] lg:text-8xl font-bold mb-3 text-primary leading-none">
-        So
+      {/* Eyebrow */}
+      <div className="how-eyebrow flex items-center gap-3">
+        <span className="h-px w-6 bg-(--color-accent) inline-block" />
+        <span className="text-[10px] uppercase tracking-[0.3em] text-(--color-muted-fg) font-medium">
+          Process
+        </span>
+      </div>
+
+      {/* Heading */}
+      <h2 className="how-title font-display text-5xl md:text-6xl lg:text-7xl leading-[0.95] text-(--color-fg)">
+        How We Make<br />
+        <span className="text-(--color-accent)">It Happen.</span>
       </h2>
-      <h3 className="how-subtitle text-[35px] lg:text-4xl font-bold mb-4 text-secondary">
-        How Do We Make It Happen
-      </h3>
-      <p className="how-body text-sm lg:text-base opacity-75 leading-relaxed text-muted-foreground">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-        nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-        volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-        ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
-        Duis.
+
+      {/* Body */}
+      <p className="how-body text-base md:text-lg text-(--color-muted-fg) leading-relaxed max-w-md">
+        Four steps from discovery to results — no guesswork, no bloated
+        agencies, no wasted spend. Just creators who move the needle.
       </p>
+
+      {/* Stats row */}
+      <div className="flex flex-wrap gap-8 pt-2">
+        {[
+          { val: "48h", label: "Campaign live" },
+          { val: "50K+", label: "Vetted creators" },
+          { val: "2×", label: "Average ROI" },
+        ].map(({ val, label }) => (
+          <div key={label} className="how-stat flex flex-col gap-1">
+            <span className="font-display text-3xl text-(--color-fg) leading-none">
+              {val}
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-(--color-muted-fg)">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
