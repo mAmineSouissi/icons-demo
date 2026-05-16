@@ -1,114 +1,85 @@
 import { ChevronDown } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import TextType from "@/components/shared/TextType";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { dur, ease, stagger } from "@/lib/motion";
-import { CrowdedPeeps } from "./HowSection/CrowdedPeeps";
-import { cn } from "@/lib/utils";
+import { dur, ease } from "@/lib/motion";
+import { GooeyText } from "@/components/ui/gooey-text-morphing";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// "Icons" split into masked character spans for GSAP reveal
-const HERO_CHARS = ["I", "c", "o", "n", "s"];
+const GOOEY_TEXTS = ["Icons.", "Creators.", "Icons.", "Culture.", "Icons."];
 
 export const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const bgVideoRef = useRef<HTMLVideoElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({ delay: 0.15 });
+      const tl = gsap.timeline({ delay: 0.4 });
 
-      // Subtle parallax for background video (matches previous TreatedImage parallax)
-      if (bgVideoRef.current) {
-        gsap.to(bgVideoRef.current, {
-          yPercent: -(0.25 * 30),
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
-
-      // ── Character-by-character reveal ──
-      // Each .hero-char sits inside an overflow-hidden mask wrapper.
-      // Starting at y:"110%" means it's hidden below the mask edge.
-      tl.from(".hero-char", {
-        y: "110%",
-        rotation: 6,
-        duration: dur.slow,
-        ease: ease.cinematic,
-        stagger: stagger.tight,
-        transformOrigin: "bottom center",
+      // Eyebrow label
+      tl.from(".hero-eyebrow", {
+        opacity: 0,
+        y: -10,
+        duration: dur.fast,
+        ease: ease.out,
       });
 
-      // Accent dot scales in
+      // Gooey title wrapper
       tl.from(
-        ".hero-dot",
-        { scale: 0, opacity: 0, duration: dur.fast, ease: ease.bounce },
-        "-=0.5",
+        ".hero-title-wrap",
+        { opacity: 0, y: 30, duration: dur.base, ease: ease.out },
+        "-=0.1",
       );
 
-      // Subtitle: clip-path wipe left → right
+      // Divider expands
+      tl.from(
+        ".hero-divider",
+        { scaleX: 0, duration: dur.fast, ease: ease.out, transformOrigin: "center" },
+        "-=0.3",
+      );
+
+      // Subtitle wipe
       tl.from(
         ".hero-typewriter",
-        {
-          clipPath: "inset(0 100% 0 0)",
-          opacity: 0,
-          duration: dur.base,
-          ease: ease.out,
-        },
-        "-=0.4",
-      );
-
-      // Scroll cue fade in
-      tl.from(
-        scrollCueRef.current,
-        { opacity: 0, duration: dur.base, ease: ease.out },
+        { clipPath: "inset(0 100% 0 0)", opacity: 0, duration: dur.base, ease: ease.out },
         "-=0.2",
       );
 
-      // Chevron bounce loop
+      // CTA buttons
+      tl.from(
+        ".hero-cta",
+        { opacity: 0, y: 12, duration: dur.base, ease: ease.out, stagger: 0.08 },
+        "-=0.3",
+      );
+
+      // Scroll cue
+      tl.from(scrollCueRef.current, { opacity: 0, duration: dur.base }, "-=0.2");
+
+      // Chevron breathes — Disney follow-through
       gsap.to(chevronRef.current, {
         y: 8,
-        duration: 0.75,
+        duration: 0.9,
         ease: "sine.inOut",
         repeat: -1,
         yoyo: true,
       });
 
-      // ── Scroll-out: clip-path wipe upward (cinematic) ──
+      // Content clips upward on scroll (cinematic exit)
       gsap.to(contentRef.current, {
         clipPath: "inset(0 0 100% 0)",
         ease: ease.scrub,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "45% top",
-          scrub: 1,
+          end: "42% top",
+          scrub: 1.2,
           invalidateOnRefresh: true,
-        },
-      });
-
-      gsap.to(bgRef.current, {
-        scale: 0.85,
-        autoAlpha: 0,
-        ease: ease.scrub,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.8,
         },
       });
     },
@@ -118,48 +89,53 @@ export const HeroSection = () => {
   return (
     <section
       ref={sectionRef}
-      className={cn(
-        "min-h-screen flex flex-col items-center justify-center relative isolate overflow-hidden transition-colors duration-700",
-      )}
+      // -mt-24 compensates for Layout's pt-24, giving a true full-viewport hero
+      className="h-screen -mt-24 flex flex-col items-center justify-center relative isolate overflow-hidden"
     >
+      {/* Radial accent glow behind the title */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, var(--color-accent) 0%, transparent 68%)",
+          opacity: 0.13,
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Hero content — centered in true viewport */}
       <div
         ref={contentRef}
-        className="text-center mb-10 z-10 text-white"
+        className="flex flex-col items-center text-center px-6 pt-24 gap-5 z-10 w-full"
         style={{ willChange: "clip-path", clipPath: "inset(0 0 0% 0)" }}
       >
-        {/* ── Split-character heading ── */}
-        <h1
-          className="flex items-end justify-center leading-none mb-4"
-          style={{
-            fontFamily: '"fat", sans-serif',
-            fontWeight: 800,
-          }}
-          aria-label="Icons"
-        >
-          {HERO_CHARS.map((char, i) => (
-            // overflow-hidden masks the y:"110%" starting position
-            <span key={i} className="inline-block overflow-hidden leading-none">
-              <span className="hero-char inline-block text-[7vh]">{char}</span>
-            </span>
-          ))}
-          {/* Accent dot */}
-          <span className="inline-block overflow-hidden leading-none ml-0.5">
-            <span
-              className="hero-dot inline-block text-[5vh]"
-              style={{ color: "var(--accent)", lineHeight: "inherit" }}
-            >
-              .
-            </span>
+        {/* Eyebrow */}
+        <div className="hero-eyebrow flex items-center gap-3">
+          <span className="h-px w-5 bg-(--color-accent)/60 inline-block" />
+          <span className="text-[9px] uppercase tracking-[0.4em] text-(--color-muted-fg) font-medium">
+            The Creator Platform
           </span>
-        </h1>
+          <span className="h-px w-5 bg-(--color-accent)/60 inline-block" />
+        </div>
 
-        {/* Subtitle typewriter */}
+        {/* GooeyText morphing title */}
+        <div className="hero-title-wrap w-full">
+          <GooeyText
+            texts={GOOEY_TEXTS}
+            morphTime={1.2}
+            cooldownTime={2.8}
+            className="h-20 sm:h-24 md:h-32 lg:h-40 w-full"
+            textClassName="font-display font-black leading-none text-[clamp(3.5rem,8.5vw,8rem)]"
+          />
+        </div>
+
+        {/* Divider */}
+        <div className="hero-divider w-20 h-px bg-(--color-border-strong)/60 mx-auto" />
+
+        {/* Typewriter tagline */}
         <div
-          style={{
-            fontFamily: '"snaga-unicase-display", sans-serif',
-            fontWeight: 300,
-            fontStyle: "normal",
-          }}
+          className="hero-typewriter"
+          style={{ fontFamily: '"snaga-unicase-display", sans-serif', fontWeight: 300 }}
         >
           <TextType
             text={[
@@ -167,27 +143,46 @@ export const HeroSection = () => {
               "where every face is an icon.",
               "Join us today!",
             ]}
-            typingSpeed={75}
+            typingSpeed={70}
             pauseDuration={1500}
             showCursor={true}
-            className="text-[clamp(1.2rem,3vw,2rem)]"
+            className="text-[clamp(0.85rem,2vw,1.4rem)] text-(--color-muted-fg) tracking-wide"
             cursorCharacter="|"
+            cursorClassName="font-sans font-thin text-[0.75em] opacity-50 align-middle"
           />
+        </div>
+
+        {/* CTA row */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+          <Link
+            href="/creators"
+            className="hero-cta inline-flex items-center gap-2 px-6 py-3 rounded-full bg-(--color-fg) text-(--color-bg) text-sm font-medium transition-all duration-300 hover:bg-(--color-accent) hover:text-white"
+          >
+            Start Creating
+          </Link>
+          <Link
+            href="/brands"
+            className="hero-cta inline-flex items-center gap-2 px-6 py-3 rounded-full border border-(--color-border) text-(--color-fg) text-sm font-medium transition-all duration-300 hover:border-(--color-border-strong) hover:bg-(--color-panel-2)/60"
+          >
+            For Brands
+          </Link>
         </div>
       </div>
 
+      {/* Scroll cue */}
       <div
         ref={scrollCueRef}
-        className="absolute bottom-12 flex flex-col items-center gap-2 cursor-pointer group z-10"
-        onClick={() =>
-          window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
-        }
+        className="absolute bottom-10 inset-x-0 flex flex-col items-center gap-2 cursor-pointer group z-10"
+        onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
       >
-        <span className="text-xs uppercase tracking-[0.25em] text-(--color-muted)">
+        <span className="text-[9px] uppercase tracking-[0.35em] text-(--color-muted-fg)/70 group-hover:text-(--color-muted-fg) transition-colors duration-300">
           Scroll
         </span>
         <div ref={chevronRef}>
-          <ChevronDown className="w-5 h-5 text-(--color-muted) group-hover:text-(--color-accent) transition-colors" />
+          <ChevronDown
+            className="w-4 h-4 text-(--color-muted-fg)/60 group-hover:text-(--color-accent) transition-colors duration-300"
+            strokeWidth={1.5}
+          />
         </div>
       </div>
     </section>

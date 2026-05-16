@@ -124,7 +124,7 @@ export const CreatorReelSection = () => {
             </p>
             <h2
               className="text-5xl md:text-7xl font-bold leading-none"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
+              style={{ fontFamily: "var(--font-display)" }}
             >
               {["Meet", "the"].map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden mr-4">
@@ -231,7 +231,7 @@ export const CreatorReelSection = () => {
           <p
             className="text-5xl font-bold"
             style={{
-              fontFamily: "'DM Serif Display', serif",
+              fontFamily: "var(--font-display)",
               color: "var(--accent)",
             }}
           >

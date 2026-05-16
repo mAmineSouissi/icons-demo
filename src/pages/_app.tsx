@@ -2,36 +2,96 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
 import Head from "next/head";
+import {
+  Archivo_Black,
+  Bricolage_Grotesque,
+  Caveat,
+  DM_Mono,
+  Inter,
+} from "next/font/google";
 import Application from "@/components/Application";
 import { SmoothScroll } from "@/components/shared/SmoothScroll";
 import { PageTransition } from "@/components/shared/PageTransition";
 
+const archivoBlack = Archivo_Black({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-archivo-black",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-caveat",
+  display: "swap",
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-dm-mono",
+  display: "swap",
+});
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "800"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <Head>
-        <meta
-          name="description"
-          content="Icons - UGC Creator Platform - Connect with brands and create amazing content"
-        />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1"
-        />
-        <title>Icons - UGC Creator Platform</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <ThemeProvider
-        attribute="data-theme"
-        defaultTheme="light"
-        enableSystem={false}
+      <style jsx global>{`
+        :root {
+          --font-sans: ${inter.style.fontFamily}, ui-sans-serif, system-ui, sans-serif;
+          --font-display: ${archivoBlack.style.fontFamily}, "Archivo Black", ui-sans-serif, system-ui, sans-serif;
+          --font-grotesque: ${bricolage.style.fontFamily}, ui-sans-serif, system-ui, sans-serif;
+          --font-bricolage: ${bricolage.style.fontFamily}, "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+          --font-script: ${caveat.style.fontFamily}, "Caveat", cursive;
+          --font-mono: ${dmMono.style.fontFamily}, "DM Mono", ui-monospace, monospace;
+          --font-serif: ${archivoBlack.style.fontFamily}, "Archivo Black", ui-sans-serif, sans-serif;
+        }
+        html,
+        body {
+          font-family: var(--font-sans);
+        }
+      `}</style>
+      <div
+        className={`${archivoBlack.variable} ${inter.variable} ${caveat.variable} ${dmMono.variable} ${bricolage.variable}`}
       >
-        <SmoothScroll>
-          <PageTransition>
-            <Application Component={Component} pageProps={pageProps} />
-          </PageTransition>
-        </SmoothScroll>
-      </ThemeProvider>
+        <Head>
+          <meta
+            name="description"
+            content="Icons - UGC Creator Platform - Connect with brands and create amazing content"
+          />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+          />
+          <title>Icons - UGC Creator Platform</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="light"
+          enableSystem={false}
+        >
+          <SmoothScroll>
+            <PageTransition>
+              <Application Component={Component} pageProps={pageProps} />
+            </PageTransition>
+          </SmoothScroll>
+        </ThemeProvider>
+      </div>
     </>
   );
 }

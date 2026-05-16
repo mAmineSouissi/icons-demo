@@ -48,3 +48,7 @@ next-env.d.ts
 .agents/*
 .windsurf/*
 KIBOV2/*
+.claude/*
+docs/*
+.mcp.json
+CLAUDE.md
