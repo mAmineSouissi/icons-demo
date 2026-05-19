@@ -9,9 +9,11 @@ import { IconsLogo, StarMark } from "@/components/shared/IconsLogo";
 
 const NAV_LINKS = [
   { label: "Creators", href: "/creators" },
-  { label: "Brands", href: "/brands" },
-  { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
+  { label: "Brands",   href: "/brands"   },
+  { label: "Pricing",  href: "/pricing"  },
+  { label: "About",    href: "/about"    },
+  { label: "Blog",     href: "/blog"     },
+  { label: "Contact",  href: "/contact"  },
 ];
 
 const TICKER = [
@@ -225,7 +227,7 @@ const Header = () => {
 
           <div>
             <div className="font-mono text-[11px] tracking-[0.32em] uppercase mb-8 opacity-70">
-              ✦ menu · 04 items
+              ✦ menu · 06 items
             </div>
             <nav className="flex flex-col gap-1">
               {NAV_LINKS.map((item, i) => {

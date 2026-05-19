@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -11,26 +12,21 @@ import {
   Instagram,
   Twitter,
   Linkedin,
-  Plus,
-  Minus,
   Clock,
+  ChevronDown,
 } from "lucide-react";
-import {
-  PageHero,
-  SectionShell,
-  SectionLabel,
-} from "@/components/shared/PagePrimitives";
+import { SectionShell } from "@/components/shared/PagePrimitives";
+import { Sparkle } from "@/components/ui/Sparkle";
 import { ease } from "@/lib/motion";
-import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 
 const offices = [
-  { city: "New York",  country: "USA",  address: "112 Greene St, SoHo",  tone: "gradient-cool" },
-  { city: "Dubai",     country: "UAE",  address: "DIFC, Gate Avenue",     tone: "gradient-warm" },
-  { city: "Lisbon",    country: "PT",   address: "Rua da Boavista 84",    tone: "gradient-accent" },
+  { city: "New York", country: "USA", address: "112 Greene St, SoHo", tone: "cream"  },
+  { city: "Dubai",    country: "UAE", address: "DIFC, Gate Avenue",   tone: "accent" },
+  { city: "Lisbon",   country: "PT",  address: "Rua da Boavista 84",  tone: "pink"   },
 ];
 
 const faqs = [
@@ -57,117 +53,152 @@ const faqs = [
 ];
 
 const subjectOptions = [
-  { value: "creator", label: "I'm a creator" },
+  { value: "creator", label: "I'm a creator"       },
   { value: "brand",   label: "I represent a brand" },
-  { value: "press",   label: "Press & media" },
-  { value: "other",   label: "Something else" },
+  { value: "press",   label: "Press & media"       },
+  { value: "other",   label: "Something else"      },
 ];
 
+/* ─── Styles ─────────────────────────────────────────────────────── */
+
+const PAGE_STYLES = `
+  .ct-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .ct-form-grid { grid-template-columns: 1fr 360px; gap: 2.5rem; }
+  }
+
+  .ct-offices-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .ct-offices-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+`;
+
+/* ─── Page ───────────────────────────────────────────────────────── */
+
 export const ContactPage = () => {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref    = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [sent, setSent]       = useState(false);
+  const [form, setForm]       = useState({ name: "", email: "", subject: "", message: "" });
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useGSAP(
     () => {
+      // Hero words — fromTo so elements are never pre-hidden if animation interrupts
+      gsap.fromTo(".ct-word",
+        { opacity: 0, y: 40, rotate: 2 },
+        { opacity: 1, y: 0, rotate: 0, duration: 0.85, ease: "power3.out", stagger: 0.07, delay: 0.1, overwrite: "auto" },
+      );
+      gsap.fromTo(".ct-hero-sub",  { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.55, overwrite: "auto" });
+      gsap.fromTo(".ct-hero-meta", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.1, delay: 0.7, overwrite: "auto" });
+
+      // Scroll reveals
       gsap.utils.toArray<Element>(".ct-reveal").forEach((el) => {
         gsap.from(el, {
-          y: 40,
-          opacity: 0,
-          duration: 0.85,
-          ease: ease.out,
-          scrollTrigger: {
-            trigger: el,
-            start: "top 88%",
-            toggleActions: "play none none reverse",
-          },
+          y: 40, opacity: 0, duration: 0.85, ease: ease.out,
+          scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" },
         });
       });
 
       // Magnetic submit button
       const btn = btnRef.current;
       if (!btn) return;
-      const onMove = (e: MouseEvent) => {
+      const onMove  = (e: MouseEvent) => {
         const r = btn.getBoundingClientRect();
         gsap.to(btn, {
-          x: (e.clientX - r.left - r.width / 2) * 0.25,
-          y: (e.clientY - r.top - r.height / 2) * 0.25,
-          duration: 0.4,
-          ease: "power2.out",
+          x: (e.clientX - r.left - r.width  / 2) * 0.25,
+          y: (e.clientY - r.top  - r.height / 2) * 0.25,
+          duration: 0.4, ease: "power2.out",
         });
       };
-      const onLeave = () =>
-        gsap.to(btn, {
-          x: 0,
-          y: 0,
-          duration: 0.5,
-          ease: "elastic.out(1,0.4)",
-        });
-      btn.addEventListener("mousemove", onMove);
+      const onLeave = () => gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1,0.4)" });
+      btn.addEventListener("mousemove",  onMove);
       btn.addEventListener("mouseleave", onLeave);
       return () => {
-        btn.removeEventListener("mousemove", onMove);
+        btn.removeEventListener("mousemove",  onMove);
         btn.removeEventListener("mouseleave", onLeave);
       };
     },
     { scope: ref },
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSent(true);
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSent(true); };
 
   return (
     <div ref={ref} className="min-h-screen bg-(--color-bg) text-(--color-fg)">
-      <PageHero
-        eyebrow="Contact"
-        title="Let's __ACCENT__Talk."
-        lede="Whether you're a creator ready to grow, a brand looking for authentic content, or just curious — we'd love to hear from you."
-        meta={
-          <div className="flex flex-col items-start md:items-end gap-3">
-            <span className="chip" data-tone="accent">
+      <style>{PAGE_STYLES}</style>
+
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section
+        className="relative py-32 px-6 md:px-12 overflow-hidden bracket-frame dot-grid"
+        style={{ background: "var(--color-bg)" }}
+      >
+        <Sparkle size={52} fill="var(--accent2)" className="absolute top-16 right-[10%] rotate-12 opacity-60 pointer-events-none" />
+        <Sparkle size={38} fill="var(--accent4)" className="absolute bottom-16 left-[8%] -rotate-6 opacity-55 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto">
+          <div className="font-mono text-[12px] tracking-[0.32em] uppercase mb-8 opacity-50">
+            contact
+          </div>
+
+          <h1
+            className="font-display italic leading-[0.88] tracking-[-0.03em] mb-8"
+            style={{ fontSize: "clamp(3rem,8vw,7rem)" }}
+          >
+            {["Let's", "talk."].map((word, i) => (
+              <span
+                key={i}
+                className="ct-word inline-block align-bottom mr-[0.22em] last:mr-0"
+                style={i === 1 ? { color: "var(--color-accent)" } : undefined}
+              >
+                {word}
+              </span>
+            ))}
+          </h1>
+
+          <p className="ct-hero-sub font-script text-2xl md:text-3xl opacity-65 mb-10">
+            — we'd love to hear from you. really.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-5">
+            <span className="ct-hero-meta chip" data-tone="accent">
               <Clock className="w-3.5 h-3.5" />
               Avg. response in 24 hrs
             </span>
             <a
               href="mailto:hello@icons.studio"
-              className="font-display text-2xl md:text-3xl hover:text-(--color-accent) transition-colors"
+              className="ct-hero-meta font-display italic text-xl md:text-2xl hover:text-(--color-accent) transition-colors duration-200"
             >
               hello@icons.studio
             </a>
           </div>
-        }
-      />
+        </div>
+      </section>
 
-      {/* ── Form + Info ──────────────────────────────────────────── */}
-      <section className="px-6 md:px-10 pb-24 border-t border-(--color-border)">
-        <div className="max-w-7xl mx-auto pt-16 grid grid-cols-1 lg:grid-cols-12 gap-px grid-divider rounded-sm overflow-hidden border border-(--color-border)">
+      {/* ── FORM + INFO ──────────────────────────────────────────── */}
+      <section className="px-6 md:px-12 py-20 border-t border-(--color-border) bracket-frame">
+        <div className="max-w-7xl mx-auto ct-form-grid">
+
           {/* Form */}
-          <div className="ct-reveal lg:col-span-7 p-8 md:p-14">
+          <div className="ct-reveal">
             {sent ? (
-              <div className="flex flex-col items-start gap-5 py-16">
-                <span className="font-display text-7xl text-(--color-accent) leading-none">
-                  ✓
-                </span>
-                <h3 className="font-display text-3xl">Message received.</h3>
-                <p className="text-(--color-muted-fg) max-w-md">
-                  We'll get back to you within 24 hours. Meanwhile, you can
-                  follow along on Instagram for behind-the-scenes from the team.
+              <div className="sticker p-10 md:p-14 flex flex-col items-start gap-5" data-tone="accent">
+                <span className="font-display italic text-7xl leading-none">✓</span>
+                <h3 className="font-display italic text-3xl leading-tight">Message received.</h3>
+                <p className="font-script text-xl opacity-75">
+                  — we&apos;ll get back to you within 24 hours.
                 </p>
                 <button
-                  onClick={() => {
-                    setSent(false);
-                    setForm({ name: "", email: "", subject: "", message: "" });
-                  }}
-                  className="mt-4 text-sm text-(--color-accent) hover:underline cursor-pointer"
+                  onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
+                  className="font-mono text-[11px] uppercase tracking-[0.22em] opacity-60 hover:opacity-100 transition-opacity cursor-pointer mt-2"
                 >
                   Send another →
                 </button>
@@ -176,47 +207,43 @@ export const ContactPage = () => {
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[
-                    { id: "name",  label: "Full name",    type: "text",  placeholder: "Sara Malik" },
+                    { id: "name",  label: "Full name",     type: "text",  placeholder: "Sara Malik"    },
                     { id: "email", label: "Email address", type: "email", placeholder: "hello@you.com" },
                   ].map(({ id, label, type, placeholder }) => (
                     <div key={id} className="flex flex-col gap-2">
-                      <label
-                        htmlFor={id}
-                        className="eyebrow !text-[10px]"
-                      >
-                        {label}
-                      </label>
+                      <label htmlFor={id} className="eyebrow !text-[10px]">{label}</label>
                       <input
-                        id={id}
-                        required
-                        type={type}
-                        placeholder={placeholder}
+                        id={id} required type={type} placeholder={placeholder}
                         value={form[id as keyof typeof form]}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, [id]: e.target.value }))
-                        }
+                        onChange={(e) => setForm((f) => ({ ...f, [id]: e.target.value }))}
                         className="bg-transparent border-b border-(--color-border) py-3 text-base outline-none text-(--color-fg) placeholder:text-(--color-muted-fg)/40 focus:border-(--color-accent) transition-colors duration-200"
                       />
                     </div>
                   ))}
                 </div>
 
+                {/* Subject toggle */}
                 <div className="flex flex-col gap-3">
-                  <span className="eyebrow !text-[10px]">Subject</span>
-                  <div className="flex flex-wrap gap-2">
+                  <span className="eyebrow !text-[10px]">I am…</span>
+                  <div
+                    className="inline-flex flex-wrap gap-1 p-1 rounded-full border-2 self-start"
+                    style={{
+                      borderColor: "var(--color-fg)",
+                      background: "var(--color-bg)",
+                      boxShadow: "4px 4px 0 0 var(--color-fg)",
+                    }}
+                  >
                     {subjectOptions.map((opt) => (
                       <button
                         key={opt.value}
                         type="button"
-                        onClick={() =>
-                          setForm((f) => ({ ...f, subject: opt.value }))
-                        }
-                        className={cn(
-                          "px-4 py-2 text-xs uppercase tracking-[0.18em] font-medium rounded-full border transition-all duration-200 cursor-pointer",
+                        onClick={() => setForm((f) => ({ ...f, subject: opt.value }))}
+                        className="px-5 py-2 rounded-full font-mono text-[11px] tracking-[0.18em] uppercase transition-all duration-200 cursor-pointer"
+                        style={
                           form.subject === opt.value
-                            ? "bg-(--color-fg) text-(--color-bg) border-(--color-fg)"
-                            : "text-(--color-muted-fg) border-(--color-border) hover:border-(--color-border-strong) hover:text-(--color-fg)",
-                        )}
+                            ? { background: "var(--color-fg)", color: "var(--color-bg)" }
+                            : { background: "transparent", color: "var(--color-fg)", opacity: 0.5 }
+                        }
                       >
                         {opt.label}
                       </button>
@@ -225,28 +252,18 @@ export const ContactPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="message"
-                    className="eyebrow !text-[10px]"
-                  >
-                    Message
-                  </label>
+                  <label htmlFor="message" className="eyebrow !text-[10px]">Message</label>
                   <textarea
-                    id="message"
-                    required
-                    rows={5}
-                    placeholder="Tell us what's on your mind…"
+                    id="message" required rows={5} placeholder="Tell us what's on your mind…"
                     value={form.message}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, message: e.target.value }))
-                    }
+                    onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                     className="bg-transparent border-b border-(--color-border) py-3 text-base outline-none resize-none text-(--color-fg) placeholder:text-(--color-muted-fg)/40 focus:border-(--color-accent) transition-colors duration-200"
                   />
                 </div>
 
                 <div className="flex items-center justify-between gap-4 pt-4">
-                  <p className="text-xs text-(--color-muted-fg) hidden sm:block">
-                    By submitting, you agree to our terms and privacy policy.
+                  <p className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-40 hidden sm:block">
+                    We reply within 24 hours, always.
                   </p>
                   <button
                     ref={btnRef}
@@ -262,32 +279,46 @@ export const ContactPage = () => {
             )}
           </div>
 
-          {/* Info */}
-          <aside className="ct-reveal lg:col-span-5 p-8 md:p-14 bg-(--color-panel-2)/40 flex flex-col justify-between gap-10">
+          {/* Info panel — dark sticker */}
+          <aside
+            className="ct-reveal sticker flex flex-col justify-between gap-10 p-8 md:p-12"
+            data-tone="ink"
+          >
             <div className="space-y-10">
               <div>
-                <SectionLabel>Email us</SectionLabel>
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] mb-3"
+                  style={{ color: "color-mix(in srgb, var(--color-bg) 50%, transparent)" }}>
+                  Email us
+                </p>
                 <a
                   href="mailto:hello@icons.studio"
-                  className="mt-3 inline-flex items-center gap-2 text-lg font-medium hover:text-(--color-accent) transition-colors duration-200"
+                  className="inline-flex items-center gap-2 font-display italic text-xl transition-opacity duration-200 hover:opacity-75"
+                  style={{ color: "var(--color-bg)" }}
                 >
-                  <Mail className="w-4 h-4" /> hello@icons.studio
+                  <Mail className="w-4 h-4 shrink-0" /> hello@icons.studio
                 </a>
               </div>
 
               <div>
-                <SectionLabel>Press & media</SectionLabel>
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] mb-3"
+                  style={{ color: "color-mix(in srgb, var(--color-bg) 50%, transparent)" }}>
+                  Press &amp; media
+                </p>
                 <a
                   href="mailto:press@icons.studio"
-                  className="mt-3 inline-flex items-center gap-2 text-lg font-medium hover:text-(--color-accent) transition-colors duration-200"
+                  className="inline-flex items-center gap-2 font-display italic text-xl transition-opacity duration-200 hover:opacity-75"
+                  style={{ color: "var(--color-bg)" }}
                 >
-                  <Mail className="w-4 h-4" /> press@icons.studio
+                  <Mail className="w-4 h-4 shrink-0" /> press@icons.studio
                 </a>
               </div>
 
               <div>
-                <SectionLabel>Follow along</SectionLabel>
-                <div className="mt-4 flex items-center gap-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] mb-4"
+                  style={{ color: "color-mix(in srgb, var(--color-bg) 50%, transparent)" }}>
+                  Follow along
+                </p>
+                <div className="flex items-center gap-3">
                   {[
                     { Icon: Instagram, label: "Instagram", href: "#" },
                     { Icon: Twitter,   label: "Twitter",   href: "#" },
@@ -297,7 +328,11 @@ export const ContactPage = () => {
                       key={label}
                       href={href}
                       aria-label={label}
-                      className="w-10 h-10 rounded-full border border-(--color-border) text-(--color-muted-fg) hover:text-(--color-fg) hover:border-(--color-border-strong) inline-flex items-center justify-center transition-colors duration-200"
+                      className="w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-60"
+                      style={{
+                        border: "1px solid color-mix(in srgb, var(--color-bg) 25%, transparent)",
+                        color: "var(--color-bg)",
+                      }}
                     >
                       <Icon className="w-4 h-4" />
                     </a>
@@ -306,86 +341,138 @@ export const ContactPage = () => {
               </div>
             </div>
 
-            <div className="font-display text-[8rem] leading-[0.8] text-(--color-accent) opacity-[0.07] select-none -mr-4 -mb-6">
+            {/* Watermark */}
+            <div
+              className="font-display italic leading-[0.8] select-none -mr-2 -mb-2"
+              style={{
+                fontSize: "clamp(4rem,8vw,6.5rem)",
+                color: "var(--color-bg)",
+                opacity: 0.07,
+              }}
+            >
               icons.
             </div>
           </aside>
         </div>
       </section>
 
-      {/* ── Offices ──────────────────────────────────────────────── */}
-      <SectionShell eyebrow="Find us" title="Three offices, one team.">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px grid-divider">
+      {/* ── OFFICES ──────────────────────────────────────────────── */}
+      <SectionShell eyebrow="Find us" title="Three offices, one team." className="bracket-frame">
+        <div className="ct-offices-grid pb-3 pr-3">
           {offices.map((o) => (
-            <article key={o.city} className="ct-reveal card-hover p-8">
+            <article key={o.city} className="ct-reveal sticker flex flex-col gap-6 p-8" data-tone={o.tone}>
+              {/* Map placeholder */}
               <div
-                className={cn(
-                  o.tone,
-                  "aspect-[4/3] mb-6 rounded-sm relative overflow-hidden",
-                )}
+                className="aspect-[4/3] rounded-xl relative overflow-hidden flex items-center justify-center"
+                style={{ background: "rgba(0,0,0,0.06)" }}
               >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <MapPin className="w-10 h-10 text-(--color-fg)/40" strokeWidth={1.5} />
-                </div>
-                <span className="absolute top-3 left-3 chip !text-[9px] !px-2 !py-1 bg-(--color-bg)/70">
+                <MapPin className="w-10 h-10 opacity-20" strokeWidth={1.5} />
+                <span
+                  className="absolute top-3 right-3 font-mono text-[9px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full"
+                  style={{ background: "rgba(0,0,0,0.08)" }}
+                >
                   {o.country}
                 </span>
               </div>
-              <h3 className="font-display text-3xl mb-2">{o.city}</h3>
-              <p className="text-sm text-(--color-muted-fg)">{o.address}</p>
+              <div>
+                <h3 className="font-display italic text-3xl leading-tight mb-1">{o.city}</h3>
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">{o.address}</p>
+              </div>
             </article>
           ))}
         </div>
       </SectionShell>
 
       {/* ── FAQ ──────────────────────────────────────────────────── */}
-      <SectionShell eyebrow="FAQ" title="Quick answers." tight>
+      <section
+        className="px-6 md:px-12 py-24 border-t border-(--color-border) bracket-frame"
+        style={{ background: "var(--color-bg)" }}
+      >
         <div className="max-w-3xl mx-auto">
-          {faqs.map((f, i) => {
-            const open = openFaq === i;
-            return (
-              <div
-                key={f.q}
-                className="ct-reveal border-t border-(--color-border) last:border-b"
-              >
-                <button
-                  onClick={() => setOpenFaq(open ? null : i)}
-                  aria-expanded={open}
-                  className="w-full flex items-center justify-between gap-6 py-6 text-left group cursor-pointer"
-                >
-                  <span className="font-display text-xl md:text-2xl group-hover:text-(--color-accent) transition-colors">
-                    {f.q}
-                  </span>
-                  <span
-                    className={cn(
-                      "w-9 h-9 rounded-full border border-(--color-border) inline-flex items-center justify-center shrink-0 transition-all duration-300",
-                      open
-                        ? "bg-(--color-accent) border-(--color-accent) text-black rotate-180"
-                        : "text-(--color-muted-fg) group-hover:border-(--color-border-strong) group-hover:text-(--color-fg)",
-                    )}
+          <div className="font-mono text-[12px] tracking-[0.32em] uppercase mb-4 opacity-50 ct-reveal">
+            faq
+          </div>
+          <h2 className="ct-reveal font-display italic text-[clamp(2rem,5vw,4rem)] leading-[0.95] tracking-[-0.03em] mb-14">
+            Quick answers.
+          </h2>
+
+          <div className="border-t-2" style={{ borderColor: "var(--color-fg)" }}>
+            {faqs.map((f, i) => {
+              const open = openFaq === i;
+              return (
+                <div key={f.q} className="ct-reveal border-b-2" style={{ borderColor: "var(--color-fg)" }}>
+                  <button
+                    onClick={() => setOpenFaq(open ? null : i)}
+                    className="w-full flex items-center justify-between gap-4 py-5 text-left cursor-pointer"
                   >
-                    {open ? (
-                      <Minus className="w-4 h-4" />
-                    ) : (
-                      <Plus className="w-4 h-4" />
-                    )}
-                  </span>
-                </button>
-                <div
-                  className="grid transition-[grid-template-rows] duration-400 ease-out"
-                  style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
-                >
-                  <div className="overflow-hidden">
-                    <p className="pb-7 pr-14 text-base text-(--color-muted-fg) leading-relaxed">
-                      {f.a}
-                    </p>
+                    <span className="font-display italic text-lg md:text-xl leading-snug">{f.q}</span>
+                    <ChevronDown
+                      className="shrink-0 transition-transform duration-300"
+                      style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
+                      width={20} height={20}
+                    />
+                  </button>
+                  <div
+                    className="overflow-hidden transition-all duration-300"
+                    style={{ maxHeight: open ? "200px" : "0px" }}
+                  >
+                    <p className="font-sans text-base leading-relaxed pb-5 opacity-70">{f.a}</p>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </SectionShell>
+      </section>
+
+      {/* ── FINAL CTA ────────────────────────────────────────────── */}
+      <section
+        className="relative py-24 px-6 md:px-12 dot-grid bracket-frame border-t border-(--color-border)"
+        style={{ background: "var(--color-bg)" }}
+      >
+        <div className="max-w-4xl mx-auto relative">
+          <Sparkle size={56} fill="var(--accent2)" className="absolute -top-4 -left-4 md:-left-10 -rotate-12 pointer-events-none" />
+          <Sparkle size={44} fill="var(--accent3)" className="absolute -bottom-4 -right-4 md:-right-10 rotate-12 pointer-events-none" />
+
+          <div
+            className="sticker p-10 md:p-16 text-center flex flex-col items-center gap-8"
+            data-tone="ink"
+          >
+            <div className="font-mono text-[11px] tracking-[0.32em] uppercase opacity-60 flex items-center gap-2">
+              <span>✦</span><span>ready when you are</span><span>✦</span>
+            </div>
+
+            <h2 className="font-display italic text-[clamp(2.2rem,6vw,5rem)] leading-[0.92] tracking-[-0.03em]">
+              Pick your side.
+            </h2>
+
+            <p className="font-script text-2xl md:text-3xl opacity-70">
+              — brands start free. creators always free.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link href="/brief" className="btn-primary">
+                Start a campaign
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/creators"
+                className="btn-ghost"
+                style={{
+                  background: "transparent",
+                  color: "var(--color-bg)",
+                  borderColor: "var(--color-bg)",
+                  boxShadow: "4px 4px 0 0 var(--color-accent)",
+                }}
+              >
+                Join as creator
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };

@@ -196,17 +196,22 @@ export const SectionShell = ({
   useGSAP(
     () => {
       gsap.utils.toArray<Element>(".sx-reveal").forEach((el) => {
-        gsap.from(el, {
-          y: 36,
-          opacity: 0,
-          duration: 0.85,
-          ease: ease.out,
-          scrollTrigger: {
-            trigger: el,
-            start: "top 88%",
-            toggleActions: "play none none reverse",
+        gsap.fromTo(
+          el,
+          { y: 36, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.85,
+            ease: ease.out,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 95%",
+              toggleActions: "play none none none",
+              once: true,
+            },
           },
-        });
+        );
       });
     },
     { scope: ref },
@@ -260,17 +265,21 @@ export const BorderedGrid = ({
   children: ReactNode;
   className?: string;
 }) => {
-  const colClass =
+  const gridId = `bg-${cols}`;
+  const css =
     cols === 4
-      ? "md:grid-cols-2 lg:grid-cols-4"
+      ? `.${gridId} { display: grid; grid-template-columns: 1fr; } @media (min-width: 768px) { .${gridId} { grid-template-columns: repeat(2, 1fr); } } @media (min-width: 1024px) { .${gridId} { grid-template-columns: repeat(4, 1fr); } }`
       : cols === 3
-        ? "md:grid-cols-3"
-        : "md:grid-cols-2";
+        ? `.${gridId} { display: grid; grid-template-columns: 1fr; } @media (min-width: 768px) { .${gridId} { grid-template-columns: repeat(3, 1fr); } }`
+        : `.${gridId} { display: grid; grid-template-columns: 1fr; } @media (min-width: 768px) { .${gridId} { grid-template-columns: repeat(2, 1fr); } }`;
 
   return (
-    <div className={cn("grid-divider grid grid-cols-1 gap-px", colClass, className)}>
-      {children}
-    </div>
+    <>
+      <style>{css}</style>
+      <div className={cn("grid-divider gap-px", gridId, className)}>
+        {children}
+      </div>
+    </>
   );
 };
 
