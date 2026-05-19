@@ -7,7 +7,7 @@ import { HeroCampaign } from "@/components/home/Contents/campaign/HeroCampaign";
 import { AppTilesScene } from "@/components/home/Contents/campaign/AppTilesScene";
 import { WhyGenZ } from "@/components/home/Contents/campaign/WhyGenZ";
 import { HowSticker } from "@/components/home/Contents/campaign/HowSticker";
-import { CreatorRoster } from "@/components/home/Contents/campaign/CreatorRoster";
+import { BrandsValueSection } from "@/components/home/Contents/campaign/BrandsValueSection";
 import { CtaSticker } from "@/components/home/Contents/campaign/CtaSticker";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -38,8 +38,8 @@ export const HomePage = () => {
         <HeroCampaign />
         <AppTilesScene />
         <WhyGenZ />
+        <BrandsValueSection />
         <HowSticker />
-        <CreatorRoster />
         <CtaSticker />
       </div>
     </>

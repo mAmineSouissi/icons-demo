@@ -175,9 +175,9 @@ export const HeroCampaign = () => {
       className="relative min-h-screen flex flex-col items-center justify-center px-6 py-28 dot-grid overflow-hidden bracket-frame"
     >
       {/* Top eyebrow */}
-      <div className="hero-mono absolute top-8 left-8 right-8 flex items-center justify-between font-mono text-[11px] tracking-[0.28em] uppercase">
-        <span>01 · campaign cover</span>
-        <span className="hidden sm:inline">v.01 — icons</span>
+      <div className="hero-mono absolute top-8 left-8 right-8 flex items-center justify-between font-mono text-[11px] tracking-[0.28em] uppercase opacity-50">
+        <span>ugc creator platform</span>
+        <span className="hidden sm:inline">est. 2026</span>
       </div>
 
       {/* Floater sparkles */}
@@ -205,9 +205,9 @@ export const HeroCampaign = () => {
       {/* Main sticker card */}
       <div className="hero-card relative z-10 inline-flex flex-col items-center gap-6 max-w-3xl">
         {/* Tiny eyebrow inside */}
-        <div className="font-mono text-[11px] tracking-[0.32em] uppercase text-(--color-fg) flex items-center gap-2">
+        <div className="font-mono text-[11px] tracking-[0.32em] uppercase text-(--color-fg) flex items-center gap-2 opacity-60">
           <span>✦</span>
-          <span>new icon alert</span>
+          <span>where creators get paid & brands get results</span>
           <span>✦</span>
         </div>
 
@@ -252,13 +252,22 @@ export const HeroCampaign = () => {
           <span className="hero-letter inline-block">S</span>
         </h1>
 
-        {/* Script tagline */}
-        <p className="hero-script font-script text-3xl md:text-4xl text-(--color-fg) -mt-2">
-          — that&apos;s the platform, bestie
+        {/* Value proposition */}
+        <p className="hero-script font-script text-2xl md:text-3xl text-(--color-fg) -mt-2 text-center max-w-lg">
+          creators get paid in 48h &middot; brands get content that converts
         </p>
 
+        {/* Trust metrics */}
+        <div className="hero-cta flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-[10px] tracking-[0.22em] uppercase opacity-55">
+          <span>2,847 creators paid</span>
+          <span aria-hidden className="hidden sm:inline">·</span>
+          <span>143 brands</span>
+          <span aria-hidden className="hidden sm:inline">·</span>
+          <span>$1.4M+ paid out</span>
+        </div>
+
         {/* CTAs */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
           <Link href="/creators" className="hero-cta btn-primary">
             I&apos;m a creator
             <ArrowUpRight className="w-4 h-4" />
@@ -273,7 +282,7 @@ export const HeroCampaign = () => {
       {/* Bottom mono caption */}
       <div className="hero-mono absolute bottom-8 left-8 right-8 flex items-center justify-between font-mono text-[11px] tracking-[0.28em] uppercase">
         <span>scroll ↓</span>
-        <span className="hidden sm:inline">est. 2026 · ugc creators × brands</span>
+        <span className="hidden sm:inline">creators · brands · payments · analytics</span>
       </div>
     </section>
   );

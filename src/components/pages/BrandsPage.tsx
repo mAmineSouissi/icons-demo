@@ -1,39 +1,19 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import {
-  ArrowUpRight,
-  BarChart2,
-  ShieldCheck,
-  Layers,
-  Headphones,
-  Check,
-} from "lucide-react";
-import {
-  PageHero,
-  InlineStats,
-  SectionShell,
-  BorderedGrid,
-  CTASection,
-} from "@/components/shared/PagePrimitives";
-import { ease } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { CTASection, SectionLabel } from "@/components/shared/PagePrimitives";
+import { Sparkle } from "@/components/ui/Sparkle";
+import { ease, dur, stagger } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 
-const heroStats = [
-  { value: "500+", label: "Campaigns" },
-  { value: "10M+", label: "Reach" },
-  { value: "2×", label: "Avg. ROI" },
-];
-
-// Trusted-by logos rendered as monospace wordmarks (placeholder; replace with SVGs later)
 const trustedBy = [
   "Glow",
   "TrailRunner",
@@ -49,101 +29,443 @@ const trustedBy = [
   "Maven",
 ];
 
-const features = [
-  { Icon: Layers,      title: "Authentic content at scale", body: "Commission dozens of creator-led videos, posts, and reviews — all on-brand, all unique." },
-  { Icon: ShieldCheck, title: "Vetted creator network",     body: "Every creator is verified for audience quality, engagement, and brand-safety." },
-  { Icon: BarChart2,   title: "Real-time analytics",        body: "Track reach, engagement, and conversions from a single clean dashboard." },
-  { Icon: Headphones,  title: "Dedicated support",          body: "A campaign manager is with you every step — from brief to delivery." },
+const results = [
+  {
+    brand: "GlowBeauty",
+    category: "Beauty & Lifestyle",
+    metric: "3.2M",
+    metricLabel: "Impressions",
+    sub: "42% lower CPM vs. paid ads",
+    tone: "gradient-warm",
+  },
+  {
+    brand: "TrailRunner",
+    category: "Sports & Fitness",
+    metric: "18K",
+    metricLabel: "New sign-ups",
+    sub: "From a 30-creator campaign",
+    tone: "gradient-cool",
+  },
+  {
+    brand: "NestHome",
+    category: "Home & Living",
+    metric: "4×",
+    metricLabel: "ROAS",
+    sub: "Creator-first product launch",
+    tone: "gradient-accent",
+  },
 ];
 
-const cases = [
-  { brand: "GlowBeauty",   result: "3.2M impressions, 42% lower CPM vs. paid ads.", category: "Beauty & Lifestyle",  tone: "gradient-warm" },
-  { brand: "TrailRunner",  result: "18K new sign-ups from a 30-creator campaign.",   category: "Sports & Fitness",    tone: "gradient-cool" },
-  { brand: "NestHome",     result: "4× ROAS on a creator-first product launch.",     category: "Home & Living",       tone: "gradient-accent" },
+const process = [
+  {
+    num: "01",
+    title: "Brief us.",
+    badge: "Campaign brief",
+    body: "A 10-minute form. Your goal, budget, target demo, and formats — we handle everything else.",
+    stat: "10 min",
+    statLabel: "to submit",
+    bg: "var(--br-indigo)",
+    ink: "var(--br-indigo-ink)",
+    rotate: "-rotate-1",
+  },
+  {
+    num: "02",
+    title: "We match.",
+    badge: "Creator matching",
+    body: "Our team hand-picks creators from 10K+ vetted profiles. Every recommendation is explained.",
+    stat: "48 hrs",
+    statLabel: "to first match",
+    bg: "var(--br-teal)",
+    ink: "var(--br-teal-ink)",
+    rotate: "rotate-1",
+  },
+  {
+    num: "03",
+    title: "Content ships.",
+    badge: "Live & tracked",
+    body: "Creators go live. Real-time analytics, UTM tracking, and direct attribution from day one.",
+    stat: "4 days",
+    statLabel: "avg. live time",
+    bg: "var(--br-amber)",
+    ink: "var(--br-amber-ink)",
+    rotate: "-rotate-[0.5deg]",
+  },
 ];
 
 const previewCreators = [
-  { name: "Maya R.",    niche: "Books · 412K",   tone: "gradient-warm"   },
-  { name: "Kai L.",     niche: "Travel · 1.2M",  tone: "gradient-cool"   },
-  { name: "Priya N.",   niche: "Beauty · 289K",  tone: "gradient-accent" },
-  { name: "Theo W.",    niche: "Fitness · 640K", tone: "gradient-mono"   },
-  { name: "Diego A.",   niche: "Design · 523K",  tone: "gradient-cool"   },
-  { name: "Linh P.",    niche: "Recipes · 1.8M", tone: "gradient-accent" },
+  { name: "Maya R.",  slug: "mayareads",    niche: "Books & culture",    followers: "412K", engagement: "6.8%", platform: "Instagram", available: true,  img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&h=800&fit=crop&crop=face&q=80" },
+  { name: "Kai L.",   slug: "kaiwalks",     niche: "Travel & food",      followers: "1.2M", engagement: "4.2%", platform: "YouTube",   available: false, img: "https://images.unsplash.com/photo-1542206395-9feb3edaa68d?w=600&h=800&fit=crop&crop=face&q=80" },
+  { name: "Priya N.", slug: "priyaedits",   niche: "Beauty & wellness",  followers: "289K", engagement: "8.1%", platform: "Instagram", available: true,  img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop&crop=face&q=80" },
+  { name: "Theo W.",  slug: "theofitness",  niche: "Fitness coaching",   followers: "640K", engagement: "5.3%", platform: "TikTok",    available: true,  img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop&crop=face&q=80" },
+  { name: "Diego A.", slug: "diegoarchive", niche: "Streetwear & design",followers: "523K", engagement: "7.1%", platform: "Instagram", available: false, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&h=800&fit=crop&crop=face&q=80" },
+  { name: "Linh P.",  slug: "linhcooks",    niche: "Recipes & home",     followers: "1.8M", engagement: "5.7%", platform: "YouTube",   available: true,  img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=800&fit=crop&crop=face&q=80" },
 ];
 
-const plans = [
-  {
-    name: "Spark",
-    price: "$2.5K",
-    cadence: "per campaign",
-    description: "For first-time creator-led launches and one-off product moments.",
-    features: [
-      "Up to 5 vetted creators",
-      "Brief + creative direction",
-      "Standard analytics dashboard",
-      "Email support",
-    ],
-    cta: "Start a campaign",
-    highlight: false,
-  },
-  {
-    name: "Studio",
-    price: "$8K",
-    cadence: "per month",
-    description: "For brands running always-on creator pipelines and seasonal pushes.",
-    features: [
-      "20–40 creators per month",
-      "Dedicated campaign manager",
-      "Advanced analytics + UTM tracking",
-      "Whitelisting & paid amplification",
-      "Quarterly strategy review",
-    ],
-    cta: "Talk to studio",
-    highlight: true,
-  },
-  {
-    name: "Network",
-    price: "Custom",
-    cadence: "tailored",
-    description: "For global brands with a year-round creator program and roster.",
-    features: [
-      "Unlimited campaigns",
-      "On-site creator events",
-      "Custom data & API access",
-      "Priority creator booking",
-      "Multi-market activation",
-    ],
-    cta: "Contact sales",
-    highlight: false,
-  },
-];
+
+/* ─── Styles ─────────────────────────────────────────────────────── */
+
+const PAGE_STYLES = `
+  :root, [data-theme="brand"] {
+    --br-indigo: #b8c8f8; --br-indigo-ink: #3848bf;
+    --br-teal:   #b8f0e8; --br-teal-ink:   #1a7a6a;
+    --br-amber:  #f8e0b8; --br-amber-ink:  #9a5a10;
+    --br-rose:   #f8b8c8; --br-rose-ink:   #b02040;
+    --br-text-on-pastel: rgba(0,0,0,0.85);
+    --br-subtext-on-pastel: rgba(0,0,0,0.55);
+  }
+  html[data-theme="dark"] {
+    --br-indigo: #dde4f8; --br-indigo-ink: #2d3aaa;
+    --br-teal:   #d4f0ea; --br-teal-ink:   #126656;
+    --br-amber:  #f5deb3; --br-amber-ink:  #7a4510;
+    --br-rose:   #f5c8d8; --br-rose-ink:   #922040;
+    --br-text-on-pastel: rgba(0,0,0,0.88);
+    --br-subtext-on-pastel: rgba(0,0,0,0.55);
+  }
+
+  /* Hero */
+  .br-hero-grid { display: grid; grid-template-columns: 1fr; min-height: 580px; }
+  @media (min-width: 1024px) { .br-hero-grid { grid-template-columns: 1fr 420px; } }
+  .br-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 28rem; }
+
+  /* Mosaic */
+  .br-mosaic-top { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); }
+  .br-mosaic-bottom { display: grid; grid-template-columns: 1fr 1fr; }
+  .br-mosaic-cell { display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; min-height: 150px; position: relative; overflow: hidden; }
+
+  /* Power strip */
+  .br-ps-grid { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 768px) { .br-ps-grid { grid-template-columns: repeat(3, 1fr); } }
+  .br-ps-cell { padding: 2.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  @media (min-width: 768px) { .br-ps-cell { padding: 3rem 3rem; border-bottom: none; border-right: 1px solid rgba(255,255,255,0.1); } }
+  .br-ps-cell:last-child { border: none; }
+
+  /* Process steps */
+  .br-steps-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  @media (min-width: 768px) { .br-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; } }
+
+  /* Results rows */
+  .br-result-cols { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  @media (min-width: 768px) { .br-result-cols { grid-template-columns: 2fr 1fr 2fr; align-items: center; } }
+
+  /* Creator preview */
+  .br-creators-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--color-border); }
+  @media (min-width: 640px)  { .br-creators-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1024px) { .br-creators-grid { grid-template-columns: repeat(6, 1fr); } }
+  .br-creator-card { aspect-ratio: 3 / 4; display: block; position: relative; overflow: hidden; }
+  .br-creator-card:hover { outline: 2.5px solid var(--color-accent); outline-offset: -2px; z-index: 2; }
+  .br-platform-badge { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 999px; background: rgba(255,255,255,0.72); backdrop-filter: blur(6px); color: rgba(0,0,0,0.65); }
+  .br-avail-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .br-avail-dot.avail { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.7); }
+  .br-avail-dot.busy  { background: rgba(255,255,255,0.28); }
+`;
+
+/* ─── Custom SVG marks ───────────────────────────────────────────── */
+
+// Document with brief lines + checkmark — "Brief your campaign"
+const BriefMark = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+    <path
+      d="M5 2h9l4 4v14H5V2Z"
+      stroke={color}
+      strokeWidth="1.3"
+      strokeLinejoin="round"
+    />
+    <path d="M14 2v4h4" stroke={color} strokeWidth="1.3" />
+    <path
+      d="M8 10h6M8 13h4"
+      stroke={color}
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M9 16.5l1.5 1.5 3-3"
+      stroke={color}
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// Hub + spokes scatter — "We match your brand to creators"
+const NetworkMark = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+    <circle cx="11" cy="11" r="2.5" fill={color} />
+    <circle cx="4" cy="5" r="1.7" fill={color} opacity="0.6" />
+    <circle cx="18" cy="4" r="1.7" fill={color} opacity="0.6" />
+    <circle cx="3" cy="17" r="1.7" fill={color} opacity="0.6" />
+    <circle cx="19" cy="17" r="1.7" fill={color} opacity="0.6" />
+    <path
+      d="M5.5 6.5L9 9.5M12.8 9.2l4.2-4M5 15.5l4.2-3.2M13 12.5l4.5 3.5"
+      stroke={color}
+      strokeWidth="1"
+      strokeLinecap="round"
+      opacity="0.45"
+    />
+  </svg>
+);
+
+// Curve arc + arrowhead + dot — "Content launches fast"
+const LaunchMark = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+    <path
+      d="M3 19 C5 11, 11 5, 19 3"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+    <path
+      d="M15 3h4v4"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="8.5" cy="13.5" r="1.6" fill={color} />
+  </svg>
+);
+
+// Ascending staircase bars — "Real attribution, real ROI"
+const ROIMark = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+    <path
+      d="M2.5 19.5h17"
+      stroke={color}
+      strokeWidth="1.3"
+      strokeLinecap="round"
+    />
+    <rect
+      x="4"
+      y="13"
+      width="3.5"
+      height="6.5"
+      rx="0.5"
+      fill={color}
+      opacity="0.35"
+    />
+    <rect
+      x="9"
+      y="9"
+      width="3.5"
+      height="10.5"
+      rx="0.5"
+      fill={color}
+      opacity="0.65"
+    />
+    <rect x="14" y="4" width="3.5" height="15.5" rx="0.5" fill={color} />
+  </svg>
+);
+
+/* ─── Page ───────────────────────────────────────────────────────── */
 
 export const BrandsPage = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      gsap.utils.toArray<Element>(".br-reveal").forEach((el) => {
-        gsap.from(el, {
-          y: 40,
-          opacity: 0,
-          duration: 0.85,
+      // Hero words reveal
+      gsap.fromTo(
+        ".br-word",
+        { opacity: 0, y: 48, rotate: 3 },
+        {
+          opacity: 1,
+          y: 0,
+          rotate: 0,
+          duration: dur.epic,
+          ease: ease.cinematic,
+          stagger: stagger.tight,
+          delay: 0.1,
+          overwrite: "auto",
+          clearProps: "transform,opacity",
+        },
+      );
+      gsap.fromTo(
+        ".br-hero-in",
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: dur.base,
           ease: ease.out,
-          scrollTrigger: {
-            trigger: el,
-            start: "top 88%",
-            toggleActions: "play none none reverse",
+          stagger: stagger.normal,
+          delay: 0.45,
+        },
+      );
+
+      // Power strip
+      gsap.utils.toArray<Element>(".br-ps-reveal").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: dur.slow,
+            ease: ease.out,
+            delay: i * stagger.normal,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              toggleActions: "play none none none",
+              once: true,
+            },
           },
-        });
+        );
       });
 
-      // Logo wall marquee
+      // Process steps
+      gsap.utils.toArray<Element>(".br-step").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { y: 40, opacity: 0, scale: 0.97 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: dur.slow,
+            ease: ease.out,
+            delay: i * 0.12,
+            scrollTrigger: {
+              trigger: ".br-steps-grid",
+              start: "top 88%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Results rows — clip-path wipe
+      gsap.utils.toArray<Element>(".br-result-row").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { clipPath: "inset(0 0 100% 0)", y: 16 },
+          {
+            clipPath: "inset(0 0 0% 0)",
+            y: 0,
+            duration: dur.base,
+            ease: ease.out,
+            delay: i * 0.1,
+            scrollTrigger: {
+              trigger: ".br-results-list",
+              start: "top 85%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Result metrics pop
+      gsap.utils.toArray<Element>(".br-metric").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { scale: 0.7, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: dur.base,
+            ease: ease.bounce,
+            delay: 0.2 + i * 0.1,
+            scrollTrigger: {
+              trigger: ".br-results-list",
+              start: "top 85%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Creator cards
+      gsap.fromTo(
+        ".br-creator-card",
+        { y: 50, opacity: 0, scale: 0.96 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: dur.slow,
+          ease: ease.out,
+          stagger: stagger.cards,
+          scrollTrigger: {
+            trigger: ".br-creators-grid",
+            start: "top 88%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        },
+      );
+
+      // Benefit rows — clip-path wipe
+      gsap.utils.toArray<Element>(".br-benefit-row").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { clipPath: "inset(0 0 100% 0)", y: 16 },
+          {
+            clipPath: "inset(0 0 0% 0)",
+            y: 0,
+            duration: dur.base,
+            ease: ease.out,
+            delay: i * 0.09,
+            scrollTrigger: {
+              trigger: ".br-benefits-list",
+              start: "top 85%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Benefit icons pop
+      gsap.utils.toArray<Element>(".br-benefit-icon").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: dur.base,
+            ease: ease.bounce,
+            delay: 0.15 + i * 0.09,
+            scrollTrigger: {
+              trigger: ".br-benefits-list",
+              start: "top 85%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Generic reveals
+      gsap.utils.toArray<Element>(".br-reveal").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: dur.slow,
+            ease: ease.out,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 95%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          },
+        );
+      });
+
+      // Logo marquee
       const track = ref.current?.querySelector<HTMLElement>(".br-logos");
       if (track) {
         const w = track.scrollWidth / 2;
         gsap.to(track, {
           x: -w,
-          duration: 32,
+          duration: 30,
           ease: "none",
           repeat: -1,
           modifiers: { x: gsap.utils.unitize((x) => parseFloat(x) % w) },
@@ -155,199 +477,831 @@ export const BrandsPage = () => {
 
   return (
     <div ref={ref} className="min-h-screen bg-(--color-bg) text-(--color-fg)">
-      <PageHero
-        eyebrow="For Brands"
-        title="Your Brand. __ACCENT__Amplified."
-        lede="Stop guessing which influencers will perform. Icons matches you with creators whose audience actually cares about what you do."
-        meta={<InlineStats items={heroStats} />}
-      />
+      <style>{PAGE_STYLES}</style>
 
-      {/* ── Trusted-by logo wall ─────────────────────────────────── */}
-      <section className="relative overflow-hidden py-10 border-y border-(--color-border)">
-        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-(--color-bg) to-transparent pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-(--color-bg) to-transparent pointer-events-none" />
-        <div className="br-logos flex items-center gap-16 whitespace-nowrap w-max">
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden border-b border-(--color-border) dot-grid bracket-frame">
+        <div className="br-hero-grid">
+          {/* Left */}
+          <div className="relative flex flex-col justify-center px-8 md:px-14 py-16 md:py-28 overflow-hidden gap-8">
+            {/* Sparkle accents */}
+            <Sparkle
+              size={52}
+              fill="var(--color-accent)"
+              className="absolute top-8 right-8 md:right-16 -rotate-12 pointer-events-none opacity-70"
+            />
+            <Sparkle
+              size={36}
+              fill="var(--br-teal-ink)"
+              className="absolute bottom-10 left-6 rotate-6 pointer-events-none opacity-50"
+            />
+
+            <div className="relative z-10 flex flex-col gap-7">
+              {/* Badge */}
+              <div
+                className="br-hero-in inline-flex items-center gap-2.5 self-start px-4 py-2 rounded-full"
+                style={{
+                  background: "var(--color-accent)",
+                  color: "rgba(0,0,0,0.85)",
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-black/40 animate-pulse" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.3em] font-bold">
+                  Open for Briefs
+                </span>
+              </div>
+
+              {/* Title */}
+              <h1
+                className="font-display italic leading-[0.9]"
+                style={{ fontSize: "clamp(3.75rem,9vw,8rem)" }}
+                aria-label="Turn creators into revenue."
+              >
+                {[
+                  { text: "Turn creators", accent: false },
+                  { text: "into", accent: false },
+                  { text: "revenue.", accent: true },
+                ].map(({ text, accent }) => (
+                  <span key={text} className="block">
+                    <span
+                      className="br-word inline-block"
+                      style={
+                        accent ? { color: "var(--color-accent)" } : undefined
+                      }
+                    >
+                      {text}
+                    </span>
+                  </span>
+                ))}
+              </h1>
+
+              {/* Script subtitle */}
+              <p className="br-hero-in font-script text-xl md:text-2xl opacity-65">
+                — real creators, real attribution, zero agency
+              </p>
+
+              {/* Body */}
+              <p className="br-hero-in font-mono text-[13px] tracking-wide text-(--color-muted-fg) leading-relaxed max-w-md">
+                Stop guessing which creators will perform. Icons matches your
+                brand with vetted creators whose audiences actually convert —
+                and tracks every dollar.
+              </p>
+
+              {/* CTAs */}
+              <div className="br-hero-in flex flex-wrap items-center gap-4">
+                <Link href="/brief" className="btn-primary group">
+                  Start a campaign
+                  <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+                <Link href="/pricing" className="btn-ghost group">
+                  See pricing
+                  <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              </div>
+
+              {/* Stat pills */}
+              <div className="br-hero-in br-stat-row">
+                {[
+                  { value: "500+", label: "Campaigns", tone: "cream"  },
+                  { value: "10M+", label: "Reach",     tone: "pink"   },
+                  { value: "2×",   label: "Avg. ROAS", tone: "accent" },
+                ].map((s) => (
+                  <div
+                    key={s.label}
+                    className="sticker flex flex-col items-center justify-center py-4 px-2 text-center"
+                    data-tone={s.tone}
+                  >
+                    <span className="font-display italic text-2xl leading-none mb-1">{s.value}</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] opacity-60">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right — live campaign results mosaic */}
+          <div className="hidden lg:flex flex-col border-l border-(--color-border)">
+            <div className="br-mosaic-top flex-1">
+              <div className="br-mosaic-cell gradient-warm border-r border-(--color-border)/40">
+                <div className="flex items-center justify-between">
+                  <span
+                    className="font-mono text-[9px] uppercase tracking-[0.22em]"
+                    style={{ color: "rgba(0,0,0,0.45)" }}
+                  >
+                    Beauty
+                  </span>
+                  <span
+                    className="font-mono text-[9px] tracking-[0.15em] px-2 py-0.5 rounded-full"
+                    style={{
+                      background: "rgba(255,255,255,0.6)",
+                      color: "rgba(0,0,0,0.55)",
+                    }}
+                  >
+                    Live ●
+                  </span>
+                </div>
+                <div>
+                  <p
+                    className="font-display text-4xl leading-none"
+                    style={{ color: "rgba(0,0,0,0.75)" }}
+                  >
+                    3.2M
+                  </p>
+                  <p
+                    className="font-mono text-[9px] uppercase tracking-[0.2em] mt-1"
+                    style={{ color: "rgba(0,0,0,0.45)" }}
+                  >
+                    Impressions
+                  </p>
+                  <p
+                    className="font-display text-lg leading-none mt-2"
+                    style={{ color: "rgba(0,0,0,0.7)" }}
+                  >
+                    GlowBeauty
+                  </p>
+                </div>
+              </div>
+              <div className="br-mosaic-cell gradient-cool">
+                <div className="flex items-center justify-between">
+                  <span
+                    className="font-mono text-[9px] uppercase tracking-[0.22em]"
+                    style={{ color: "rgba(0,0,0,0.45)" }}
+                  >
+                    Fitness
+                  </span>
+                  <span
+                    className="font-mono text-[9px] tracking-[0.15em] px-2 py-0.5 rounded-full"
+                    style={{
+                      background: "rgba(255,255,255,0.6)",
+                      color: "rgba(0,0,0,0.55)",
+                    }}
+                  >
+                    Delivered ✓
+                  </span>
+                </div>
+                <div>
+                  <p
+                    className="font-display text-4xl leading-none"
+                    style={{ color: "rgba(0,0,0,0.75)" }}
+                  >
+                    18K
+                  </p>
+                  <p
+                    className="font-mono text-[9px] uppercase tracking-[0.2em] mt-1"
+                    style={{ color: "rgba(0,0,0,0.45)" }}
+                  >
+                    New sign-ups
+                  </p>
+                  <p
+                    className="font-display text-lg leading-none mt-2"
+                    style={{ color: "rgba(0,0,0,0.7)" }}
+                  >
+                    TrailRunner
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="br-mosaic-bottom flex-1">
+              <div className="br-mosaic-cell gradient-accent border-r border-(--color-border)/40">
+                <div className="flex items-center justify-between">
+                  <span
+                    className="font-mono text-[9px] uppercase tracking-[0.22em]"
+                    style={{ color: "rgba(0,0,0,0.45)" }}
+                  >
+                    Home
+                  </span>
+                  <span
+                    className="font-mono text-[9px] tracking-[0.15em] px-2 py-0.5 rounded-full"
+                    style={{
+                      background: "rgba(255,255,255,0.6)",
+                      color: "rgba(0,0,0,0.55)",
+                    }}
+                  >
+                    Delivered ✓
+                  </span>
+                </div>
+                <div>
+                  <p
+                    className="font-display text-4xl leading-none"
+                    style={{ color: "rgba(0,0,0,0.75)" }}
+                  >
+                    4×
+                  </p>
+                  <p
+                    className="font-mono text-[9px] uppercase tracking-[0.2em] mt-1"
+                    style={{ color: "rgba(0,0,0,0.45)" }}
+                  >
+                    ROAS achieved
+                  </p>
+                  <p
+                    className="font-display text-lg leading-none mt-2"
+                    style={{ color: "rgba(0,0,0,0.7)" }}
+                  >
+                    NestHome
+                  </p>
+                </div>
+              </div>
+              <div className="br-mosaic-cell gradient-mono">
+                <div className="flex items-center justify-between">
+                  <span
+                    className="font-mono text-[9px] uppercase tracking-[0.22em]"
+                    style={{ color: "rgba(255,255,255,0.45)" }}
+                  >
+                    Design
+                  </span>
+                  <span
+                    className="font-mono text-[9px] tracking-[0.15em] px-2 py-0.5 rounded-full"
+                    style={{
+                      background: "rgba(255,255,255,0.15)",
+                      color: "rgba(255,255,255,0.7)",
+                    }}
+                  >
+                    Active ●
+                  </span>
+                </div>
+                <div>
+                  <p
+                    className="font-display text-4xl leading-none"
+                    style={{ color: "rgba(255,255,255,0.85)" }}
+                  >
+                    $48K
+                  </p>
+                  <p
+                    className="font-mono text-[9px] uppercase tracking-[0.2em] mt-1"
+                    style={{ color: "rgba(255,255,255,0.45)" }}
+                  >
+                    Creator fees managed
+                  </p>
+                  <p
+                    className="font-display text-lg leading-none mt-2"
+                    style={{ color: "rgba(255,255,255,0.7)" }}
+                  >
+                    Maven
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Logo marquee ─────────────────────────────────────────── */}
+      <section className="relative overflow-hidden py-8 border-b border-(--color-border)">
+        <div
+          aria-hidden
+          className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, var(--color-bg), transparent)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to left, var(--color-bg), transparent)",
+          }}
+        />
+        <div className="br-logos flex items-center gap-14 whitespace-nowrap w-max">
           {[...trustedBy, ...trustedBy].map((brand, i) => (
             <span
               key={i}
-              className="font-display text-3xl md:text-4xl text-(--color-fg)/45 tracking-tight"
+              className="font-display text-2xl md:text-3xl tracking-tight"
+              style={{
+                color: "color-mix(in srgb, var(--color-fg) 28%, transparent)",
+              }}
             >
               {brand}
             </span>
           ))}
         </div>
-        <p className="mt-6 text-center eyebrow !text-[10px]">
+        <p className="mt-5 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-(--color-muted-fg)">
           500+ brand campaigns delivered
         </p>
       </section>
 
-      {/* ── What You Get ─────────────────────────────────────────── */}
-      <SectionShell
-        eyebrow="What you get"
-        title="A creator program that works like an in-house team."
+      {/* ── Power strip — KPIs ───────────────────────────────────── */}
+      <section
+        className="relative overflow-hidden border-b border-(--color-border)"
+        style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}
       >
-        <BorderedGrid cols={4}>
-          {features.map(({ Icon, title, body }) => (
-            <div key={title} className="sx-reveal p-8">
-              <Icon className="w-6 h-6 text-(--color-accent) mb-6" strokeWidth={1.5} />
-              <h3 className="font-medium text-base mb-3">{title}</h3>
-              <p className="text-sm text-(--color-muted-fg) leading-relaxed">
-                {body}
+        <div
+          aria-hidden
+          className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, var(--color-accent) 0%, transparent 70%)",
+            opacity: 0.05,
+            transform: "translate(30%, -40%)",
+          }}
+        />
+        <div className="br-ps-grid max-w-7xl mx-auto px-8 md:px-14 relative">
+          {[
+            {
+              value: "500+",
+              label: "Campaigns run",
+              sub: "across 40+ verticals",
+            },
+            {
+              value: "10M+",
+              label: "Total creator reach",
+              sub: "combined audience",
+            },
+            {
+              value: "2×",
+              label: "Avg. ROAS delivered",
+              sub: "vs. paid ads benchmark",
+            },
+          ].map(({ value, label, sub }) => (
+            <div key={label} className="br-ps-cell br-ps-reveal">
+              <p
+                className="font-display leading-none mb-3"
+                style={{
+                  fontSize: "clamp(3.5rem,7vw,6rem)",
+                  color: "var(--color-accent)",
+                }}
+              >
+                {value}
+              </p>
+              <p
+                className="font-medium text-base mb-1"
+                style={{ color: "var(--color-bg)" }}
+              >
+                {label}
+              </p>
+              <p
+                className="font-mono text-[11px] tracking-wide"
+                style={{
+                  color: "color-mix(in srgb, var(--color-bg) 50%, transparent)",
+                }}
+              >
+                {sub}
               </p>
             </div>
           ))}
-        </BorderedGrid>
-      </SectionShell>
+        </div>
+      </section>
 
-      {/* ── Creator preview ──────────────────────────────────────── */}
-      <SectionShell
-        eyebrow="Talent on tap"
-        title="A glimpse of who you could be working with."
-        description="From niche micro-creators to platform-defining voices — our roster spans 40+ verticals across beauty, fitness, food, lifestyle, and design."
-      >
-        <BorderedGrid cols={3}>
-          {previewCreators.map((c) => (
-            <article
-              key={c.name}
-              className="sx-reveal card-hover group cursor-pointer p-6"
-            >
-              <div className={`${c.tone} aspect-[5/4] mb-5 relative overflow-hidden rounded-sm`}>
-                <span className="absolute inset-0 flex items-center justify-center font-display text-7xl text-(--color-fg)/30">
-                  {c.name.charAt(0)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-base group-hover:text-(--color-accent) transition-colors">
-                    {c.name}
-                  </h3>
-                  <p className="text-xs text-(--color-muted-fg) mt-1">{c.niche}</p>
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-(--color-muted-fg) opacity-0 group-hover:opacity-100 group-hover:text-(--color-accent) transition-all duration-300" />
-              </div>
-            </article>
-          ))}
-        </BorderedGrid>
-      </SectionShell>
-
-      {/* ── Case studies ─────────────────────────────────────────── */}
-      <SectionShell
-        eyebrow="Results that speak"
-        title="Recent work."
-      >
-        <BorderedGrid cols={3}>
-          {cases.map((c) => (
-            <article
-              key={c.brand}
-              className="sx-reveal card-hover group cursor-pointer p-8 flex flex-col justify-between gap-8 min-h-[320px]"
-            >
-              <div className={`${c.tone} h-24 rounded-sm relative overflow-hidden`}>
-                <span className="absolute inset-0 flex items-center justify-center font-display text-3xl text-(--color-fg)/55">
-                  {c.brand}
-                </span>
-              </div>
-              <div>
-                <p className="eyebrow !text-[10px] mb-3 text-(--color-accent)">
-                  {c.category}
-                </p>
-                <h3 className="font-medium text-xl mb-3">{c.brand}</h3>
-                <p className="text-sm text-(--color-muted-fg) leading-relaxed">
-                  {c.result}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-(--color-accent) opacity-70 group-hover:opacity-100 transition">
-                Read the breakdown
-                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
-            </article>
-          ))}
-        </BorderedGrid>
-      </SectionShell>
-
-      {/* ── Pricing ──────────────────────────────────────────────── */}
-      <SectionShell
-        eyebrow="Plans"
-        title="Pricing that scales with ambition."
-        description="No mark-ups on creator fees. Every plan includes brief writing, talent matching, and a campaign manager."
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {plans.map((plan) => (
-            <article
-              key={plan.name}
-              className={cn(
-                "sx-reveal relative p-8 md:p-10 rounded-sm flex flex-col transition-all duration-300",
-                plan.highlight
-                  ? "bg-(--color-fg) text-(--color-bg) shadow-2xl"
-                  : "border border-(--color-border) bg-(--color-panel-2)/40 hover:border-(--color-border-strong)",
-              )}
-            >
-              {plan.highlight && (
-                <span className="absolute -top-3 left-8 chip" data-tone="accent">
-                  Most popular
-                </span>
-              )}
-              <header className="mb-8">
-                <h3 className="font-display text-3xl mb-3">{plan.name}</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-display text-5xl">{plan.price}</span>
-                  <span
-                    className={cn(
-                      "text-sm",
-                      plan.highlight
-                        ? "text-(--color-bg)/60"
-                        : "text-(--color-muted-fg)",
-                    )}
-                  >
-                    {plan.cadence}
-                  </span>
-                </div>
-                <p
-                  className={cn(
-                    "mt-4 text-sm leading-relaxed",
-                    plan.highlight
-                      ? "text-(--color-bg)/75"
-                      : "text-(--color-muted-fg)",
-                  )}
-                >
-                  {plan.description}
-                </p>
-              </header>
-              <ul className="space-y-3 mb-10 flex-1">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-sm">
-                    <Check
-                      className={cn(
-                        "w-4 h-4 mt-0.5 shrink-0",
-                        plan.highlight ? "text-(--color-accent)" : "text-(--color-accent)",
-                      )}
-                      strokeWidth={2.5}
-                    />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/contact"
-                className={cn(
-                  "inline-flex items-center justify-between gap-2 px-5 py-3 rounded-full text-sm font-medium transition-all duration-300 group",
-                  plan.highlight
-                    ? "bg-(--color-accent) text-black hover:bg-(--color-fg) hover:text-(--color-bg)"
-                    : "border border-(--color-fg) text-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg)",
-                )}
+      {/* ── How it works — 3-step process ────────────────────────── */}
+      <section className="border-b border-(--color-border) px-6 md:px-10 py-20 md:py-28">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
+            <div>
+              <div
+                // className="br-reveal"
+                className="font-display leading-[0.9] flex flex-row gap-x-4"
+                style={{ fontSize: "clamp(3rem,3vw,3rem)" }}
               >
-                {plan.cta}
+                {[
+                  { text: "How", accent: false },
+                  { text: "it", accent: true },
+                  { text: "works.", accent: false },
+                ].map(({ text, accent }) => (
+                  <span key={text} className="block">
+                    <span
+                      className="br-word inline-block"
+                      style={
+                        accent ? { color: "var(--color-accent-4)" } : undefined
+                      }
+                    >
+                      {text}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <p className="br-reveal hidden md:block font-mono text-[12px] tracking-wide text-(--color-muted-fg) max-w-xs leading-relaxed self-end">
+              From your first conversation to published content — typically
+              under a week.
+            </p>
+          </div>
+
+          <div className="br-steps-grid">
+            {process.map(
+              ({
+                num,
+                title,
+                badge,
+                body,
+                stat,
+                statLabel,
+                bg,
+                ink,
+                rotate,
+              }) => (
+                <div
+                  key={num}
+                  className="br-step relative overflow-hidden rounded-lg border-2 border-(--color-fg)"
+                  style={{
+                    background: bg,
+                    boxShadow: "8px 8px 0 0 var(--color-fg)",
+                  }}
+                >
+                  {/* Watermark number */}
+                  <span
+                    aria-hidden
+                    className="absolute -right-3 -top-3 font-display italic select-none pointer-events-none"
+                    style={{
+                      fontSize: "clamp(6rem,12vw,9rem)",
+                      lineHeight: 1,
+                      opacity: 0.13,
+                      color: ink,
+                    }}
+                  >
+                    {num}
+                  </span>
+
+                  <div className="relative z-10 p-8 md:p-10 flex flex-col justify-between min-h-[300px]">
+                    <div>
+                      {/* Badge sticker */}
+                      <div
+                        className={`inline-block px-3 py-1.5 rounded-full border-2 border-(--color-fg) font-mono text-[10px] tracking-[0.22em] uppercase mb-6 ${rotate}`}
+                        style={{
+                          background: "#ffffff",
+                          color: "#0a0a0a",
+                          boxShadow: "3px 3px 0 0 #0a0a0a",
+                        }}
+                      >
+                        ✦ {badge}
+                      </div>
+
+                      <h3
+                        className="font-display italic text-4xl md:text-5xl leading-none mb-4"
+                        style={{ color: "var(--br-text-on-pastel)" }}
+                      >
+                        {title}
+                      </h3>
+                      <p
+                        className="font-mono text-[12px] tracking-wide leading-relaxed"
+                        style={{ color: "var(--br-subtext-on-pastel)" }}
+                      >
+                        {body}
+                      </p>
+                    </div>
+
+                    {/* Stat at bottom */}
+                    <div
+                      className="mt-8 pt-5 border-t-2"
+                      style={{
+                        borderColor: `color-mix(in srgb, ${ink} 30%, transparent)`,
+                      }}
+                    >
+                      <p
+                        className="font-display italic text-3xl leading-none"
+                        style={{ color: ink }}
+                      >
+                        {stat}
+                      </p>
+                      <p
+                        className="font-mono text-[10px] uppercase tracking-[0.25em] mt-1.5"
+                        style={{ color: "var(--br-subtext-on-pastel)" }}
+                      >
+                        {statLabel}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ),
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Results — editorial rows ──────────────────────────────── */}
+      <section className="border-b border-(--color-border)">
+        <div className="px-6 md:px-10 py-16 md:py-20 border-b border-(--color-border)">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div>
+              <div className="br-reveal mb-5 font-display text-4xl md:text-6xl leading-[0.95]">
+                <SectionLabel>Results that speak</SectionLabel>
+              </div>
+            </div>
+            <p className="br-reveal hidden md:block font-mono text-[12px] tracking-wide text-(--color-muted-fg) max-w-xs leading-relaxed self-end">
+              No projections. No cherry-picked outliers. Three honest campaign
+              breakdowns.
+            </p>
+          </div>
+        </div>
+
+        <div className="br-results-list max-w-7xl mx-auto">
+          {results.map(
+            ({ brand, category, metric, metricLabel, sub, tone }) => (
+              <div
+                key={brand}
+                className="br-result-row group relative border-b border-(--color-border) overflow-hidden"
+                style={{ clipPath: "inset(0 0 0% 0)" }}
+              >
+                <div
+                  aria-hidden
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                >
+                  <div
+                    className={`${tone} absolute inset-0`}
+                    style={{ opacity: 0.3 }}
+                  />
+                </div>
+
+                <div className="relative z-10 br-result-cols px-6 md:px-10 py-9 md:py-11">
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[10px] tracking-[0.28em] text-(--color-muted-fg) mb-2 uppercase">
+                      {category}
+                    </span>
+                    <span className="font-display text-3xl md:text-5xl lg:text-[3.5rem] leading-none">
+                      {brand}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col items-start md:items-center">
+                    <span
+                      className="br-metric font-display leading-none"
+                      style={{
+                        fontSize: "clamp(2.5rem,5vw,4rem)",
+                        color: "var(--color-accent)",
+                      }}
+                    >
+                      {metric}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-(--color-muted-fg) mt-1">
+                      {metricLabel}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="font-mono text-[12px] tracking-wide text-(--color-muted-fg) leading-relaxed max-w-xs transition-colors duration-400 group-hover:text-(--color-fg)">
+                      {sub}
+                    </p>
+                    <ArrowUpRight className="w-5 h-5 shrink-0 text-(--color-accent) opacity-0 -translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                  </div>
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+      </section>
+
+      {/* ── Creator roster preview ────────────────────────────────── */}
+      <section className="border-b border-(--color-border) px-6 md:px-10 py-20 md:py-28">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
+            <div>
+              <div className="br-reveal mb-5">
+                <SectionLabel>The talent</SectionLabel>
+              </div>
+              <h2 className="br-reveal font-display text-4xl md:text-6xl leading-[0.95]">
+                10K+ creators,
+                <br />
+                ready to brief.
+              </h2>
+            </div>
+            <div className="br-reveal flex items-end gap-6 self-end">
+              <p className="font-mono text-[12px] tracking-wide text-(--color-muted-fg) max-w-xs leading-relaxed hidden md:block">
+                Beauty, fitness, food, travel, design — 40+ verticals, all
+                audited for audience quality.
+              </p>
+              <Link href="/creators" className="btn-ghost group shrink-0">
+                Browse roster
                 <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
-            </article>
+            </div>
+          </div>
+
+          <div className="br-creators-grid rounded-lg">
+            {previewCreators.map((c, i) => (
+              <Link key={c.name} href={`/creators/${c.slug}`} className="br-creator-card group rounded-lg">
+                {/* Photo */}
+                <img
+                  src={c.img}
+                  alt={c.name}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                />
+
+                {/* Subtle grain overlay */}
+                <div aria-hidden className="absolute inset-0 pointer-events-none"
+                  style={{ backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+
+                {/* Index */}
+                <span className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.25em]"
+                  style={{ color: "rgba(0,0,0,0.3)" }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                {/* Stacked badges — top right */}
+                <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5">
+                  <span className="br-platform-badge">{c.platform}</span>
+                  <span className="font-mono text-[11px] font-semibold tracking-[0.1em] px-3 py-1 rounded-full"
+                    style={{ background: "rgba(255,255,255,0.8)", backdropFilter: "blur(8px)", color: "rgba(0,0,0,0.8)" }}>
+                    {c.followers}
+                  </span>
+                  <span className="font-mono text-[9px] tracking-[0.15em] px-2.5 py-0.5 rounded-full"
+                    style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(4px)", color: "rgba(0,0,0,0.55)" }}>
+                    {c.engagement} eng.
+                  </span>
+                </div>
+
+                {/* Bottom panel */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-400"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)" }}>
+                  <div className="flex items-end justify-between gap-3">
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] mb-1.5"
+                        style={{ color: "rgba(255,255,255,0.7)" }}>{c.niche}</p>
+                      <h3 className="font-display text-2xl leading-none text-white flex items-center gap-2">
+                        {c.name}
+                        <span className={`br-avail-dot ${c.available ? "avail" : "busy"}`} />
+                      </h3>
+                    </div>
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                      style={{ background: "var(--color-accent)", color: "rgba(0,0,0,0.85)" }}>
+                      <ArrowUpRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Why Icons for Brands — editorial benefit list ─────────── */}
+      <section className="border-b border-(--color-border)">
+        <div className="px-6 md:px-10 py-16 md:py-20 border-b border-(--color-border)">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div>
+              <div className="br-reveal mb-5">
+                <SectionLabel>Why Icons</SectionLabel>
+              </div>
+              <h2 className="br-reveal font-display text-4xl md:text-6xl lg:text-7xl leading-[0.95] max-w-2xl">
+                Built around
+                <br />
+                how brands work.
+              </h2>
+            </div>
+            <p className="br-reveal hidden md:block font-mono text-[12px] tracking-wide text-(--color-muted-fg) max-w-xs leading-relaxed self-end">
+              Four things we get right that every other creator platform gets
+              wrong.
+            </p>
+          </div>
+        </div>
+
+        <div className="br-benefits-list max-w-7xl mx-auto">
+          {[
+            {
+              Mark: BriefMark,
+              num: "01",
+              title: "One brief, dozens of creators",
+              body: "Write your goals once. We handle talent sourcing, brief distribution, and content QA.",
+              iconBg: "var(--br-indigo)",
+              iconColor: "var(--br-indigo-ink)",
+            },
+            {
+              Mark: NetworkMark,
+              num: "02",
+              title: "10K+ vetted, brand-safe creators",
+              body: "Every creator audited for engagement quality, audience demographics, and brand safety score.",
+              iconBg: "var(--br-teal)",
+              iconColor: "var(--br-teal-ink)",
+            },
+            {
+              Mark: LaunchMark,
+              num: "03",
+              title: "Brief to live in under a week",
+              body: "Average delivery is 4 days. No lengthy agency contracts. No production delays.",
+              iconBg: "var(--br-amber)",
+              iconColor: "var(--br-amber-ink)",
+            },
+            {
+              Mark: ROIMark,
+              num: "04",
+              title: "Real attribution, not vanity",
+              body: "UTM tracking, conversion pixels, and quarterly reports. Every dollar traced to a creator.",
+              iconBg: "var(--br-rose)",
+              iconColor: "var(--br-rose-ink)",
+            },
+          ].map(({ Mark, num, title, body, iconBg, iconColor }) => (
+            <div
+              key={title}
+              className="br-benefit-row group relative border-b border-(--color-border) overflow-hidden cursor-default"
+              style={{ clipPath: "inset(0 0 0% 0)" }}
+            >
+              <div
+                aria-hidden
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ background: iconBg }}
+              />
+
+              <div className="relative z-10 flex items-center gap-6 md:gap-10 px-6 md:px-10 py-9 md:py-11">
+                <span className="font-mono text-[10px] tracking-[0.32em] text-(--color-muted-fg) w-6 shrink-0">
+                  {num}
+                </span>
+                <div
+                  className="br-benefit-icon w-12 h-12 shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: iconBg,
+                    borderRadius: "var(--radius-md)",
+                  }}
+                >
+                  <Mark color={iconColor} />
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-baseline md:gap-12">
+                  <h3 className="font-display text-3xl md:text-5xl lg:text-[3.5rem] leading-none shrink-0">
+                    {title}
+                  </h3>
+                  <p className="font-mono text-[12px] tracking-wide text-(--color-muted-fg) leading-relaxed mt-2 md:mt-0 max-w-sm transition-colors duration-400 group-hover:text-(--color-fg)">
+                    {body}
+                  </p>
+                </div>
+                <ArrowUpRight className="w-5 h-5 shrink-0 text-(--color-accent) opacity-0 -translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+              </div>
+            </div>
           ))}
         </div>
-      </SectionShell>
+      </section>
+
+      {/* ── Brand testimonial — full inverted ────────────────────── */}
+      <section
+        className="relative overflow-hidden px-8 md:px-14 py-28 md:py-44"
+        style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}
+      >
+        <div
+          aria-hidden
+          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, var(--color-accent) 0%, transparent 70%)",
+            opacity: 0.06,
+            transform: "translate(-30%, -40%)",
+          }}
+        />
+
+        <div className="max-w-5xl mx-auto relative">
+          <div className="br-reveal flex items-center gap-3 mb-12">
+            <span
+              className="font-mono text-[10px] uppercase tracking-[0.35em]"
+              style={{
+                color: "color-mix(in srgb, var(--color-bg) 50%, transparent)",
+              }}
+            >
+              ✦ Brand story
+            </span>
+          </div>
+
+          <div
+            className="br-reveal font-display leading-none mb-6 select-none"
+            style={{
+              fontSize: "clamp(5rem,12vw,10rem)",
+              color: "var(--color-accent)",
+              lineHeight: 0.7,
+            }}
+          >
+            "
+          </div>
+
+          <blockquote
+            className="br-reveal font-display leading-[1.05] mb-14"
+            style={{
+              fontSize: "clamp(1.75rem,4vw,3.5rem)",
+              color: "var(--color-bg)",
+            }}
+          >
+            We tried every influencer platform. Icons was the first where a
+            campaign manager actually pushed back on our brief to make it
+            better.
+          </blockquote>
+
+          <footer className="br-reveal flex items-center gap-5">
+            <div
+              className="w-14 h-14 rounded-full gradient-warm flex items-center justify-center font-display text-xl"
+              style={{ opacity: 0.85 }}
+            >
+              <span style={{ color: "rgba(0,0,0,0.6)" }}>J</span>
+            </div>
+            <div>
+              <div
+                className="font-medium text-base"
+                style={{ color: "var(--color-bg)" }}
+              >
+                Jamie Chen
+              </div>
+              <div
+                className="font-mono text-[11px] tracking-[0.15em] mt-1"
+                style={{
+                  color: "color-mix(in srgb, var(--color-bg) 50%, transparent)",
+                }}
+              >
+                Head of Growth · GlowBeauty
+              </div>
+            </div>
+          </footer>
+        </div>
+      </section>
 
       <CTASection
         eyebrow="Start a campaign"
         title="Brief us in 10 minutes."
-        description="Tell us about your brand and we'll hand-pick the right creators for your next campaign — usually within 48 hours."
-        primary={{ label: "Get in touch", href: "/contact" }}
+        description="Tell us your goals and budget. We'll hand-pick creators and have recommendations in your inbox within 48 hours."
+        primary={{ label: "Start a campaign", href: "/brief" }}
         secondary={{ label: "See how it works", href: "/about" }}
       />
     </div>

@@ -82,9 +82,9 @@ export const CtaSticker = () => {
           className="cta-card sticker p-10 md:p-16 text-center flex flex-col items-center gap-8"
           data-tone="ink"
         >
-          <div className="font-mono text-[11px] tracking-[0.32em] uppercase flex items-center gap-2 opacity-80">
+          <div className="font-mono text-[11px] tracking-[0.32em] uppercase flex items-center gap-2 opacity-60">
             <span>✦</span>
-            <span>new icon alert</span>
+            <span>ready when you are</span>
             <span>✦</span>
           </div>
 
@@ -96,13 +96,21 @@ export const CtaSticker = () => {
             &nbsp;icon.
           </h2>
 
-          <p className="font-script text-2xl md:text-3xl">
-            — apply in 60 seconds, no portfolio drama
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-16 mt-2">
+            <div className="text-center">
+              <p className="font-script text-2xl md:text-3xl">— for creators</p>
+              <p className="font-mono text-[11px] tracking-[0.22em] uppercase mt-1" style={{ opacity: 0.6 }}>apply in 60 seconds, no portfolio drama</p>
+            </div>
+            <div className="hidden sm:block w-px h-12 self-center" style={{ background: "var(--bg)", opacity: 0.2 }} />
+            <div className="text-center">
+              <p className="font-script text-2xl md:text-3xl">— for brands</p>
+              <p className="font-mono text-[11px] tracking-[0.22em] uppercase mt-1" style={{ opacity: 0.6 }}>brief to live in 48h, no agency markup</p>
+            </div>
+          </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
             <Link href="/creators" className="btn-primary">
-              Become a creator
+              Join as creator
               <ArrowUpRight className="w-4 h-4" />
             </Link>
             <Link
@@ -110,7 +118,7 @@ export const CtaSticker = () => {
               className="btn-ghost"
               style={{ background: "transparent", color: "var(--bg)", borderColor: "var(--bg)", boxShadow: "4px 4px 0 0 var(--accent)" }}
             >
-              Hire creators
+              Post a brief
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
