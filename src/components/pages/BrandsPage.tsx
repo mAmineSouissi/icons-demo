@@ -9,7 +9,6 @@ import { ArrowUpRight } from "lucide-react";
 import { CTASection, SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur, stagger } from "@/lib/motion";
-import { Separator } from "@radix-ui/react-select";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
