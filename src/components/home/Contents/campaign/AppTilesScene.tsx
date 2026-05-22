@@ -136,7 +136,7 @@ export const AppTilesScene = () => {
             <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.2em] last:mr-0">
               <span
                 className="aptsection-word inline-block"
-                style={{ color: word === "UGC" ? "#c5ff3d" : undefined }}
+                style={{ color: word === "UGC" ? "oklch(0.7823 0.0488 220.2338)" : undefined }}
               >
                 {word}
               </span>

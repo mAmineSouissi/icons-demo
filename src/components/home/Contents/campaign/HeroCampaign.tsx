@@ -10,6 +10,10 @@ export const HeroCampaign = () => {
 
   useGSAP(
     () => {
+      // Remove the CSS pre-hide rule BEFORE creating tweens so GSAP's
+      // from() reads the natural opacity (1) as the target end-state.
+      document.getElementById("hero-prehide")?.remove();
+
       const tl = gsap.timeline({ delay: 0.15 });
 
       tl.from(".hero-mono", {
