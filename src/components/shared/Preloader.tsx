@@ -127,7 +127,7 @@ export const Preloader = ({ onComplete }: PreloaderProps) => {
       <div ref={confettiRef} className="pointer-events-none absolute inset-0">
         <ConfettiStar style={{ top: "14%",  left: "10%" }} size={54} fill="#ff3d8b" />
         <ConfettiStar style={{ top: "22%",  right: "14%" }} size={38} fill="#2d6cff" />
-        <ConfettiStar style={{ bottom: "20%", left: "12%" }} size={46} fill="#c5ff3d" />
+        <ConfettiStar style={{ bottom: "20%", left: "12%" }} size={46} fill="oklch(0.7823 0.0488 220.2338)" />
         <ConfettiStar style={{ bottom: "16%", right: "10%" }} size={62} fill="#F5C518" />
         <ConfettiStar style={{ top: "10%",  left: "44%" }} size={28} fill="#0a0a0a" />
         <ConfettiStar style={{ bottom: "8%", left: "46%" }} size={32} fill="#ff3d8b" />
@@ -183,7 +183,7 @@ export const Preloader = ({ onComplete }: PreloaderProps) => {
             ref={barFillRef}
             className="absolute inset-0"
             style={{
-              background: "#c5ff3d",
+              background: "oklch(0.7823 0.0488 220.2338)",
               transformOrigin: "left center",
             }}
           />
