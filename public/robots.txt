@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# App / private routes — no value to index
+Disallow: /dashboard
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /brief-builder
+Disallow: /brief-status
+Disallow: /creators/status
+Disallow: /animations
+Disallow: /api/
+
+Sitemap: https://icons.so/sitemap.xml
