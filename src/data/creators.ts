@@ -6,6 +6,14 @@ export type PortfolioItem = {
   format: string;
   brand: string;
   views: string;
+  /** Unsplash thumbnail — shown as the tile background image */
+  thumb?: string;
+};
+
+export type CreatorAudience = {
+  topAge: string;        // e.g. "25–34"
+  genderSplit: string;   // e.g. "74% female"
+  topLocations: string[]; // e.g. ["US", "UK", "CA"]
 };
 
 export type CreatorProfile = {
@@ -14,6 +22,8 @@ export type CreatorProfile = {
   title: string;
   location: string;
   bio: string;
+  quote: string;         // punchy one-liner from bio, shown as editorial pullquote
+  photo: string;         // Unsplash portrait URL
   tone: string;
   accentHex: string;
   platforms: Platform[];
@@ -22,6 +32,7 @@ export type CreatorProfile = {
   contentTypes: string[];
   brandFit: string[];
   pastBrands: string[];
+  audience: CreatorAudience;
   availability: "available" | "booking-soon" | "booked";
   fee: string;
   responseTime: string;
@@ -35,8 +46,11 @@ export const creators: CreatorProfile[] = [
     title: "Books & Culture",
     location: "Brooklyn, NY",
     bio: "I make literary culture feel alive — through hauls, shelf tours, deep-dives, and the kind of earnest enthusiasm that actually gets people to read. My audience is curious, educated, and buys things they trust. Brands that value that audience don't need to explain it twice.",
+    quote: "My audience is curious, educated, and buys things they trust.",
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-warm",
     accentHex: "#F5C518",
+    audience: { topAge: "25–34", genderSplit: "74% female", topLocations: ["US", "UK", "CA"] },
     platforms: [
       { name: "TikTok", followers: "412K", growth: "+8.2% / mo" },
       { name: "Instagram", followers: "89K", growth: "+4.1% / mo" },
@@ -55,12 +69,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $1,200 / post",
     responseTime: "< 12 hours",
     portfolio: [
-      { bg: "linear-gradient(135deg, #2a1a4a 0%, #0a0812 100%)", dark: true, format: "TikTok · 60s", brand: "Penguin Random House", views: "2.1M" },
-      { bg: "#F5C518", dark: false, format: "Instagram Reel", brand: "Leuchtturm1917", views: "412K" },
-      { bg: "linear-gradient(135deg, #1a2a1a 0%, #0a120a 100%)", dark: true, format: "TikTok · 45s", brand: "Chamberlain Coffee", views: "890K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Story", brand: "Skillshare", views: "67K" },
-      { bg: "linear-gradient(135deg, #4a1a2a 0%, #120a0a 100%)", dark: true, format: "TikTok · 90s", brand: "Organic", views: "3.4M" },
-      { bg: "#E8F5C8", dark: false, format: "Instagram Post", brand: "Patagonia", views: "201K" },
+      { bg: "linear-gradient(135deg, #2a1a4a 0%, #0a0812 100%)", dark: true,  format: "TikTok · 60s",     brand: "Penguin Random House", views: "2.1M",  thumb: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "Instagram Reel",   brand: "Leuchtturm1917",       views: "412K",  thumb: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a2a1a 0%, #0a120a 100%)", dark: true,  format: "TikTok · 45s",     brand: "Chamberlain Coffee",   views: "890K",  thumb: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0",                                            dark: false, format: "Instagram Story",  brand: "Skillshare",           views: "67K",   thumb: "https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #4a1a2a 0%, #120a0a 100%)", dark: true,  format: "TikTok · 90s",     brand: "Organic",              views: "3.4M",  thumb: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=450&fit=crop&q=75" },
+      { bg: "#E8F5C8",                                            dark: false, format: "Instagram Post",   brand: "Patagonia",            views: "201K",  thumb: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -69,8 +83,11 @@ export const creators: CreatorProfile[] = [
     title: "Travel & Food",
     location: "Los Angeles, CA",
     bio: "Every city has a version most people never find. I find it. My travel content is grounded in food, local culture, and the kind of slow exploration that builds real wanderlust. Brands that want to sell adventure — not just luggage — fit naturally into what I do.",
+    quote: "Every city has a version most people never find. I find it.",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-cool",
     accentHex: "#3B9EFF",
+    audience: { topAge: "22–32", genderSplit: "52% male", topLocations: ["US", "AU", "UK"] },
     platforms: [
       { name: "Instagram", followers: "840K", growth: "+6.3% / mo" },
       { name: "TikTok", followers: "1.2M", growth: "+11.4% / mo" },
@@ -90,12 +107,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $2,800 / post",
     responseTime: "< 6 hours",
     portfolio: [
-      { bg: "linear-gradient(135deg, #0a1628 0%, #1a3a6a 100%)", dark: true, format: "YouTube · 8min", brand: "Away", views: "1.4M" },
-      { bg: "#C8F135", dark: false, format: "Instagram Reel", brand: "Omsom", views: "780K" },
-      { bg: "linear-gradient(135deg, #0a2028 0%, #1a4a5a 100%)", dark: true, format: "TikTok · 60s", brand: "Revolut", views: "2.2M" },
-      { bg: "#FF3EB5", dark: false, format: "Instagram Post", brand: "Airbnb", views: "510K" },
-      { bg: "linear-gradient(135deg, #1a0a28 0%, #3a1a6a 100%)", dark: true, format: "TikTok · 90s", brand: "Organic", views: "4.1M" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Reel", brand: "Marriott", views: "340K" },
+      { bg: "linear-gradient(135deg, #0a1628 0%, #1a3a6a 100%)", dark: true,  format: "YouTube · 8min",  brand: "Away",    views: "1.4M",  thumb: "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135",                                            dark: false, format: "Instagram Reel",  brand: "Omsom",   views: "780K",  thumb: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3df1?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a2028 0%, #1a4a5a 100%)", dark: true,  format: "TikTok · 60s",   brand: "Revolut", views: "2.2M",  thumb: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5",                                            dark: false, format: "Instagram Post",  brand: "Airbnb",  views: "510K",  thumb: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a0a28 0%, #3a1a6a 100%)", dark: true,  format: "TikTok · 90s",   brand: "Organic", views: "4.1M",  thumb: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0",                                            dark: false, format: "Instagram Reel",  brand: "Marriott",views: "340K",  thumb: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -104,8 +121,11 @@ export const creators: CreatorProfile[] = [
     title: "Beauty & Wellness",
     location: "London, UK",
     bio: "Skincare that works, routines that are real, beauty without the filter. I test everything on camera — the good and the bad — and my audience trusts me because I've never pretended otherwise. That trust is exactly why brand deals in my space convert.",
+    quote: "I test everything on camera — the good and the bad.",
+    photo: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-accent",
     accentHex: "#C8F135",
+    audience: { topAge: "18–28", genderSplit: "91% female", topLocations: ["UK", "US", "IN"] },
     platforms: [
       { name: "Instagram", followers: "289K", growth: "+5.7% / mo" },
       { name: "TikTok", followers: "512K", growth: "+9.2% / mo" },
@@ -124,12 +144,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $900 / post",
     responseTime: "< 24 hours",
     portfolio: [
-      { bg: "linear-gradient(135deg, #2a0a2a 0%, #1a0a1a 100%)", dark: true, format: "TikTok · 45s", brand: "Paula's Choice", views: "1.8M" },
-      { bg: "#C8F135", dark: false, format: "Instagram Reel", brand: "LUSH", views: "290K" },
-      { bg: "linear-gradient(135deg, #1a2a0a 0%, #0a1a0a 100%)", dark: true, format: "TikTok · 60s", brand: "The Ordinary", views: "930K" },
-      { bg: "#FF3EB5", dark: false, format: "GRWM · 90s", brand: "Zara", views: "450K" },
-      { bg: "#F5C518", dark: false, format: "Instagram Post", brand: "Hims & Hers", views: "178K" },
-      { bg: "linear-gradient(135deg, #0a1a2a 0%, #0a0a1a 100%)", dark: true, format: "TikTok · 75s", brand: "Organic", views: "2.6M" },
+      { bg: "linear-gradient(135deg, #2a0a2a 0%, #1a0a1a 100%)", dark: true,  format: "TikTok · 45s",    brand: "Paula's Choice", views: "1.8M",  thumb: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135",                                            dark: false, format: "Instagram Reel",  brand: "LUSH",           views: "290K",  thumb: "https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a2a0a 0%, #0a1a0a 100%)", dark: true,  format: "TikTok · 60s",   brand: "The Ordinary",   views: "930K",  thumb: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5",                                            dark: false, format: "GRWM · 90s",      brand: "Zara",           views: "450K",  thumb: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "Instagram Post",  brand: "Hims & Hers",    views: "178K",  thumb: "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a2a 0%, #0a0a1a 100%)", dark: true,  format: "TikTok · 75s",   brand: "Organic",        views: "2.6M",  thumb: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -138,8 +158,11 @@ export const creators: CreatorProfile[] = [
     title: "Fitness Coaching",
     location: "Austin, TX",
     bio: "I make fitness feel achievable, not aspirational. No six-packs, no suffering — just consistent, honest coaching content that actually changes people's habits. My audience shows up every day because I show up every day. Brands that believe in that kind of consistency tend to get the best results with me.",
+    quote: "No six-packs, no suffering — just consistent, honest coaching content.",
+    photo: "https://images.unsplash.com/photo-1534308143439-3820b8f68edc?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-mono",
     accentHex: "#ffffff",
+    audience: { topAge: "22–35", genderSplit: "63% male", topLocations: ["US", "CA", "AU"] },
     platforms: [
       { name: "YouTube", followers: "640K", growth: "+4.4% / mo" },
       { name: "Instagram", followers: "310K", growth: "+3.1% / mo" },
@@ -159,12 +182,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $1,800 / post",
     responseTime: "< 8 hours",
     portfolio: [
-      { bg: "#0d0d0d", dark: true, format: "YouTube · 12min", brand: "Whoop", views: "890K" },
-      { bg: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)", dark: true, format: "TikTok · 60s", brand: "Gymshark", views: "1.6M" },
-      { bg: "#C8F135", dark: false, format: "Instagram Reel", brand: "Huel", views: "340K" },
-      { bg: "#0d0d0d", dark: true, format: "YouTube · 8min", brand: "NordicTrack", views: "720K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Post", brand: "Calm", views: "190K" },
-      { bg: "linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 100%)", dark: true, format: "TikTok · 90s", brand: "Organic", views: "3.1M" },
+      { bg: "#0d0d0d",                                            dark: true,  format: "YouTube · 12min", brand: "Whoop",       views: "890K",  thumb: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)", dark: true,  format: "TikTok · 60s",   brand: "Gymshark",    views: "1.6M",  thumb: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135",                                            dark: false, format: "Instagram Reel",  brand: "Huel",        views: "340K",  thumb: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&h=450&fit=crop&q=75" },
+      { bg: "#0d0d0d",                                            dark: true,  format: "YouTube · 8min",  brand: "NordicTrack", views: "720K",  thumb: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0",                                            dark: false, format: "Instagram Post",  brand: "Calm",        views: "190K",  thumb: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 100%)", dark: true,  format: "TikTok · 90s",   brand: "Organic",     views: "3.1M",  thumb: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -173,8 +196,11 @@ export const creators: CreatorProfile[] = [
     title: "Craft & DIY",
     location: "Portland, OR",
     bio: "I make things with my hands and film it honestly — including the mistakes. My community is one of the most engaged on the platform because they're genuinely learning alongside me. Craft supply brands, home goods, and anyone who believes in making something yourself will find a real home in my content.",
+    quote: "I make things with my hands and film it honestly — including the mistakes.",
+    photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-warm",
     accentHex: "#FF3EB5",
+    audience: { topAge: "25–40", genderSplit: "88% female", topLocations: ["US", "UK", "CA"] },
     platforms: [
       { name: "Pinterest", followers: "312K", growth: "+14.2% / mo" },
       { name: "Instagram", followers: "186K", growth: "+6.8% / mo" },
@@ -194,12 +220,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $700 / post",
     responseTime: "< 18 hours",
     portfolio: [
-      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s", brand: "Cricut", views: "640K" },
-      { bg: "#C8F135", dark: false, format: "Pinterest Video", brand: "Anthropologie", views: "280K" },
-      { bg: "linear-gradient(135deg, #2a1a0a 0%, #1a0a0a 100%)", dark: true, format: "TikTok · 90s", brand: "Organic", views: "1.1M" },
-      { bg: "#F5C518", dark: false, format: "Instagram Reel", brand: "IKEA", views: "190K" },
-      { bg: "#0d0d0d", dark: true, format: "TikTok · 60s", brand: "Ooni", views: "420K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Post", brand: "Mollie Makes", views: "87K" },
+      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s",    brand: "Cricut",       views: "640K",  thumb: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135", dark: false, format: "Pinterest Video", brand: "Anthropologie", views: "280K",  thumb: "https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #2a1a0a 0%, #1a0a0a 100%)", dark: true, format: "TikTok · 90s", brand: "Organic",      views: "1.1M",  thumb: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518", dark: false, format: "Instagram Reel",  brand: "IKEA",         views: "190K",  thumb: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=450&fit=crop&q=75" },
+      { bg: "#0d0d0d", dark: true,  format: "TikTok · 60s",   brand: "Ooni",         views: "420K",  thumb: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0", dark: false, format: "Instagram Post",  brand: "Mollie Makes", views: "87K",   thumb: "https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -208,8 +234,11 @@ export const creators: CreatorProfile[] = [
     title: "Streetwear & Design",
     location: "New York, NY",
     bio: "I document culture through clothing — what people wear, why they wear it, and what it says about the moment we're in. My audience skews male, 18–30, and deeply engaged with fashion as identity. For brands that want to live inside that conversation rather than interrupt it, I'm the right fit.",
+    quote: "I document culture through clothing — what people wear, and what it says about the moment we're in.",
+    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-cool",
     accentHex: "#3B9EFF",
+    audience: { topAge: "18–30", genderSplit: "76% male", topLocations: ["US", "JP", "UK"] },
     platforms: [
       { name: "Instagram", followers: "523K", growth: "+7.6% / mo" },
       { name: "TikTok", followers: "388K", growth: "+8.9% / mo" },
@@ -228,12 +257,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $1,500 / post",
     responseTime: "< 10 hours",
     portfolio: [
-      { bg: "#0d0d0d", dark: true, format: "Instagram Reel", brand: "New Balance", views: "1.2M" },
-      { bg: "linear-gradient(135deg, #0a1028 0%, #1a2a4a 100%)", dark: true, format: "TikTok · 60s", brand: "Nike", views: "2.4M" },
-      { bg: "#C8F135", dark: false, format: "Instagram Post", brand: "Carhartt WIP", views: "380K" },
-      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s", brand: "Organic", views: "910K" },
-      { bg: "#F5C518", dark: false, format: "Instagram Reel", brand: "Adobe", views: "240K" },
-      { bg: "linear-gradient(135deg, #1a0a28 0%, #2a1a4a 100%)", dark: true, format: "TikTok · 90s", brand: "Dover Street Market", views: "560K" },
+      { bg: "#0d0d0d", dark: true,  format: "Instagram Reel", brand: "New Balance",        views: "1.2M",  thumb: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1028 0%, #1a2a4a 100%)", dark: true, format: "TikTok · 60s", brand: "Nike", views: "2.4M", thumb: "https://images.unsplash.com/photo-1556906781-9a412961d28b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135", dark: false, format: "Instagram Post",  brand: "Carhartt WIP",       views: "380K",  thumb: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s",   brand: "Organic",            views: "910K",  thumb: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518", dark: false, format: "Instagram Reel",  brand: "Adobe",              views: "240K",  thumb: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a0a28 0%, #2a1a4a 100%)", dark: true, format: "TikTok · 90s", brand: "Dover Street Market", views: "560K", thumb: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -242,8 +271,11 @@ export const creators: CreatorProfile[] = [
     title: "Coffee & Daily Rituals",
     location: "Chicago, IL",
     bio: "I turned my morning coffee ritual into a community of 94,000 people who care deeply about slow mornings, good beans, and intentional living. Small creator, massive engagement. Brands in the food, wellness, and home space consistently tell me our collaborations convert better than anything they've run at 10× the reach.",
+    quote: "Small creator, massive engagement. Our collaborations convert better than anything at 10× the reach.",
+    photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-accent",
     accentHex: "#C8F135",
+    audience: { topAge: "25–38", genderSplit: "69% female", topLocations: ["US", "CA", "AU"] },
     platforms: [
       { name: "Instagram", followers: "94K", growth: "+12.3% / mo" },
       { name: "TikTok", followers: "67K", growth: "+15.8% / mo" },
@@ -262,12 +294,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $600 / post",
     responseTime: "< 4 hours",
     portfolio: [
-      { bg: "linear-gradient(135deg, #1a0a00 0%, #2a1a0a 100%)", dark: true, format: "Instagram Reel", brand: "Blue Bottle", views: "280K" },
-      { bg: "#F5C518", dark: false, format: "TikTok · 30s", brand: "Fellow", views: "190K" },
-      { bg: "#C8F135", dark: false, format: "Instagram Post", brand: "Aesop", views: "84K" },
-      { bg: "linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 100%)", dark: true, format: "TikTok · 60s", brand: "Organic", views: "510K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Reel", brand: "Kinfolk", views: "61K" },
-      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s", brand: "Muji", views: "130K" },
+      { bg: "linear-gradient(135deg, #1a0a00 0%, #2a1a0a 100%)", dark: true,  format: "Instagram Reel", brand: "Blue Bottle", views: "280K",  thumb: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "TikTok · 30s",   brand: "Fellow",      views: "190K",  thumb: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135",                                            dark: false, format: "Instagram Post", brand: "Aesop",       views: "84K",   thumb: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 100%)", dark: true,  format: "TikTok · 60s",  brand: "Organic",     views: "510K",  thumb: "https://images.unsplash.com/photo-1501523460185-2aa5d2a0f981?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0",                                            dark: false, format: "Instagram Reel", brand: "Kinfolk",     views: "61K",   thumb: "https://images.unsplash.com/photo-1485182708500-e8f1f318ba72?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5",                                            dark: false, format: "TikTok · 45s",   brand: "Muji",        views: "130K",  thumb: "https://images.unsplash.com/photo-1520970014086-2208d157c9e2?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -276,8 +308,11 @@ export const creators: CreatorProfile[] = [
     title: "Recipes & Home Cooking",
     location: "San Francisco, CA",
     bio: "Vietnamese-American home cooking that doesn't compromise on flavor or accessibility. 1.8M followers built purely on recipe content because food is universal and my recipes actually work. I work with food brands, kitchen equipment, and any company that wants to be part of what people eat at home.",
+    quote: "1.8M followers built purely on recipe content because food is universal and my recipes actually work.",
+    photo: "https://images.unsplash.com/photo-1504703395950-b89145a5425b?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-mono",
     accentHex: "#FF3EB5",
+    audience: { topAge: "22–40", genderSplit: "67% female", topLocations: ["US", "CA", "AU"] },
     platforms: [
       { name: "TikTok", followers: "1.8M", growth: "+13.1% / mo" },
       { name: "Instagram", followers: "620K", growth: "+8.7% / mo" },
@@ -297,12 +332,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $3,200 / post",
     responseTime: "< 12 hours",
     portfolio: [
-      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s", brand: "Le Creuset", views: "4.2M" },
-      { bg: "linear-gradient(135deg, #1a0a2a 0%, #2a1a3a 100%)", dark: true, format: "TikTok · 60s", brand: "HelloFresh", views: "2.8M" },
-      { bg: "#C8F135", dark: false, format: "YouTube · 6min", brand: "Made In", views: "680K" },
-      { bg: "#F5C518", dark: false, format: "Instagram Reel", brand: "Heinz", views: "1.1M" },
-      { bg: "linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%)", dark: true, format: "TikTok · 30s", brand: "Organic", views: "6.7M" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Post", brand: "Miso & Easy", views: "390K" },
+      { bg: "#FF3EB5", dark: false, format: "TikTok · 45s",   brand: "Le Creuset", views: "4.2M",  thumb: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a0a2a 0%, #2a1a3a 100%)", dark: true, format: "TikTok · 60s", brand: "HelloFresh", views: "2.8M", thumb: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135", dark: false, format: "YouTube · 6min",  brand: "Made In",    views: "680K",  thumb: "https://images.unsplash.com/photo-1556909211-36987daf7b4d?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518", dark: false, format: "Instagram Reel",  brand: "Heinz",      views: "1.1M",  thumb: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%)", dark: true, format: "TikTok · 30s", brand: "Organic", views: "6.7M", thumb: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0", dark: false, format: "Instagram Post",  brand: "Miso & Easy",views: "390K",  thumb: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -311,8 +346,11 @@ export const creators: CreatorProfile[] = [
     title: "Home Cooking",
     location: "Nashville, TN",
     bio: "Everyday cooking that doesn't require a culinary degree. I focus on simple, beautiful meals for real kitchens — and my YouTube audience comes back every week because the recipes actually work on the first try. Food and kitchen brands find their best ROI with an audience that cooks at home daily.",
+    quote: "Simple, beautiful meals for real kitchens — they work on the first try.",
+    photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-warm",
     accentHex: "#F5C518",
+    audience: { topAge: "28–45", genderSplit: "78% female", topLocations: ["US", "UK", "CA"] },
     platforms: [
       { name: "YouTube", followers: "342K", growth: "+6.1% / mo" },
       { name: "Instagram", followers: "118K", growth: "+4.8% / mo" },
@@ -331,12 +369,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $1,100 / post",
     responseTime: "< 10 hours",
     portfolio: [
-      { bg: "#F5C518", dark: false, format: "YouTube · 8min", brand: "Staub", views: "620K" },
-      { bg: "linear-gradient(135deg, #2a1a0a 0%, #1a0a0a 100%)", dark: true, format: "YouTube · 6min", brand: "Rao's", views: "880K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Reel", brand: "Thrive Market", views: "210K" },
-      { bg: "linear-gradient(135deg, #1a0a2a 0%, #0a0a1a 100%)", dark: true, format: "YouTube · 10min", brand: "Zwilling", views: "410K" },
-      { bg: "#C8F135", dark: false, format: "Instagram Post", brand: "Organic", views: "340K" },
-      { bg: "#FF3EB5", dark: false, format: "Instagram Reel", brand: "Trader Joe's", views: "180K" },
+      { bg: "#F5C518", dark: false, format: "YouTube · 8min",  brand: "Staub",          views: "620K",  thumb: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #2a1a0a 0%, #1a0a0a 100%)", dark: true, format: "YouTube · 6min", brand: "Rao's", views: "880K", thumb: "https://images.unsplash.com/photo-1498579150354-977475b7ea0b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0", dark: false, format: "Instagram Reel",  brand: "Thrive Market",  views: "210K",  thumb: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a0a2a 0%, #0a0a1a 100%)", dark: true, format: "YouTube · 10min", brand: "Zwilling", views: "410K", thumb: "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135", dark: false, format: "Instagram Post",  brand: "Organic",        views: "340K",  thumb: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5", dark: false, format: "Instagram Reel",  brand: "Trader Joe's",   views: "180K",  thumb: "https://images.unsplash.com/photo-1556040220-4096d522378d?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -345,8 +383,11 @@ export const creators: CreatorProfile[] = [
     title: "Tech Reviews",
     location: "Seattle, WA",
     bio: "I review technology the way engineers think about it — specs matter, but so does the experience after the honeymoon period. 1.4M subscribers trust me because I'm honest when things disappoint. Tech brands with products that genuinely outperform expectations get the most from our partnership.",
+    quote: "1.4M subscribers trust me because I'm honest when things disappoint.",
+    photo: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-cool",
     accentHex: "#3B9EFF",
+    audience: { topAge: "22–38", genderSplit: "81% male", topLocations: ["US", "IN", "UK"] },
     platforms: [
       { name: "YouTube", followers: "1.4M", growth: "+3.8% / mo" },
       { name: "Instagram", followers: "280K", growth: "+2.4% / mo" },
@@ -365,12 +406,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $4,500 / post",
     responseTime: "< 48 hours",
     portfolio: [
-      { bg: "linear-gradient(135deg, #0a1028 0%, #0a0a20 100%)", dark: true, format: "YouTube · 18min", brand: "Samsung", views: "3.2M" },
-      { bg: "#3B9EFF", dark: false, format: "YouTube · 12min", brand: "Logitech", views: "1.8M" },
-      { bg: "linear-gradient(135deg, #0a2010 0%, #0a100a 100%)", dark: true, format: "YouTube · 15min", brand: "Razer", views: "2.4M" },
-      { bg: "#C8F135", dark: false, format: "Instagram Post", brand: "Anker", views: "290K" },
-      { bg: "linear-gradient(135deg, #1a0a28 0%, #0a0a1a 100%)", dark: true, format: "YouTube · 20min", brand: "Notion", views: "1.4M" },
-      { bg: "#F5C518", dark: false, format: "Instagram Reel", brand: "Organic", views: "720K" },
+      { bg: "linear-gradient(135deg, #0a1028 0%, #0a0a20 100%)", dark: true,  format: "YouTube · 18min", brand: "Samsung",  views: "3.2M",  thumb: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&h=450&fit=crop&q=75" },
+      { bg: "#3B9EFF",                                            dark: false, format: "YouTube · 12min", brand: "Logitech", views: "1.8M",  thumb: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a2010 0%, #0a100a 100%)", dark: true,  format: "YouTube · 15min", brand: "Razer",    views: "2.4M",  thumb: "https://images.unsplash.com/photo-1547394765-185e1e68f34e?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135",                                            dark: false, format: "Instagram Post",   brand: "Anker",    views: "290K",  thumb: "https://images.unsplash.com/photo-1491933382434-500287f9b54b?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a0a28 0%, #0a0a1a 100%)", dark: true,  format: "YouTube · 20min", brand: "Notion",   views: "1.4M",  thumb: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "Instagram Reel",   brand: "Organic",  views: "720K",  thumb: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -379,8 +420,11 @@ export const creators: CreatorProfile[] = [
     title: "Dance & Movement",
     location: "Atlanta, GA",
     bio: "Dance is how I communicate — and 2.1M people have decided it's how they want to start their day. My content is joyful, physical, and deeply culturally specific. Brands looking to reach a young, diverse, highly-active audience without feeling forced will find that my audience already shops where culture lives.",
+    quote: "Dance is how I communicate — 2.1M people have decided it's how they want to start their day.",
+    photo: "https://images.unsplash.com/photo-1484863137850-59afcfe05386?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-accent",
     accentHex: "#C8F135",
+    audience: { topAge: "16–26", genderSplit: "72% female", topLocations: ["US", "NG", "UK"] },
     platforms: [
       { name: "TikTok", followers: "2.1M", growth: "+14.2% / mo" },
       { name: "Instagram", followers: "490K", growth: "+9.6% / mo" },
@@ -399,12 +443,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $3,800 / post",
     responseTime: "< 8 hours",
     portfolio: [
-      { bg: "#C8F135", dark: false, format: "TikTok · 30s", brand: "Nike", views: "8.2M" },
-      { bg: "linear-gradient(135deg, #1a0a2a 0%, #2a0a3a 100%)", dark: true, format: "TikTok · 45s", brand: "Fenty Beauty", views: "5.1M" },
-      { bg: "#FF3EB5", dark: false, format: "Instagram Reel", brand: "Spotify", views: "1.9M" },
-      { bg: "linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%)", dark: true, format: "TikTok · 60s", brand: "Prime Energy", views: "4.7M" },
-      { bg: "#F5C518", dark: false, format: "TikTok · 30s", brand: "Organic", views: "11.3M" },
-      { bg: "#3B9EFF", dark: false, format: "Instagram Post", brand: "FitFlop", views: "840K" },
+      { bg: "#C8F135", dark: false, format: "TikTok · 30s",    brand: "Nike",         views: "8.2M",  thumb: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a0a2a 0%, #2a0a3a 100%)", dark: true, format: "TikTok · 45s", brand: "Fenty Beauty", views: "5.1M", thumb: "https://images.unsplash.com/photo-1534126511673-b6899657816a?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5", dark: false, format: "Instagram Reel",  brand: "Spotify",      views: "1.9M",  thumb: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%)", dark: true, format: "TikTok · 60s", brand: "Prime Energy", views: "4.7M", thumb: "https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518", dark: false, format: "TikTok · 30s",    brand: "Organic",      views: "11.3M", thumb: "https://images.unsplash.com/photo-1535525153412-5a42439a210d?w=600&h=450&fit=crop&q=75" },
+      { bg: "#3B9EFF", dark: false, format: "Instagram Post",  brand: "FitFlop",      views: "840K",  thumb: "https://images.unsplash.com/photo-1599557229782-a7be42d51e97?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -413,8 +457,11 @@ export const creators: CreatorProfile[] = [
     title: "Outdoor & Adventure",
     location: "Denver, CO",
     bio: "I document what happens when you actually go outside — the trips that don't go perfectly, the gear that earns its keep, and the landscapes that still manage to surprise you. Micro by numbers, but my 78K followers are among the most purchase-intent outdoor audiences on Instagram. They gear up before every season.",
+    quote: "Micro by numbers, but my audience is the most purchase-intent outdoor community on Instagram.",
+    photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-mono",
     accentHex: "#ffffff",
+    audience: { topAge: "25–40", genderSplit: "68% male", topLocations: ["US", "CA", "AU"] },
     platforms: [
       { name: "Instagram", followers: "78K", growth: "+12.3% / mo" },
       { name: "TikTok", followers: "42K", growth: "+18.7% / mo" },
@@ -433,12 +480,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $550 / post",
     responseTime: "< 6 hours",
     portfolio: [
-      { bg: "#0d0d0d", dark: true, format: "Instagram Reel", brand: "Arc'teryx", views: "180K" },
-      { bg: "linear-gradient(135deg, #0a1a2a 0%, #1a2a3a 100%)", dark: true, format: "TikTok · 60s", brand: "Osprey", views: "240K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Post", brand: "Clif Bar", views: "62K" },
-      { bg: "linear-gradient(135deg, #1a1a0a 0%, #2a2a1a 100%)", dark: true, format: "Instagram Reel", brand: "Garmin", views: "130K" },
-      { bg: "#C8F135", dark: false, format: "TikTok · 45s", brand: "Organic", views: "510K" },
-      { bg: "#3B9EFF", dark: false, format: "Instagram Post", brand: "REI", views: "88K" },
+      { bg: "#0d0d0d", dark: true,  format: "Instagram Reel",  brand: "Arc'teryx", views: "180K",  thumb: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a2a 0%, #1a2a3a 100%)", dark: true, format: "TikTok · 60s", brand: "Osprey", views: "240K", thumb: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0", dark: false, format: "Instagram Post",  brand: "Clif Bar",  views: "62K",   thumb: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a1a0a 0%, #2a2a1a 100%)", dark: true, format: "Instagram Reel", brand: "Garmin", views: "130K", thumb: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135", dark: false, format: "TikTok · 45s",    brand: "Organic",   views: "510K",  thumb: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#3B9EFF", dark: false, format: "Instagram Post",  brand: "REI",       views: "88K",   thumb: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -447,8 +494,11 @@ export const creators: CreatorProfile[] = [
     title: "Sustainable Living",
     location: "Amsterdam, NL",
     bio: "I make sustainable living feel aspirational rather than sacrificial. My content is about beautiful choices that happen to be better for the planet — and my audience of 221K is one of the most purchase-ready conscious consumer communities on Instagram. They're not just scrolling. They're buying.",
+    quote: "I make sustainable living feel aspirational rather than sacrificial.",
+    photo: "https://images.unsplash.com/photo-1485893086445-ed75865251e0?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-warm",
     accentHex: "#FF3EB5",
+    audience: { topAge: "22–35", genderSplit: "82% female", topLocations: ["NL", "UK", "DE"] },
     platforms: [
       { name: "Instagram", followers: "221K", growth: "+8.8% / mo" },
       { name: "Pinterest", followers: "94K", growth: "+11.2% / mo" },
@@ -467,12 +517,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $850 / post",
     responseTime: "< 16 hours",
     portfolio: [
-      { bg: "#C8F135", dark: false, format: "Instagram Reel", brand: "Patagonia", views: "360K" },
-      { bg: "linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%)", dark: true, format: "Instagram Reel", brand: "Allbirds", views: "480K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Post", brand: "Oatly", views: "142K" },
-      { bg: "#FF3EB5", dark: false, format: "Pinterest Video", brand: "Who Gives A Crap", views: "86K" },
-      { bg: "linear-gradient(135deg, #1a2a0a 0%, #0a1a0a 100%)", dark: true, format: "Instagram Reel", brand: "Organic", views: "720K" },
-      { bg: "#F5C518", dark: false, format: "Instagram Post", brand: "Pela Case", views: "210K" },
+      { bg: "#C8F135", dark: false, format: "Instagram Reel",  brand: "Patagonia",         views: "360K",  thumb: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%)", dark: true, format: "Instagram Reel", brand: "Allbirds", views: "480K", thumb: "https://images.unsplash.com/photo-1545289414-1c3cb1c06238?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0", dark: false, format: "Instagram Post",  brand: "Oatly",             views: "142K",  thumb: "https://images.unsplash.com/photo-1585233024703-6d3e8e665c74?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5", dark: false, format: "Pinterest Video", brand: "Who Gives A Crap",  views: "86K",   thumb: "https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a2a0a 0%, #0a1a0a 100%)", dark: true, format: "Instagram Reel", brand: "Organic", views: "720K", thumb: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518", dark: false, format: "Instagram Post",  brand: "Pela Case",         views: "210K",  thumb: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -481,8 +531,11 @@ export const creators: CreatorProfile[] = [
     title: "Menswear & Styling",
     location: "Paris, FR",
     bio: "Men's style content that doesn't talk down to its audience. I cover everything from investment pieces to accessible outfit building — and my 503K followers represent a genuinely style-conscious male demographic that fashion brands rarely reach at this engagement level. I'm selective. That's the point.",
+    quote: "I'm selective about what I wear, who I work with, and what I put my name on. That's the point.",
+    photo: "https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-cool",
     accentHex: "#3B9EFF",
+    audience: { topAge: "22–35", genderSplit: "84% male", topLocations: ["FR", "US", "UK"] },
     platforms: [
       { name: "Instagram", followers: "503K", growth: "+5.9% / mo" },
       { name: "TikTok", followers: "214K", growth: "+7.3% / mo" },
@@ -501,12 +554,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $2,200 / post",
     responseTime: "< 24 hours",
     portfolio: [
-      { bg: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)", dark: true, format: "Instagram Post", brand: "A.P.C.", views: "920K" },
-      { bg: "#3B9EFF", dark: false, format: "Instagram Reel", brand: "Aesop", views: "580K" },
-      { bg: "linear-gradient(135deg, #1a1a2a 0%, #0a0a1a 100%)", dark: true, format: "TikTok · 60s", brand: "Common Projects", views: "740K" },
-      { bg: "#F5C518", dark: false, format: "Instagram Post", brand: "Maison Margiela", views: "1.1M" },
-      { bg: "linear-gradient(135deg, #0a1a28 0%, #1a2a3a 100%)", dark: true, format: "Instagram Reel", brand: "Organic", views: "1.4M" },
-      { bg: "#F0EBE0", dark: false, format: "TikTok · 45s", brand: "Tod's", views: "310K" },
+      { bg: "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)", dark: true,  format: "Instagram Post", brand: "A.P.C.",           views: "920K",  thumb: "https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=600&h=450&fit=crop&q=75" },
+      { bg: "#3B9EFF",                                            dark: false, format: "Instagram Reel", brand: "Aesop",            views: "580K",  thumb: "https://images.unsplash.com/photo-1527800796976-f6cebb9b6adb?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a1a2a 0%, #0a0a1a 100%)", dark: true,  format: "TikTok · 60s",  brand: "Common Projects",  views: "740K",  thumb: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "Instagram Post", brand: "Maison Margiela",  views: "1.1M",  thumb: "https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a28 0%, #1a2a3a 100%)", dark: true,  format: "Instagram Reel", brand: "Organic",          views: "1.4M",  thumb: "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0",                                            dark: false, format: "TikTok · 45s",   brand: "Tod's",            views: "310K",  thumb: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -515,8 +568,11 @@ export const creators: CreatorProfile[] = [
     title: "Wellness & Mindset",
     location: "London, UK",
     bio: "I cover the inner work — the habits, mindsets, and daily practices that make everything else easier. My TikTok audience is 25–35, predominantly women navigating high-pressure careers and lives. Wellness, productivity, and mental health brands that speak honestly to that audience consistently outperform benchmarks with my campaigns.",
+    quote: "I cover the inner work — the habits and practices that make everything else easier.",
+    photo: "https://images.unsplash.com/photo-1520315342629-6ea920342047?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-accent",
     accentHex: "#C8F135",
+    audience: { topAge: "25–35", genderSplit: "86% female", topLocations: ["UK", "US", "AU"] },
     platforms: [
       { name: "TikTok", followers: "167K", growth: "+9.7% / mo" },
       { name: "Instagram", followers: "82K", growth: "+6.1% / mo" },
@@ -535,12 +591,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $750 / post",
     responseTime: "< 12 hours",
     portfolio: [
-      { bg: "#C8F135", dark: false, format: "TikTok · 60s", brand: "Headspace", views: "480K" },
-      { bg: "linear-gradient(135deg, #1a2a0a 0%, #0a1a0a 100%)", dark: true, format: "TikTok · 45s", brand: "AG1", views: "610K" },
-      { bg: "#F0EBE0", dark: false, format: "Instagram Post", brand: "Leuchtturm1917", views: "94K" },
-      { bg: "linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 100%)", dark: true, format: "TikTok · 75s", brand: "Organic", views: "1.2M" },
-      { bg: "#FF3EB5", dark: false, format: "Instagram Reel", brand: "BetterHelp", views: "180K" },
-      { bg: "#F5C518", dark: false, format: "TikTok · 30s", brand: "Calm", views: "320K" },
+      { bg: "#C8F135",                                            dark: false, format: "TikTok · 60s",   brand: "Headspace",     views: "480K",  thumb: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a2a0a 0%, #0a1a0a 100%)", dark: true,  format: "TikTok · 45s",  brand: "AG1",           views: "610K",  thumb: "https://images.unsplash.com/photo-1544991875-5dc1b05f586d?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F0EBE0",                                            dark: false, format: "Instagram Post", brand: "Leuchtturm1917",views: "94K",   thumb: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a0a1a 0%, #1a1a2a 100%)", dark: true,  format: "TikTok · 75s",  brand: "Organic",       views: "1.2M",  thumb: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=450&fit=crop&q=75" },
+      { bg: "#FF3EB5",                                            dark: false, format: "Instagram Reel", brand: "BetterHelp",    views: "180K",  thumb: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "TikTok · 30s",   brand: "Calm",          views: "320K",  thumb: "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=600&h=450&fit=crop&q=75" },
     ],
   },
   {
@@ -549,8 +605,11 @@ export const creators: CreatorProfile[] = [
     title: "Budget Travel Tips",
     location: "Manchester, UK",
     bio: "I prove that travel doesn't have to cost what everyone says it does. My audience are 20-somethings who genuinely want to see the world but are working with real budgets. Brands that want to reach that audience — travel, finance, lifestyle — will find one of the most conversion-focused micro-communities on the platform.",
+    quote: "I prove that travel doesn't have to cost what everyone says it does.",
+    photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=800&q=80",
     tone: "gradient-mono",
     accentHex: "#ffffff",
+    audience: { topAge: "20–30", genderSplit: "58% female", topLocations: ["UK", "US", "AU"] },
     platforms: [
       { name: "TikTok", followers: "88K", growth: "+10.4% / mo" },
       { name: "Instagram", followers: "34K", growth: "+8.6% / mo" },
@@ -569,12 +628,12 @@ export const creators: CreatorProfile[] = [
     fee: "From $400 / post",
     responseTime: "< 5 hours",
     portfolio: [
-      { bg: "#0d0d0d", dark: true, format: "TikTok · 60s", brand: "Wise", views: "380K" },
-      { bg: "linear-gradient(135deg, #0a1a2a 0%, #1a2a3a 100%)", dark: true, format: "TikTok · 45s", brand: "HostelWorld", views: "240K" },
-      { bg: "#3B9EFF", dark: false, format: "Instagram Reel", brand: "Skyscanner", views: "160K" },
-      { bg: "#F5C518", dark: false, format: "TikTok · 30s", brand: "Monzo", views: "420K" },
-      { bg: "linear-gradient(135deg, #1a1a0a 0%, #2a2a0a 100%)", dark: true, format: "TikTok · 60s", brand: "Organic", views: "810K" },
-      { bg: "#C8F135", dark: false, format: "Instagram Post", brand: "Osprey", views: "78K" },
+      { bg: "#0d0d0d",                                            dark: true,  format: "TikTok · 60s",  brand: "Wise",        views: "380K",  thumb: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #0a1a2a 0%, #1a2a3a 100%)", dark: true,  format: "TikTok · 45s",  brand: "HostelWorld", views: "240K",  thumb: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=450&fit=crop&q=75" },
+      { bg: "#3B9EFF",                                            dark: false, format: "Instagram Reel", brand: "Skyscanner",  views: "160K",  thumb: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=450&fit=crop&q=75" },
+      { bg: "#F5C518",                                            dark: false, format: "TikTok · 30s",   brand: "Monzo",       views: "420K",  thumb: "https://images.unsplash.com/photo-1527697788519-2d62b0a1c4da?w=600&h=450&fit=crop&q=75" },
+      { bg: "linear-gradient(135deg, #1a1a0a 0%, #2a2a0a 100%)", dark: true,  format: "TikTok · 60s",  brand: "Organic",     views: "810K",  thumb: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=450&fit=crop&q=75" },
+      { bg: "#C8F135",                                            dark: false, format: "Instagram Post", brand: "Osprey",      views: "78K",   thumb: "https://images.unsplash.com/photo-1523592121529-f6dde35f079e?w=600&h=450&fit=crop&q=75" },
     ],
   },
 ];

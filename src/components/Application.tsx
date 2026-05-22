@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { AppProps } from "next/app";
 import Layout from "./layout/Layout";
+import type { ReactNode } from "react";
 
 interface ApplicationProps {
   className?: string;
@@ -9,6 +10,12 @@ interface ApplicationProps {
 }
 
 function Application({ className, Component, pageProps }: ApplicationProps) {
+  // Pages can export `getLayout` to override or skip the default Layout.
+  // e.g. `MyPage.getLayout = (page) => page` opts out entirely.
+  const getLayout =
+    (Component as any).getLayout ??
+    ((page: ReactNode) => <Layout className="relative z-10">{page}</Layout>);
+
   return (
     <div
       className={cn(
@@ -16,9 +23,7 @@ function Application({ className, Component, pageProps }: ApplicationProps) {
         className,
       )}
     >
-      <Layout className="relative z-10">
-        <Component {...pageProps} />
-      </Layout>
+      {getLayout(<Component {...pageProps} />)}
     </div>
   );
 }

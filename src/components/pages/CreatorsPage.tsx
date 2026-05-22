@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles, Search, X } from "lucide-react";
 import { SectionShell, SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur, stagger } from "@/lib/motion";
@@ -267,6 +267,16 @@ const PAGE_STYLES = `
     --cr-yellow: rgba(248,232,184,0.14); --cr-yellow-ink: #f8e8b8;
   }
 
+  /* Pre-hide scroll-animated elements to prevent FOUC */
+  .creator-card,
+  .step-num,
+  .benefit-row,
+  .benefit-icon,
+  .earnings-row,
+  .earnings-value,
+  .cr-reveal,
+  .ps-reveal { opacity: 0; }
+
   /* Hero */
   .cr-hero-grid { display: grid; grid-template-columns: 1fr; min-height: 580px; }
   @media (min-width: 1024px) { .cr-hero-grid { grid-template-columns: 1fr 400px; } }
@@ -278,10 +288,10 @@ const PAGE_STYLES = `
   .mosaic-bottom { display: grid; grid-template-columns: 1fr 1fr; }
 
   /* Creator grid */
-  .creators-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--color-border); }
+  .creators-grid { display: grid; grid-template-columns: 1fr; gap: 0; background: var(--color-bg); }
   @media (min-width: 640px)  { .creators-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .creators-grid { grid-template-columns: repeat(4, 1fr); } }
-  .creator-card { aspect-ratio: 3 / 4; display: block; position: relative; overflow: hidden; }
+  .creator-card { aspect-ratio: 3 / 4; display: block; position: relative; overflow: hidden; box-shadow: inset -1px -1px 0 0 var(--color-border); }
   .creator-card:hover { outline: 2.5px solid var(--color-accent); outline-offset: -2px; z-index: 2; }
 
   /* Power strip */
@@ -306,6 +316,43 @@ const PAGE_STYLES = `
   .cr-avail-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .cr-avail-dot.avail { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.7); }
   .cr-avail-dot.busy  { background: rgba(255,255,255,0.28); }
+
+  /* Search input */
+  .cr-search-wrap { position: relative; display: flex; align-items: center; }
+  .cr-search-icon { position: absolute; left: 0.875rem; pointer-events: none; color: var(--color-muted-fg); transition: color 0.15s; }
+  .cr-search-input {
+    width: 100%; padding: 0.5rem 2.25rem 0.5rem 2.5rem;
+    border: 1.5px solid var(--color-border); border-radius: 999px;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+    background: var(--color-bg); color: var(--color-fg);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none; min-width: 200px;
+  }
+  .cr-search-input::placeholder { color: var(--color-muted-fg); opacity: 0.7; }
+  .cr-search-input:focus { border-color: var(--color-fg); box-shadow: 2px 2px 0 0 var(--color-accent); }
+  .cr-search-clear { position: absolute; right: 0.6rem; padding: 0.2rem; color: var(--color-muted-fg); opacity: 0.6; cursor: pointer; background: none; border: none; display: flex; align-items: center; justify-content: center; border-radius: 999px; transition: opacity 0.15s; }
+  .cr-search-clear:hover { opacity: 1; }
+
+  /* Category filter bar */
+  .cr-filter-bar { display: flex; align-items: center; gap: 0.5rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-inline-end: 1.5rem; }
+  .cr-filter-bar::-webkit-scrollbar { display: none; }
+  .cr-filter-pill {
+    flex-shrink: 0; padding: 0.4rem 1.1rem; border-radius: 999px;
+    border: 1.5px solid var(--color-border);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    cursor: pointer; background: var(--color-bg); color: var(--color-muted-fg);
+    transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    white-space: nowrap; user-select: none;
+  }
+  .cr-filter-pill:hover { border-color: var(--color-fg); color: var(--color-fg); }
+  .cr-filter-pill:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  .cr-filter-pill[data-active="true"] {
+    background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg);
+    box-shadow: 2px 2px 0 0 var(--color-accent);
+  }
 `;
 
 /* ─── Creator card ───────────────────────────────────────────────── */
@@ -319,40 +366,29 @@ function CreatorCard({
 }) {
   return (
     <Link href={`/creators/${c.slug}`} className="creator-card group">
-      <div
-        className={`absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.06]`}
+      {/* Photo */}
+      <img
+        src={c.img}
+        alt={c.name}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
       />
 
-      {/* Dot texture */}
+      {/* Subtle dot overlay */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px)",
+            "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)",
           backgroundSize: "20px 20px",
         }}
       />
 
-      {/* Watermark initial */}
-      <span
-        aria-hidden
-        className="font-display absolute inset-0 flex items-center justify-center select-none transition-all duration-700 group-hover:scale-110 group-hover:opacity-20"
-        style={{
-          fontSize: "clamp(7rem,20vw,13rem)",
-          lineHeight: 1,
-          opacity: 0.09,
-          color: "var(--color-fg)",
-          fontStyle: "italic",
-        }}
-      >
-        {c.name.charAt(0)}
-      </span>
-
       {/* Index */}
       <span
         className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.25em]"
-        style={{ color: "rgba(0,0,0,0.3)" }}
+        style={{ color: "rgba(255,255,255,0.6)", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
       >
         {String(index + 1).padStart(2, "0")}
       </span>
@@ -499,10 +535,40 @@ const CommunityMark = ({ color }: { color: string }) => (
 /* ─── Page ───────────────────────────────────────────────────────── */
 
 const PREVIEW_COUNT = 8;
+const CATEGORIES = ["All", "Lifestyle", "Travel", "Beauty", "Fitness", "Fashion", "Food", "Tech", "Wellness"];
 
 export const CreatorsPage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const q = searchQuery.trim().toLowerCase();
+  const filteredCreators = featuredCreators
+    .filter((c) => {
+      const matchCat = activeCategory === "All" || c.category === activeCategory;
+      const matchQ =
+        !q ||
+        c.name.toLowerCase().includes(q) ||
+        c.niche.toLowerCase().includes(q) ||
+        c.platform.toLowerCase().includes(q) ||
+        c.category.toLowerCase().includes(q) ||
+        c.tier.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    })
+    .slice(0, q || activeCategory !== "All" ? undefined : PREVIEW_COUNT);
+
+  // Animate cards in whenever the filter or search changes
+  useEffect(() => {
+    if (!gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll<HTMLElement>(".creator-card");
+    gsap.fromTo(
+      cards,
+      { y: 20, opacity: 0, scale: 0.97 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.42, ease: "power2.out", stagger: 0.055, overwrite: "auto" },
+    );
+  }, [activeCategory, searchQuery]);
 
   useGSAP(
     () => {
@@ -779,13 +845,11 @@ export const CreatorsPage = () => {
                 style={{ fontSize: "clamp(3.75rem,9vw,8rem)" }}
                 aria-label="Built For Creators."
               >
-                {["Built", "For", "Creators."].map((w, i) => (
+                {["Built", "For", "Creators."].map((w) => (
                   <span key={w} className="block">
                     <span
                       className="cr-word inline-block"
-                      style={
-                        i === 1 ? { color: "var(--color-accent)" } : undefined
-                      }
+                      style={w === "For" ? { color: "oklch(0.7823 0.0488 220.2338)" } : undefined}
                     >
                       {w}
                     </span>
@@ -807,7 +871,7 @@ export const CreatorsPage = () => {
 
               {/* CTA buttons */}
               <div className="cr-hero-in flex flex-wrap items-center gap-4">
-                <Link href="/contact" className="btn-primary group">
+                <Link href="/creators/apply" className="btn-primary group">
                   Apply as creator
                   <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
@@ -978,7 +1042,7 @@ export const CreatorsPage = () => {
                 className="font-display leading-none mb-3"
                 style={{
                   fontSize: "clamp(3rem,6vw,5.5rem)",
-                  color: "var(--color-accent)",
+                  color: "var(--color-bg)",
                 }}
               >
                 {value}
@@ -1060,21 +1124,95 @@ export const CreatorsPage = () => {
           </div>
         </div>
 
-        {/* Grid — first 8 only */}
+        {/* Search + filter bar */}
+        <div className="px-6 md:px-10 py-4 border-b border-(--color-border) flex flex-col gap-3">
+          {/* Search row */}
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="cr-search-wrap max-w-sm">
+              <Search className="cr-search-icon w-3.5 h-3.5" aria-hidden />
+              <input
+                ref={searchRef}
+                type="search"
+                className="cr-search-input"
+                placeholder="Search by name, niche, platform…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search creators"
+              />
+              {searchQuery && (
+                <button
+                  className="cr-search-clear"
+                  onClick={() => { setSearchQuery(""); searchRef.current?.focus(); }}
+                  aria-label="Clear search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Filter pills */}
+          <div className="relative">
+            {/* right-fade hint for horizontal scroll on mobile */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:hidden"
+              style={{ background: "linear-gradient(to right, transparent, var(--color-bg))" }} />
+            <div className="cr-filter-bar max-w-7xl mx-auto" role="group" aria-label="Filter creators by category">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  className="cr-filter-pill"
+                  data-active={activeCategory === cat ? "true" : "false"}
+                  aria-pressed={activeCategory === cat}
+                  onClick={() => setActiveCategory(cat)}
+                >
+                  {activeCategory === cat && <span className="mr-1.5" aria-hidden>✦</span>}
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Grid */}
         <div ref={gridRef}>
           <div className="creators-grid">
-            {featuredCreators.slice(0, PREVIEW_COUNT).map((c, i) => (
-              <CreatorCard key={c.slug} c={c} index={i} />
-            ))}
+            {filteredCreators.length > 0 ? (
+              filteredCreators.map((c, i) => (
+                <CreatorCard key={c.slug} c={c} index={i} />
+              ))
+            ) : (
+              <div className="col-span-full py-28 flex flex-col items-center gap-6 text-center px-6">
+                <Sparkle size={52} fill="var(--color-fg)" className="opacity-10" />
+                <div className="flex flex-col gap-2">
+                  <p className="font-display italic text-3xl md:text-4xl" style={{ color: "var(--color-fg)", opacity: 0.3 }}>
+                    {q ? `No results for "${searchQuery}".` : `No ${activeCategory.toLowerCase()} creators yet.`}
+                  </p>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-(--color-muted-fg)">
+                    {featuredCreators.length}+ total creators across all categories
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setActiveCategory("All"); setSearchQuery(""); }}
+                  className="btn-primary"
+                >
+                  Show all creators
+                  <ArrowUpRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Show more CTA */}
         <div className="px-6 md:px-10 py-14 border-t border-(--color-border) flex flex-col sm:flex-row items-center justify-between gap-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-(--color-muted-fg)">
-            Showing 8 of {featuredCreators.length}+ creators
+            {q
+              ? `${filteredCreators.length} result${filteredCreators.length !== 1 ? "s" : ""} for "${searchQuery}"`
+              : activeCategory === "All"
+              ? `Showing ${Math.min(PREVIEW_COUNT, filteredCreators.length)} of ${featuredCreators.length}+ creators`
+              : `${filteredCreators.length} creator${filteredCreators.length !== 1 ? "s" : ""} in ${activeCategory}`}
           </p>
-          <Link href="/contact" className="btn-primary group cr-reveal">
+          <Link href="/creators/apply" className="btn-primary group cr-reveal">
             Join the roster
             <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
@@ -1388,7 +1526,8 @@ export const CreatorsPage = () => {
             className="cr-reveal font-display leading-none mb-6 select-none"
             style={{
               fontSize: "clamp(5rem,12vw,10rem)",
-              color: "var(--color-accent)",
+              color: "var(--color-fg)",
+              opacity: 0.15,
               lineHeight: 0.7,
             }}
           >
@@ -1471,7 +1610,7 @@ export const CreatorsPage = () => {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/contact" className="btn-primary">
+              <Link href="/creators/apply" className="btn-primary">
                 Apply as creator
                 <ArrowUpRight className="w-4 h-4" />
               </Link>

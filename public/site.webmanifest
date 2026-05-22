@@ -1,0 +1,23 @@
+{
+  "name": "Icons — The Creator Platform",
+  "short_name": "Icons",
+  "description": "Icons connects brands with 10,000+ vetted creators. No agency. No commission. Campaigns live in 48 hours.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f5f0e8",
+  "theme_color": "#f5f0e8",
+  "icons": [
+    {
+      "src": "/logoBlack.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo_icons.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

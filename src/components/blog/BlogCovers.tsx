@@ -424,7 +424,7 @@ export function BlogCover5() {
       {/* Background code rain */}
       <div aria-hidden style={{ position: "absolute", top: 0, right: 0, width: "52%", height: "100%", zIndex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "30px 20px", gap: 2, overflow: "hidden" }}>
         {codeLines.map((line, i) => (
-          <div key={i} style={{ ...MONO, fontSize: "clamp(5px,0.7vw,11px)", fontWeight: line.type ? 700 : 400, color: line.type === "pink" ? "rgba(255,62,181,0.22)" : line.type === "lime" ? "rgba(100,160,0,0.22)" : "rgba(0,0,0,0.10)", whiteSpace: "nowrap", letterSpacing: "0.04em", lineHeight: 1.8 }}>
+          <div key={i} style={{ ...MONO, fontSize: "clamp(5px,0.7vw,11px)", fontWeight: line.type ? 700 : 400, color: line.type === "pink" ? "rgba(255,62,181,0.22)" : line.type === "lime" ? "rgba(100,150,220,0.22)" : "rgba(0,0,0,0.10)", whiteSpace: "nowrap", letterSpacing: "0.04em", lineHeight: 1.8 }}>
             {line.text}
           </div>
         ))}

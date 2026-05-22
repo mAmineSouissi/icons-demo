@@ -28,22 +28,23 @@ export const BrandsValueSection = () => {
 
   useGSAP(
     () => {
-      gsap.from(".bvs-eyebrow", {
-        opacity: 0, x: -20, duration: 0.5,
-        scrollTrigger: { trigger: ref.current, start: "top 80%" },
-      });
+      gsap.fromTo(".bvs-eyebrow",
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.5,
+          scrollTrigger: { trigger: ref.current, start: "top 90%", once: true } },
+      );
 
       gsap.fromTo(".bvs-word > span",
         { opacity: 0, y: 52, rotate: 4 },
         { opacity: 1, y: 0, rotate: 0, duration: 0.85, ease: "power3.out", stagger: 0.06, overwrite: "auto", clearProps: "transform,opacity",
-          scrollTrigger: { trigger: ref.current, start: "top 72%" } },
+          scrollTrigger: { trigger: ref.current, start: "top 85%", once: true } },
       );
 
-      gsap.from(".bvs-stat", {
-        opacity: 0, y: 50, scale: 0.92, rotate: () => gsap.utils.random(-4, 4),
-        duration: 0.75, ease: "back.out(1.7)", stagger: 0.1,
-        scrollTrigger: { trigger: ".bvs-stats", start: "top 78%" },
-      });
+      gsap.fromTo(".bvs-stat",
+        { opacity: 0, y: 50, scale: 0.92 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "back.out(1.7)", stagger: 0.1,
+          scrollTrigger: { trigger: ".bvs-stats", start: "top 90%", once: true } },
+      );
 
       gsap.to(".bvs-stat", {
         y: "+=10", rotate: "+=3", duration: 2.8, ease: "sine.inOut",
@@ -51,31 +52,34 @@ export const BrandsValueSection = () => {
         stagger: { each: 0.4, from: "random" },
       });
 
-      gsap.from(".bvs-sparkle", {
-        opacity: 0, scale: 0, rotate: -120, duration: 0.8, ease: "back.out(2)",
-        stagger: 0.15,
-        scrollTrigger: { trigger: ".bvs-stats", start: "top 70%" },
-      });
+      gsap.fromTo(".bvs-sparkle",
+        { opacity: 0, scale: 0, rotate: -120 },
+        { opacity: 1, scale: 1, rotate: 0, duration: 0.8, ease: "back.out(2)", stagger: 0.15,
+          scrollTrigger: { trigger: ".bvs-stats", start: "top 85%", once: true } },
+      );
 
       gsap.to(".bvs-sparkle", {
         rotate: "+=12", y: "+=8", duration: 3.2, ease: "sine.inOut",
         repeat: -1, yoyo: true, stagger: 0.3,
       });
 
-      gsap.from(".bvs-row", {
-        opacity: 0, x: -30, duration: 0.5, ease: "power2.out", stagger: 0.08,
-        scrollTrigger: { trigger: ".bvs-vs", start: "top 80%" },
-      });
+      gsap.fromTo(".bvs-row",
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power2.out", stagger: 0.08,
+          scrollTrigger: { trigger: ".bvs-vs", start: "top 90%", once: true } },
+      );
 
-      gsap.from(".bvs-script", {
-        opacity: 0, y: 20, duration: 0.7,
-        scrollTrigger: { trigger: ".bvs-script", start: "top 85%" },
-      });
+      gsap.fromTo(".bvs-script",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.7,
+          scrollTrigger: { trigger: ".bvs-script", start: "top 95%", once: true } },
+      );
 
-      gsap.from(".bvs-cta-block", {
-        opacity: 0, y: 40, scale: 0.96, duration: 0.7, ease: "power3.out",
-        scrollTrigger: { trigger: ".bvs-cta-block", start: "top 82%" },
-      });
+      gsap.fromTo(".bvs-cta-block",
+        { opacity: 0, y: 40, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out",
+          scrollTrigger: { trigger: ".bvs-cta-block", start: "top 95%", once: true } },
+      );
     },
     { scope: ref },
   );

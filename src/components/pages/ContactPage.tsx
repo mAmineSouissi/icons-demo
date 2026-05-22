@@ -190,15 +190,58 @@ export const ContactPage = () => {
           {/* Form */}
           <div className="ct-reveal">
             {sent ? (
-              <div className="sticker p-10 md:p-14 flex flex-col items-start gap-5" data-tone="accent">
+              <div className="sticker p-10 md:p-14 flex flex-col items-start gap-6" data-tone="accent">
                 <span className="font-display italic text-7xl leading-none">✓</span>
-                <h3 className="font-display italic text-3xl leading-tight">Message received.</h3>
-                <p className="font-script text-xl opacity-75">
-                  — we&apos;ll get back to you within 24 hours.
-                </p>
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-display italic text-3xl leading-tight">Message received.</h3>
+                  <p className="font-script text-xl opacity-75">
+                    — we&apos;ll get back to you within 24 hours.
+                  </p>
+                </div>
+
+                {/* Contextual next step */}
+                <div className="w-full border-t border-current/20 pt-6 flex flex-col gap-4">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+                    While you wait
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {form.subject === "creator" ? (
+                      <>
+                        <Link href="/creators/apply" className="btn-ghost group text-sm" style={{ color: "var(--color-fg)", borderColor: "var(--color-fg)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                          Start your application
+                          <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </Link>
+                        <Link href="/creators" className="font-mono text-[11px] uppercase tracking-[0.18em] underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity self-center" style={{ color: "var(--color-fg)" }}>
+                          Browse the roster
+                        </Link>
+                      </>
+                    ) : form.subject === "brand" ? (
+                      <>
+                        <Link href="/brief-builder" className="btn-ghost group text-sm" style={{ color: "var(--color-fg)", borderColor: "var(--color-fg)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                          Build a brief now
+                          <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </Link>
+                        <Link href="/creators" className="font-mono text-[11px] uppercase tracking-[0.18em] underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity self-center" style={{ color: "var(--color-fg)" }}>
+                          Browse creators
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/brief-builder" className="btn-ghost group text-sm" style={{ color: "var(--color-fg)", borderColor: "var(--color-fg)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                          Run a campaign
+                          <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </Link>
+                        <Link href="/creators" className="font-mono text-[11px] uppercase tracking-[0.18em] underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity self-center" style={{ color: "var(--color-fg)" }}>
+                          Explore creators
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </div>
+
                 <button
                   onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
-                  className="font-mono text-[11px] uppercase tracking-[0.22em] opacity-60 hover:opacity-100 transition-opacity cursor-pointer mt-2"
+                  className="font-mono text-[10px] uppercase tracking-[0.22em] opacity-40 hover:opacity-70 transition-opacity cursor-pointer"
                 >
                   Send another →
                 </button>
@@ -224,9 +267,11 @@ export const ContactPage = () => {
 
                 {/* Subject toggle */}
                 <div className="flex flex-col gap-3">
-                  <span className="eyebrow !text-[10px]">I am…</span>
+                  <span id="subject-label" className="eyebrow !text-[10px]">I am…</span>
                   <div
-                    className="inline-flex flex-wrap gap-1 p-1 rounded-full border-2 self-start"
+                    role="group"
+                    aria-labelledby="subject-label"
+                    className="grid grid-cols-2 sm:inline-flex sm:flex-wrap gap-1 p-1 rounded-2xl sm:rounded-full border-2"
                     style={{
                       borderColor: "var(--color-fg)",
                       background: "var(--color-bg)",
@@ -237,8 +282,9 @@ export const ContactPage = () => {
                       <button
                         key={opt.value}
                         type="button"
+                        aria-pressed={form.subject === opt.value}
                         onClick={() => setForm((f) => ({ ...f, subject: opt.value }))}
-                        className="px-5 py-2 rounded-full font-mono text-[11px] tracking-[0.18em] uppercase transition-all duration-200 cursor-pointer"
+                        className="px-4 py-2.5 sm:px-5 sm:py-2 rounded-xl sm:rounded-full font-mono text-[10px] sm:text-[11px] tracking-[0.15em] uppercase transition-all duration-200 cursor-pointer text-center"
                         style={
                           form.subject === opt.value
                             ? { background: "var(--color-fg)", color: "var(--color-bg)" }
@@ -320,14 +366,16 @@ export const ContactPage = () => {
                 </p>
                 <div className="flex items-center gap-3">
                   {[
-                    { Icon: Instagram, label: "Instagram", href: "#" },
-                    { Icon: Twitter,   label: "Twitter",   href: "#" },
-                    { Icon: Linkedin,  label: "LinkedIn",  href: "#" },
+                    { Icon: Instagram, label: "Instagram", href: "https://instagram.com/icons" },
+                    { Icon: Twitter,   label: "Twitter",   href: "https://x.com/icons" },
+                    { Icon: Linkedin,  label: "LinkedIn",  href: "https://linkedin.com/company/icons-studio" },
                   ].map(({ Icon, label, href }) => (
                     <a
                       key={label}
                       href={href}
                       aria-label={label}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-60"
                       style={{
                         border: "1px solid color-mix(in srgb, var(--color-bg) 25%, transparent)",
@@ -451,7 +499,7 @@ export const ContactPage = () => {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/brief" className="btn-primary">
+              <Link href="/brief-builder" className="btn-primary">
                 Start a campaign
                 <ArrowUpRight className="w-4 h-4" />
               </Link>

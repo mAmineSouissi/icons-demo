@@ -94,6 +94,14 @@ const milestones = [
   { year: "2025", event: "Crossed $12M in total creator earnings. Opened NYC office. Zero creator has ever waited longer than 48 hours to be paid." },
 ];
 
+const beliefs = [
+  { num: "01", claim: "Creators are businesses.", contrast: "Not hobbies. Not side hustles." },
+  { num: "02", claim: "Content should earn.", contrast: "Not just perform." },
+  { num: "03", claim: "Brand fit beats reach.", contrast: "Every single time." },
+  { num: "04", claim: "No agency, ever.", contrast: "That's the whole point." },
+  { num: "05", claim: "48 hours or we failed.", contrast: "Payment is a deadline, not a courtesy." },
+];
+
 const pressLogos = ["TechCrunch", "Fast Company", "Vogue Business", "AdWeek", "Forbes", "The Drum", "Digiday"];
 
 const manifestoLines = [
@@ -106,10 +114,14 @@ const manifestoLines = [
 /* ─── Styles ─────────────────────────────────────────────────────── */
 
 const PAGE_STYLES = `
+  /* Pre-hide scroll-animated elements to prevent FOUC */
+  .ab-ps-cell,
+  .ab-belief-row { opacity: 0; }
+
   /* Power strip — full-bleed section, constrained inner grid */
-  .ab-ps-inner { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; display: grid; grid-template-columns: minmax(0,1fr); }
-  @media (min-width: 640px)  { .ab-ps-inner { grid-template-columns: repeat(3, minmax(0,1fr)); } }
-  @media (min-width: 1024px) { .ab-ps-inner { grid-template-columns: repeat(5, minmax(0,1fr)); } }
+  .ab-ps-grid { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; display: grid; grid-template-columns: minmax(0,1fr); }
+  @media (min-width: 640px)  { .ab-ps-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+  @media (min-width: 1024px) { .ab-ps-grid { grid-template-columns: repeat(5, minmax(0,1fr)); } }
 
   /* Power strip cell separators */
   .ab-ps-cell { padding: 2.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -128,6 +140,15 @@ const PAGE_STYLES = `
   .ab-team-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
   @media (min-width: 640px)  { .ab-team-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .ab-team-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  /* Team card top accent stripe */
+  .ab-team-card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    height: 100%;
+  }
 `;
 
 /* ─── Page ───────────────────────────────────────────────────────── */
@@ -198,8 +219,8 @@ export const AboutPage = () => {
           .from(yearEl,  { xPercent: -8, yPercent: 110, duration: 0.95 }, "-=0.35")
           .from(eventEl, { y: 30, opacity: 0, duration: 0.7 }, "-=0.55");
         gsap.fromTo(yearEl,
-          { scale: 0.92, color: "var(--fg)" },
-          { scale: 1.04, color: "var(--accent)", ease: "none",
+          { scale: 0.92, opacity: 0.4 },
+          { scale: 1.06, opacity: 1, ease: "none",
             scrollTrigger: { trigger: row, start: "top 75%", end: "bottom 30%", scrub: 1 } },
         );
       });
@@ -265,7 +286,17 @@ export const AboutPage = () => {
         });
       }
 
-      // ── 9. Generic section reveals ───────────────────────────────
+      // ── 9. Beliefs rows — clip-path wipe + y stagger ─────────────
+      gsap.utils.toArray<HTMLElement>(".ab-belief-row").forEach((el, i) => {
+        gsap.fromTo(el,
+          { clipPath: "inset(0 0 100% 0)", y: 16 },
+          { clipPath: "inset(0 0 0% 0)", y: 0,
+            duration: dur.base, ease: ease.out, delay: i * 0.09,
+            scrollTrigger: { trigger: ".ab-beliefs-list", start: "top 85%", toggleActions: "play none none none", once: true } },
+        );
+      });
+
+      // ── 10. Generic section reveals ──────────────────────────────
       gsap.utils.toArray<HTMLElement>(".sec-reveal").forEach((el) => {
         gsap.from(el, {
           y: 28, opacity: 0, duration: dur.slow, ease: ease.out,
@@ -316,8 +347,7 @@ export const AboutPage = () => {
               style={{ fontSize: "clamp(3rem,9vw,8rem)" }}>
               {["We're", "not an", "agency.", "We never", "will be."].map((word, i) => (
                 <span key={i}
-                  className="ab-word inline-block align-bottom mr-[0.22em] last:mr-0"
-                  style={i === 0 || i === 4 ? { color: "var(--color-accent)" } : undefined}>
+                  className="ab-word inline-block align-bottom mr-[0.22em] last:mr-0">
                   {word}
                 </span>
               ))}
@@ -329,11 +359,11 @@ export const AboutPage = () => {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4">
-              <Link href="/brief" className="ab-hero-cta btn-primary">
+              <Link href="/brief-builder" className="ab-hero-cta btn-primary">
                 Start a campaign
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
-              <Link href="/creators" className="ab-hero-cta btn-ghost">
+              <Link href="/creators/apply" className="ab-hero-cta btn-ghost">
                 Join as creator
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
@@ -343,11 +373,11 @@ export const AboutPage = () => {
 
         {/* ── DARK POWER STRIP ────────────────────────────────────── */}
         <section style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}>
-          <div className="ab-ps-inner">
+          <div className="ab-ps-grid">
             {powerStrip.map(({ value, label, sub }) => (
               <div key={label} className="ab-ps-cell">
                 <div className="font-display italic leading-none mb-3"
-                  style={{ fontSize: "clamp(1.8rem,3.2vw,3rem)", color: "var(--color-accent)" }}>
+                  style={{ fontSize: "clamp(1.8rem,3.2vw,3rem)", color: "var(--color-bg)" }}>
                   {value}
                 </div>
                 <div className="text-base font-medium mb-1.5" style={{ color: "var(--color-bg)" }}>{label}</div>
@@ -365,7 +395,7 @@ export const AboutPage = () => {
           className="relative h-screen flex items-center px-6 md:px-12 border-t border-(--color-border) overflow-hidden bracket-frame"
           style={{ background: "var(--color-bg)" }}>
           <div className="mn-glow absolute -top-1/4 -right-1/4 w-[800px] h-[800px] rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle, var(--accent) 0%, transparent 60%)" }} />
+            style={{ background: "radial-gradient(circle, var(--color-border) 0%, transparent 60%)", opacity: 0.4 }} />
           <div className="max-w-6xl mx-auto w-full grid grid-cols-12 gap-8 relative">
             <aside className="mn-note col-span-12 md:col-span-3 self-start">
               <p className="font-mono text-[11px] uppercase tracking-[0.32em] opacity-50">The manifesto</p>
@@ -386,7 +416,7 @@ export const AboutPage = () => {
                           const isAccent = w.startsWith("*");
                           const word = isAccent ? w.slice(1) : w;
                           return (
-                            <span key={j} className={isAccent ? "text-(--color-accent)" : ""}>
+                            <span key={j} style={isAccent ? { color: "oklch(0.7823 0.0488 220.2338)" } : undefined}>
                               {word}{j < clean.split(" ").length - 1 ? " " : ""}
                             </span>
                           );
@@ -458,6 +488,62 @@ export const AboutPage = () => {
           </div>
         </section>
 
+        {/* ── WE BELIEVE ──────────────────────────────────────────── */}
+        <section className="border-t border-(--color-border) bracket-frame"
+          style={{ background: "var(--color-bg)" }}>
+          {/* Header */}
+          <div className="px-6 md:px-12 py-16 md:py-20 border-b border-(--color-border)">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+              <div>
+                <div className="font-mono text-[12px] tracking-[0.32em] uppercase mb-4 opacity-50 sec-reveal">
+                  our convictions
+                </div>
+                <h2 className="font-display italic text-[clamp(2rem,5vw,4.5rem)] leading-[0.95] tracking-[-0.03em] sec-reveal">
+                  Five things we&apos;d<br />stake the company on.
+                </h2>
+              </div>
+              <p className="sec-reveal hidden md:block font-mono text-[12px] tracking-wide text-(--color-muted-fg) max-w-xs leading-relaxed self-end">
+                Not values from a wall poster. Decisions we make every day.
+              </p>
+            </div>
+          </div>
+
+          {/* Belief rows */}
+          <div className="ab-beliefs-list max-w-7xl mx-auto">
+            {beliefs.map(({ num, claim, contrast }) => (
+              <div key={num}
+                className="ab-belief-row group relative border-b border-(--color-border) overflow-hidden cursor-default"
+                style={{ clipPath: "inset(0 0 0% 0)" }}>
+                {/* Hover fill */}
+                <div aria-hidden
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: "var(--color-fg)" }} />
+
+                <div className="relative z-10 flex items-center gap-6 md:gap-12 px-6 md:px-12 py-9 md:py-11">
+                  {/* Number */}
+                  <span className="font-mono text-[10px] tracking-[0.32em] text-(--color-muted-fg) w-6 shrink-0 group-hover:text-(--color-bg) transition-colors duration-500">
+                    {num}
+                  </span>
+
+                  {/* Text */}
+                  <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-baseline md:gap-10">
+                    <h3 className="font-display italic text-[clamp(1.5rem,3.5vw,3rem)] leading-none shrink-0 group-hover:text-(--color-bg) transition-colors duration-500">
+                      {claim}
+                    </h3>
+                    <p className="font-mono text-[12px] tracking-wide text-(--color-muted-fg) leading-relaxed mt-2 md:mt-0 max-w-sm group-hover:text-(--color-accent) transition-colors duration-500">
+                      {contrast}
+                    </p>
+                  </div>
+
+                  {/* Arrow */}
+                  <ArrowUpRight className="w-5 h-5 shrink-0 opacity-0 -translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+                    style={{ color: "var(--color-accent)" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── TEAM ────────────────────────────────────────────────── */}
         <section className="relative py-24 px-6 md:px-12 border-t border-(--color-border) bracket-frame dot-grid"
           style={{ background: "var(--color-panel)" }}>
@@ -471,31 +557,57 @@ export const AboutPage = () => {
               Operators, builders, creators-turned-founders.
             </h2>
 
-            <div ref={teamGridRef} className="ab-team-grid pb-3 pr-3">
-              {team.map(({ name, role, bio, tone, cardTone, handle, linkedin }) => (
-                <a key={name}
-                  href={linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="team-card sticker flex flex-col gap-5 p-7 will-change-transform"
-                  data-tone={cardTone}>
-                  <div className={`team-photo ${tone} w-full aspect-square mb-2 rounded-2xl relative overflow-hidden will-change-transform`}>
-                    <span className="absolute inset-0 flex items-center justify-center font-display italic text-6xl"
-                      style={{ color: "rgba(0,0,0,0.18)" }}>
-                      {name.split(" ").map((p) => p[0]).join("")}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-display italic text-xl leading-tight mb-0.5">{name}</h3>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] opacity-60">{role}</p>
-                  </div>
-                  <p className="font-sans text-sm leading-relaxed opacity-70 flex-1">{bio}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] opacity-40">{handle}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 opacity-30" />
-                  </div>
-                </a>
-              ))}
+            <div ref={teamGridRef} className="ab-team-grid">
+              {team.map(({ name, role, bio, tone, cardTone, handle, linkedin }) => {
+                const accentColor = {
+                  accent: "var(--accent)",
+                  pink:   "#ff3eb5",
+                  yellow: "var(--accent4)",
+                  ink:    "var(--fg)",
+                }[cardTone] ?? "var(--accent)";
+                return (
+                  <a key={name}
+                    href={linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="team-card sticker will-change-transform overflow-hidden"
+                    data-tone={cardTone}
+                    style={{ padding: 0 }}
+                  >
+                    {/* Accent top stripe */}
+                    <div style={{ height: "4px", background: accentColor, borderRadius: "var(--radius-lg) var(--radius-lg) 0 0" }} />
+
+                    <div className="ab-team-card-inner">
+                      {/* Photo block */}
+                      <div className={`team-photo ${tone} w-full aspect-square rounded-2xl relative overflow-hidden will-change-transform`}>
+                        <span className="absolute inset-0 flex items-center justify-center font-display italic text-6xl"
+                          style={{ color: "rgba(0,0,0,0.18)" }}>
+                          {name.split(" ").map((p) => p[0]).join("")}
+                        </span>
+                      </div>
+
+                      {/* Name + role */}
+                      <div>
+                        <h3 className="font-display italic text-xl leading-tight mb-0.5">{name}</h3>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] opacity-55">{role}</p>
+                      </div>
+
+                      {/* Bio */}
+                      <p className="font-sans text-[14px] leading-relaxed opacity-75 flex-1">{bio}</p>
+
+                      {/* Footer — handle + arrow */}
+                      <div className="flex items-center justify-between pt-3 border-t border-(--color-border)">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.2em] opacity-40">{handle}</span>
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.15em]"
+                          style={{ color: accentColor, opacity: 0.8 }}>
+                          LinkedIn
+                          <ArrowUpRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -551,11 +663,11 @@ export const AboutPage = () => {
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-4">
-                <Link href="/brief" className="btn-primary">
+                <Link href="/brief-builder" className="btn-primary">
                   Start a campaign
                   <ArrowUpRight className="w-4 h-4" />
                 </Link>
-                <Link href="/creators" className="btn-ghost"
+                <Link href="/creators/apply" className="btn-ghost"
                   style={{
                     background: "transparent",
                     color: "var(--color-bg)",

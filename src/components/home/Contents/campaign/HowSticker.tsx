@@ -38,19 +38,19 @@ const STEPS: Step[] = [
       "Approved in under 48 hours",
     ],
     scriptLine: "— no portfolio needed, promise",
-    bg: "#c5ff3d",
-    numberTint: "#eaffb0",
+    bg: "oklch(0.7823 0.0488 220.2338)",
+    numberTint: "#c8e4f5",
     bulletStroke: "#0a0a0a",
     textColor: "#0a0a0a",
     mediaBg: "#0a0a0a",
-    mediaAccent: "#c5ff3d",
+    mediaAccent: "oklch(0.7823 0.0488 220.2338)",
     mediaImage: {
       src: "/cards/apply_in_seconds.jpg",
       alt: "Apply in 60 seconds — vibe-first creator application",
     },
     mediaStars: [
       { fill: "#f5c518", size: 44, cls: "top-4 right-4 rotate-12" },
-      { fill: "#c5ff3d", size: 34, cls: "bottom-16 left-4 -rotate-12" },
+      { fill: "oklch(0.7823 0.0488 220.2338)", size: 34, cls: "bottom-16 left-4 -rotate-12" },
     ],
   },
   {
@@ -121,7 +121,7 @@ const STEPS: Step[] = [
     scriptLine: "— the glow-up is built in",
     bg: "#0a0a0a",
     numberTint: "#2a2a2a",
-    bulletStroke: "#c5ff3d",
+    bulletStroke: "oklch(0.7823 0.0488 220.2338)",
     textColor: "#f5f1ea",
     mediaBg: "#0a0a0a",
     mediaAccent: "#f5c518",
@@ -131,7 +131,7 @@ const STEPS: Step[] = [
     },
     mediaStars: [
       { fill: "#f5c518", size: 44, cls: "top-4 right-4 rotate-12" },
-      { fill: "#c5ff3d", size: 34, cls: "bottom-16 left-4 -rotate-12" },
+      { fill: "oklch(0.7823 0.0488 220.2338)", size: 34, cls: "bottom-16 left-4 -rotate-12" },
     ],
   },
 ];

@@ -1,11 +1,47 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "@/lib/utils";
 import { IconsLogo, StarMark } from "@/components/shared/IconsLogo";
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return <div className="w-9 h-9" />;
+  const isDark = theme === "dark";
+  return (
+    <button
+      onClick={() => {
+        setSpinning(true);
+        setTheme(isDark ? "light" : "dark");
+        setTimeout(() => setSpinning(false), 400);
+      }}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="inline-flex items-center justify-center w-9 h-9 rounded-full border-2 border-(--color-fg) cursor-pointer transition-colors duration-200"
+      style={{
+        background: isDark ? "var(--color-accent)" : "transparent",
+        color: isDark ? "#000" : "var(--color-fg)",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-flex",
+          transition: "transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.18s",
+          transform: spinning ? "rotate(180deg) scale(0.5)" : "rotate(0deg) scale(1)",
+          opacity: spinning ? 0 : 1,
+        }}
+      >
+        {isDark ? <Sun className="w-3.5 h-3.5" strokeWidth={2.5} /> : <Moon className="w-3.5 h-3.5" strokeWidth={2.5} />}
+      </span>
+    </button>
+  );
+}
 
 const NAV_LINKS = [
   { label: "Creators", href: "/creators" },
@@ -28,6 +64,12 @@ const Header = () => {
   const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  // Client-only: check session after mount to avoid SSR mismatch
+  useEffect(() => {
+    setLoggedIn(!!localStorage.getItem("icons-session"));
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
@@ -169,13 +211,36 @@ const Header = () => {
 
           {/* Right cluster */}
           <div className="flex items-center gap-2">
+
+            {/* Theme toggle — always visible */}
+            <ThemeToggle />
+
+            {/* Demo shortcut — only when not logged in */}
+            {!loggedIn && (
+              <Link
+                href="/demo"
+                className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] px-3 py-1.5 rounded-full border border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors duration-150"
+              >
+                Try demo
+              </Link>
+            )}
+
+            {/* Log in */}
+            <Link href="/login" className="hdr-login-btn">
+              Log in
+              <span className="hdr-login-icon">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+
+            {/* Apply now */}
             <Link
               href="/contact"
-              className="hdr-cta hidden sm:inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-(--color-fg) text-(--color-bg) text-[12px] font-bold tracking-[0.05em] uppercase border-2 border-(--color-fg) hover:bg-(--color-accent) hover:text-(--color-fg) transition-colors group"
-              style={{ boxShadow: "3px 3px 0 0 var(--fg)" }}
+              className="hdr-cta hidden md:inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-(--color-fg) text-(--color-bg) text-[12px] font-bold tracking-[0.05em] uppercase border-2 border-(--color-fg) hover:bg-(--color-accent) hover:text-(--color-fg) transition-colors group"
+              style={{ boxShadow: "3px 3px 0 0 var(--color-fg)" }}
             >
               <span className="hdr-cta-star inline-flex">
-                <StarMark size={16} fill="#c5ff3d" outline="#0a0a0a" />
+                <StarMark size={16} fill="oklch(0.7823 0.0488 220.2338)" outline="#0a0a0a" />
               </span>
               Apply now
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-(--color-accent) text-(--color-fg) border-[1.5px] border-(--color-bg) group-hover:bg-(--color-fg) group-hover:text-(--color-bg) transition-colors">
@@ -183,12 +248,13 @@ const Header = () => {
               </span>
             </Link>
 
+            {/* Mobile hamburger */}
             <button
               className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-(--color-fg) text-(--color-fg) cursor-pointer bg-(--color-accent)"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen((v) => !v)}
-              style={{ boxShadow: "2px 2px 0 0 var(--fg)" }}
+              style={{ boxShadow: "2px 2px 0 0 var(--color-fg)" }}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -259,7 +325,7 @@ const Header = () => {
                       {item.label}.
                     </span>
                     {isActive ? (
-                      <StarMark size={28} fill="#c5ff3d" outline="#0a0a0a" />
+                      <StarMark size={28} fill="oklch(0.7823 0.0488 220.2338)" outline="#0a0a0a" />
                     ) : (
                       <ArrowUpRight className="w-6 h-6 opacity-50 group-hover:opacity-100 transition-opacity" />
                     )}
@@ -270,13 +336,23 @@ const Header = () => {
           </div>
 
           <div className="pt-8 border-t-2 border-(--color-fg) flex items-center justify-between gap-4">
-            <span className="font-mono text-[10px] tracking-[0.32em] uppercase">
-              icons · 2026
-            </span>
-            <Link href="/contact" className="btn-primary">
-              Apply now
-              <ArrowUpRight className="w-4 h-4" />
+            <Link
+              href="/login"
+              className="font-mono text-[10px] uppercase tracking-[0.22em] text-(--color-muted-fg) hover:text-(--color-fg) transition-colors"
+            >
+              Log in
             </Link>
+            <div className="flex items-center gap-3">
+              {!loggedIn && (
+                <Link href="/demo" className="font-mono text-[10px] uppercase tracking-[0.22em] px-3 py-2 rounded-full border-2 border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors">
+                  Try demo
+                </Link>
+              )}
+              <Link href="/contact" className="btn-primary">
+                Apply now
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

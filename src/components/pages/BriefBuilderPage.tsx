@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { ArrowUpRight, ArrowLeft, Check } from "lucide-react";
 import { SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
@@ -38,11 +39,11 @@ const INITIAL: Brief = {
 /* ─── Step config ────────────────────────────────────────────────── */
 
 const STEPS = [
-  { num: "01", label: "Brand",    title: "Tell us about\nyour brand.",       desc: "Who you are, who you're for, and what makes you worth talking about." },
-  { num: "02", label: "Goals",    title: "What do you\nwant to achieve?",    desc: "Campaign type, budget, and timeline — three levers that shape everything." },
-  { num: "03", label: "Creators", title: "Who should\nyou work with?",       desc: "We'll filter 10,000+ profiles down to creators who fit your exact brief." },
-  { num: "04", label: "Content",  title: "Define the\ncreative direction.",  desc: "Formats, tone, and any non-negotiables for the content itself." },
-  { num: "05", label: "Review",   title: "Your brief\nis ready.",            desc: "Everything in one place. Submit when you're happy." },
+  { num: "01", label: "Brand",    badge: "Step 1 of 5",  title: "Tell us about\nyour brand.",       desc: "Who you are, who you're for, and what makes you worth talking about." },
+  { num: "02", label: "Goals",    badge: "Step 2 of 5",  title: "What do you\nwant to achieve?",    desc: "Campaign type, budget, and timeline — three levers that shape everything." },
+  { num: "03", label: "Creators", badge: "Step 3 of 5",  title: "Who should\nyou work with?",       desc: "We'll filter 10,000+ profiles down to creators who fit your exact brief." },
+  { num: "04", label: "Content",  badge: "Step 4 of 5",  title: "Define the\ncreative direction.",  desc: "Formats, tone, and any non-negotiables for the content itself." },
+  { num: "05", label: "Review",   badge: "Final step",   title: "Your brief\nis ready.",            desc: "Everything in one place. Submit when you're happy." },
 ];
 
 /* ─── Styles ─────────────────────────────────────────────────────── */
@@ -54,68 +55,88 @@ const PAGE_STYLES = `
     min-height: calc(100vh - 64px);
   }
   @media (min-width: 1024px) {
-    .bb-layout { grid-template-columns: 340px 1fr; }
+    .bb-layout { grid-template-columns: 360px 1fr; }
   }
 
   /* Sidebar — dark ink panel */
   .bb-sidebar {
     background: var(--color-fg);
     color: var(--color-bg);
-    padding: 3.5rem 2.5rem;
+    padding: 3.5rem 2.75rem;
     position: sticky; top: 64px;
     height: calc(100vh - 64px);
     display: flex; flex-direction: column; justify-content: space-between;
     overflow: hidden;
+    border-right: 2px solid var(--color-fg);
   }
   @media (max-width: 1023px) { .bb-sidebar { display: none; } }
 
-  .bb-main { padding: 3.5rem 2.5rem 6rem; }
-  @media (min-width: 768px) { .bb-main { padding: 4rem 5rem 8rem; } }
+  /* Main area */
+  .bb-main {
+    padding: 3.5rem 2.5rem 6rem;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-fg) 8%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  @media (min-width: 768px) { .bb-main { padding: 4.5rem 5rem 8rem; } }
 
   /* Progress bar */
-  .bb-progress { display: flex; }
+  .bb-progress { display: flex; border-bottom: 2px solid var(--color-fg); }
   .bb-prog-step {
-    flex: 1; padding: 0.85rem 0;
-    border-top: 3px solid var(--color-border);
-    transition: border-color 0.3s;
+    flex: 1; padding: 0.9rem 0.75rem 0.75rem;
+    border-top: 3px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
     cursor: default;
   }
-  .bb-prog-step.done   { border-color: var(--color-accent); }
-  .bb-prog-step.active { border-color: var(--color-fg); }
+  .bb-prog-step.done   { border-top-color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 8%, transparent); }
+  .bb-prog-step.active { border-top-color: var(--color-fg); }
 
   /* Option grid layouts */
-  .opt-2 { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--color-border); }
+  .opt-2 { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
   @media (min-width: 640px) { .opt-2 { grid-template-columns: repeat(2, 1fr); } }
-  .opt-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--color-border); }
+  .opt-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
   @media (min-width: 768px) { .opt-3 { grid-template-columns: repeat(3, 1fr); } }
-  .opt-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--color-border); }
+  .opt-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
   @media (min-width: 768px) { .opt-4 { grid-template-columns: repeat(4, 1fr); } }
   .opt-inline { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
-  /* Option button */
+  /* Option button — neo-brutalist sticker cards */
   .bb-opt {
     position: relative; padding: 1.25rem 1.5rem;
     background: var(--color-bg); text-align: left; cursor: pointer;
-    border: none; width: 100%;
-    transition: background 0.2s ease;
+    border: 2px solid var(--color-fg); width: 100%;
+    border-radius: var(--radius-md);
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+    box-shadow: 3px 3px 0 0 var(--color-fg);
   }
-  .bb-opt:hover { background: var(--color-panel); }
+  .bb-opt:hover {
+    box-shadow: 5px 5px 0 0 var(--color-fg);
+    transform: translate(-1px, -1px);
+    background: var(--color-panel);
+  }
+  .bb-opt:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
   .bb-opt.sel {
     background: var(--color-fg);
     color: var(--color-bg);
-    box-shadow: inset 3px 3px 0 0 var(--color-accent);
+    box-shadow: 4px 4px 0 0 var(--color-accent);
+    transform: translate(-1px, -1px);
   }
   .bb-opt.sel .bb-opt-sub { color: color-mix(in srgb, var(--color-bg) 55%, transparent); }
 
-  /* Inline tag option */
+  /* Inline tag option — rounded pill */
   .bb-tag {
-    padding: 0.5rem 1rem;
-    border: 1.5px solid var(--color-border);
+    padding: 0.5rem 1.1rem;
+    border: 2px solid var(--color-fg);
+    border-radius: 999px;
     background: var(--color-bg); cursor: pointer;
     font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
     transition: all 0.18s; white-space: nowrap;
+    box-shadow: 2px 2px 0 0 var(--color-fg);
   }
-  .bb-tag:hover { border-color: var(--color-fg); }
+  .bb-tag:hover { box-shadow: 3px 3px 0 0 var(--color-fg); transform: translate(-0.5px, -0.5px); }
+  .bb-tag:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
   .bb-tag.sel {
     background: var(--color-fg);
     color: var(--color-bg);
@@ -126,40 +147,88 @@ const PAGE_STYLES = `
   /* Text input */
   .bb-input {
     width: 100%; background: transparent; border: none;
-    border-bottom: 1.5px solid var(--color-border);
+    border-bottom: 2px solid var(--color-border);
     padding: 0.75rem 0; font-size: 1.125rem; color: var(--color-fg);
     outline: none; transition: border-color 0.2s;
     font-family: inherit;
   }
-  .bb-input:focus { border-bottom-color: var(--color-accent); }
+  .bb-input:focus { border-bottom-color: var(--color-fg); }
   .bb-input::placeholder { color: color-mix(in srgb, var(--color-muted-fg) 60%, transparent); }
 
   .bb-textarea {
-    width: 100%; background: transparent;
-    border: 1.5px solid var(--color-border);
+    width: 100%; background: var(--color-bg);
+    border: 2px solid var(--color-fg);
+    border-radius: var(--radius-md);
     padding: 1rem 1.25rem; color: var(--color-fg);
-    outline: none; resize: none; transition: border-color 0.2s;
+    outline: none; resize: none; transition: box-shadow 0.2s;
     font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em; line-height: 1.7;
     min-height: 120px;
+    box-shadow: 3px 3px 0 0 var(--color-fg);
   }
-  .bb-textarea:focus { border-color: var(--color-accent); }
+  .bb-textarea:focus { box-shadow: 4px 4px 0 0 var(--color-accent); }
   .bb-textarea::placeholder { color: color-mix(in srgb, var(--color-muted-fg) 60%, transparent); }
 
   /* Review summary */
   .bb-review-grid {
     display: grid; grid-template-columns: 1fr;
-    gap: 1px; background: var(--color-border);
-    border: 1.5px solid var(--color-fg);
-    box-shadow: 4px 4px 0 0 var(--color-fg);
+    gap: 0.6rem;
   }
   @media (min-width: 640px) { .bb-review-grid { grid-template-columns: repeat(2, 1fr); } }
-  .bb-review-cell { padding: 1.5rem 1.75rem; background: var(--color-bg); }
+  .bb-review-cell {
+    padding: 1.5rem 1.75rem;
+    background: var(--color-bg);
+    border: 2px solid var(--color-fg);
+    border-radius: var(--radius-md);
+    box-shadow: 3px 3px 0 0 var(--color-fg);
+  }
 
   /* Nav */
   .bb-nav {
     display: flex; align-items: center; justify-content: space-between;
     padding-top: 3rem; margin-top: 3rem;
     border-top: 2px solid var(--color-fg);
+  }
+
+  /* ── Dark mode overrides ──────────────────────────────────────── */
+  [data-theme="dark"] .bb-sidebar {
+    background: #111111;
+    color: var(--color-fg);
+    border-right-color: #2a2a2a;
+  }
+  [data-theme="dark"] .bb-progress {
+    border-bottom-color: #2a2a2a;
+  }
+  [data-theme="dark"] .bb-prog-step.active {
+    border-top-color: var(--color-accent);
+  }
+  [data-theme="dark"] .bb-opt {
+    border-color: var(--color-border-soft);
+    box-shadow: 3px 3px 0 0 var(--color-border-soft);
+  }
+  [data-theme="dark"] .bb-opt:hover {
+    box-shadow: 5px 5px 0 0 var(--color-border-soft);
+  }
+  [data-theme="dark"] .bb-opt.sel {
+    background: var(--color-accent);
+    color: #000;
+    border-color: var(--color-accent);
+    box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  [data-theme="dark"] .bb-opt.sel .bb-opt-sub {
+    color: rgba(0,0,0,0.55);
+  }
+  [data-theme="dark"] .bb-tag {
+    border-color: var(--color-border-soft);
+    box-shadow: 2px 2px 0 0 var(--color-border-soft);
+  }
+  [data-theme="dark"] .bb-tag.sel {
+    background: var(--color-accent);
+    color: #000;
+    border-color: var(--color-accent);
+    box-shadow: 3px 3px 0 0 color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  [data-theme="dark"] .bb-nav {
+    border-top-color: #2a2a2a;
   }
 `;
 
@@ -177,7 +246,7 @@ function OptButton({ label, sub, selected, onToggle, large }: {
   label: string; sub?: string; selected: boolean; onToggle: () => void; large?: boolean;
 }) {
   return (
-    <button type="button" onClick={onToggle} className={`bb-opt ${selected ? "sel" : ""}`}>
+    <button type="button" onClick={onToggle} aria-pressed={selected} className={`bb-opt ${selected ? "sel" : ""}`}>
       {selected && (
         <span className="absolute top-3 right-3 w-5 h-5 flex items-center justify-center rounded-full"
           style={{ background: "var(--color-accent)" }}>
@@ -192,8 +261,8 @@ function OptButton({ label, sub, selected, onToggle, large }: {
 
 function TagButton({ label, selected, onToggle }: { label: string; selected: boolean; onToggle: () => void }) {
   return (
-    <button type="button" onClick={onToggle} className={`bb-tag ${selected ? "sel" : ""}`}>
-      {selected && <span className="mr-1.5">✦</span>}{label}
+    <button type="button" onClick={onToggle} aria-pressed={selected} className={`bb-tag ${selected ? "sel" : ""}`}>
+      {selected && <span className="mr-1.5" aria-hidden>✦</span>}{label}
     </button>
   );
 }
@@ -203,11 +272,20 @@ function TagButton({ label, selected, onToggle }: { label: string; selected: boo
 export const BriefBuilderPage = () => {
   const ref     = useRef<HTMLDivElement>(null);
   const stepRef = useRef<HTMLDivElement>(null);
-  const [step,      setStep]      = useState(0);
-  const [dir,       setDir]       = useState<1 | -1>(1);
-  const [brief,     setBrief]     = useState<Brief>(INITIAL);
-  const [submitted, setSubmitted] = useState(false);
-  const [error,     setError]     = useState("");
+  const router  = useRouter();
+  const [step,       setStep]       = useState(0);
+  const [dir,        setDir]        = useState<1 | -1>(1);
+  const [brief,      setBrief]      = useState<Brief>(INITIAL);
+  const [error,      setError]      = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Pre-selected creator from /creators/[handle] CTA
+  const creatorHandle = typeof router.query.creator === "string" ? router.query.creator : null;
+
+  // Jump to the Creators step when arriving with a pre-selected creator
+  useEffect(() => {
+    if (creatorHandle) setStep(2);
+  }, [creatorHandle]);
 
   // Animate step in on change
   useEffect(() => {
@@ -266,77 +344,21 @@ export const BriefBuilderPage = () => {
     });
   };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-    gsap.fromTo(".bb-success > *",
-      { y: 24, opacity: 0, scale: 0.92 },
-      { y: 0, opacity: 1, scale: 1, duration: dur.slow, ease: ease.bounce, stagger: 0.12, delay: 0.1 },
-    );
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    // Simulate brief processing round-trip (1.6s)
+    await new Promise((r) => setTimeout(r, 1600));
+    router.push("/brief-status");
   };
-
-  /* ── Success state ─────────────────────────────────────────────── */
-  if (submitted) {
-    return (
-      <div ref={ref} className="min-h-screen bg-(--color-bg) text-(--color-fg) flex items-center justify-center px-6 py-24 dot-grid bracket-frame">
-        <style>{PAGE_STYLES}</style>
-
-        <div className="max-w-lg w-full relative">
-          <Sparkle size={52} fill="var(--accent2)" className="absolute -top-8 -left-8 -rotate-12 pointer-events-none" />
-          <Sparkle size={40} fill="var(--accent3)" className="absolute -bottom-8 -right-6 rotate-12 pointer-events-none" />
-
-          <div className="bb-success sticker p-10 md:p-14 text-center flex flex-col items-center gap-6" data-tone="ink">
-            <div className="font-mono text-[11px] tracking-[0.32em] uppercase opacity-60 flex items-center gap-2">
-              <span>✦</span><span>brief submitted</span><span>✦</span>
-            </div>
-
-            <div className="w-16 h-16 rounded-full flex items-center justify-center"
-              style={{ background: "var(--color-accent)" }}>
-              <Check className="w-7 h-7" style={{ color: "#000" }} strokeWidth={2.5} />
-            </div>
-
-            <h1 className="font-display italic text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.92] tracking-[-0.03em]">
-              You&apos;re in the<br />queue.
-            </h1>
-
-            <p className="font-script text-xl md:text-2xl opacity-70">
-              — creator matches land in your inbox within 48 hours
-            </p>
-
-            <p className="font-mono text-[11px] tracking-wide leading-relaxed opacity-50 max-w-xs">
-              A campaign manager will review your brief and reach out at{" "}
-              <span className="opacity-100">hello@icons.com</span>.
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <Link href="/creators" className="btn-primary">
-                Browse creators
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
-              <Link href="/" className="btn-ghost"
-                style={{
-                  background: "transparent",
-                  color: "var(--color-bg)",
-                  borderColor: "var(--color-bg)",
-                  boxShadow: "4px 4px 0 0 var(--color-accent)",
-                }}>
-                Back to home
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const current = STEPS[step];
 
   return (
-    <div ref={ref} className="min-h-screen bg-(--color-bg) text-(--color-fg)">
+    <div ref={ref} className="min-h-screen bg-(--color-bg) text-(--color-fg) bracket-frame">
       <style>{PAGE_STYLES}</style>
 
       {/* ── Progress bar ─────────────────────────────────────────── */}
-      <div className="bb-progress border-b-2 bb-entrance" style={{ borderColor: "var(--color-fg)" }}>
+      <div className="bb-progress bb-entrance">
         {STEPS.map((s, i) => (
           <div key={s.num} className={`bb-prog-step ${i < step ? "done" : i === step ? "active" : ""}`}>
             <span className="font-mono text-[9px] uppercase tracking-[0.22em] block mb-0.5"
@@ -344,7 +366,7 @@ export const BriefBuilderPage = () => {
               {s.num}
             </span>
             <span className="font-mono text-[10px] tracking-[0.1em] hidden md:block"
-              style={{ color: i <= step ? "var(--color-fg)" : "var(--color-muted-fg)" }}>
+              style={{ color: i === step ? "var(--color-fg)" : i < step ? "var(--color-accent)" : "var(--color-muted-fg)" }}>
               {s.label}
             </span>
           </div>
@@ -361,18 +383,22 @@ export const BriefBuilderPage = () => {
               style={{
                 fontSize: "clamp(10rem,18vw,16rem)",
                 color: "var(--color-bg)",
-                opacity: 0.06,
+                opacity: 0.05,
                 transform: "translate(15%, 8%)",
                 lineHeight: 1,
               }}>
               {current.num}
             </span>
           </div>
+          {/* Sparkle accent */}
+          <Sparkle size={44} fill="var(--color-accent)" stroke="var(--color-accent)" strokeWidth={0}
+            className="absolute top-8 right-8 opacity-60 pointer-events-none" />
 
           <div className="relative z-10">
-            <div className="mb-8 bb-entrance">
+            <div className="mb-8 bb-entrance flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--color-accent)" }} />
               <span className="font-mono text-[10px] uppercase tracking-[0.28em]"
-                style={{ color: "color-mix(in srgb, var(--color-bg) 50%, transparent)" }}>
+                style={{ color: "color-mix(in srgb, var(--color-bg) 55%, transparent)" }}>
                 Campaign Brief
               </span>
             </div>
@@ -392,6 +418,20 @@ export const BriefBuilderPage = () => {
               — {current.desc}
             </p>
           </div>
+
+          {/* Pre-selected creator chip — always visible when present */}
+          {creatorHandle && (
+            <div className="relative z-10 pt-6"
+              style={{ borderTop: "1px solid color-mix(in srgb, var(--color-bg) 15%, transparent)" }}>
+              <p className="font-mono text-[9px] uppercase tracking-[0.25em] mb-2"
+                style={{ color: "color-mix(in srgb, var(--color-bg) 40%, transparent)" }}>Creator locked</p>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={{ background: "var(--color-accent)", color: "#000" }}>
+                <Check className="w-3 h-3 flex-shrink-0" strokeWidth={3} />
+                <span className="font-mono text-[10px] font-semibold tracking-wide">@{creatorHandle}</span>
+              </div>
+            </div>
+          )}
 
           {/* Brief summary so far */}
           {step > 0 && (
@@ -430,13 +470,23 @@ export const BriefBuilderPage = () => {
         </aside>
 
         {/* ── Main form ─────────────────────────────────────────── */}
-        <div className="bb-main">
+        <div className="bb-main relative">
+          {/* Ambient Sparkle decorations */}
+          <Sparkle size={40} fill="var(--accent2)" className="absolute top-8 right-8 opacity-40 pointer-events-none hidden md:block" />
+          <Sparkle size={28} fill="var(--accent4)" className="absolute bottom-24 right-20 opacity-35 pointer-events-none hidden lg:block" />
+
           <div ref={stepRef}>
 
             {/* ── STEP 0: Brand ──────────────────────────────────── */}
             {step === 0 && (
               <div className="max-w-2xl">
-                <h2 className="font-display italic text-4xl md:text-5xl leading-[0.95] mb-12 md:hidden">
+                <div className="md:hidden mb-6">
+                  <span className="inline-block px-4 py-1.5 rounded-full border-2 font-mono text-[10px] tracking-[0.25em] uppercase -rotate-1"
+                    style={{ borderColor: "var(--color-fg)", background: "var(--color-accent)", color: "rgba(0,0,0,0.85)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                    {current.badge}
+                  </span>
+                </div>
+                <h2 className="font-display italic text-[clamp(2.25rem,7vw,3.5rem)] leading-[0.95] tracking-[-0.02em] mb-10 md:hidden">
                   {current.title.replace("\n", " ")}
                 </h2>
 
@@ -480,7 +530,13 @@ export const BriefBuilderPage = () => {
             {/* ── STEP 1: Goals ──────────────────────────────────── */}
             {step === 1 && (
               <div className="max-w-2xl">
-                <h2 className="font-display italic text-4xl md:text-5xl leading-[0.95] mb-12 md:hidden">
+                <div className="md:hidden mb-6">
+                  <span className="inline-block px-4 py-1.5 rounded-full border-2 font-mono text-[10px] tracking-[0.25em] uppercase rotate-1"
+                    style={{ borderColor: "var(--color-fg)", background: "var(--color-accent)", color: "rgba(0,0,0,0.85)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                    {current.badge}
+                  </span>
+                </div>
+                <h2 className="font-display italic text-[clamp(2.25rem,7vw,3.5rem)] leading-[0.95] tracking-[-0.02em] mb-10 md:hidden">
                   {current.title.replace("\n", " ")}
                 </h2>
 
@@ -529,9 +585,33 @@ export const BriefBuilderPage = () => {
             {/* ── STEP 2: Creators ───────────────────────────────── */}
             {step === 2 && (
               <div className="max-w-2xl">
-                <h2 className="font-display italic text-4xl md:text-5xl leading-[0.95] mb-12 md:hidden">
+                <div className="md:hidden mb-6">
+                  <span className="inline-block px-4 py-1.5 rounded-full border-2 font-mono text-[10px] tracking-[0.25em] uppercase -rotate-1"
+                    style={{ borderColor: "var(--color-fg)", background: "var(--color-accent)", color: "rgba(0,0,0,0.85)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                    {current.badge}
+                  </span>
+                </div>
+                <h2 className="font-display italic text-[clamp(2.25rem,7vw,3.5rem)] leading-[0.95] tracking-[-0.02em] mb-10 md:hidden">
                   {current.title.replace("\n", " ")}
                 </h2>
+
+                {/* Pre-selected creator banner */}
+                {creatorHandle && (
+                  <div className="mb-8 flex items-center gap-3 px-4 py-3 rounded-xl border-2"
+                    style={{ borderColor: "var(--color-accent)", background: "color-mix(in srgb, var(--color-accent) 10%, transparent)" }}>
+                    <Check className="w-4 h-4 flex-shrink-0" style={{ color: "var(--color-accent)" }} />
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-widest opacity-60 mb-0.5">Creator pre-selected</p>
+                      <p className="text-sm font-medium">@{creatorHandle} · We'll prioritise this creator in your match list.</p>
+                    </div>
+                    <button
+                      className="ml-auto font-mono text-[10px] uppercase tracking-widest opacity-40 hover:opacity-80 transition-opacity"
+                      onClick={() => router.replace("/brief-builder", undefined, { shallow: true })}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
 
                 <div className="space-y-10">
                   <div>
@@ -578,7 +658,13 @@ export const BriefBuilderPage = () => {
             {/* ── STEP 3: Content ────────────────────────────────── */}
             {step === 3 && (
               <div className="max-w-2xl">
-                <h2 className="font-display italic text-4xl md:text-5xl leading-[0.95] mb-12 md:hidden">
+                <div className="md:hidden mb-6">
+                  <span className="inline-block px-4 py-1.5 rounded-full border-2 font-mono text-[10px] tracking-[0.25em] uppercase rotate-1"
+                    style={{ borderColor: "var(--color-fg)", background: "var(--color-accent)", color: "rgba(0,0,0,0.85)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                    {current.badge}
+                  </span>
+                </div>
+                <h2 className="font-display italic text-[clamp(2.25rem,7vw,3.5rem)] leading-[0.95] tracking-[-0.02em] mb-10 md:hidden">
                   {current.title.replace("\n", " ")}
                 </h2>
 
@@ -622,7 +708,13 @@ export const BriefBuilderPage = () => {
             {/* ── STEP 4: Review ─────────────────────────────────── */}
             {step === 4 && (
               <div className="max-w-2xl">
-                <h2 className="font-display italic text-4xl md:text-5xl leading-[0.95] mb-3 md:hidden">
+                <div className="md:hidden mb-6">
+                  <span className="inline-block px-4 py-1.5 rounded-full border-2 font-mono text-[10px] tracking-[0.25em] uppercase -rotate-1"
+                    style={{ borderColor: "var(--color-fg)", background: "var(--color-accent)", color: "rgba(0,0,0,0.85)", boxShadow: "3px 3px 0 0 var(--color-fg)" }}>
+                    {current.badge}
+                  </span>
+                </div>
+                <h2 className="font-display italic text-[clamp(2.25rem,7vw,3.5rem)] leading-[0.95] tracking-[-0.02em] mb-3 md:hidden">
                   Review your brief.
                 </h2>
                 <p className="font-mono text-[12px] tracking-wide text-(--color-muted-fg) leading-relaxed mb-10 md:hidden">
@@ -685,9 +777,27 @@ export const BriefBuilderPage = () => {
 
               <button type="button"
                 onClick={step < STEPS.length - 1 ? goNext : handleSubmit}
-                className="btn-primary group cursor-pointer">
-                {step < STEPS.length - 1 ? "Continue" : "Submit brief"}
-                <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                disabled={submitting}
+                className="btn-primary group cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                {submitting ? (
+                  <>
+                    <span
+                      className="inline-block w-3.5 h-3.5 rounded-full border-2 border-current border-t-transparent animate-spin"
+                      aria-hidden
+                    />
+                    Submitting…
+                  </>
+                ) : step < STEPS.length - 1 ? (
+                  <>
+                    Continue
+                    <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </>
+                ) : (
+                  <>
+                    Submit brief
+                    <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </>
+                )}
               </button>
             </div>
 

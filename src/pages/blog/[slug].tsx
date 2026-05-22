@@ -1,7 +1,9 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Clock, Calendar } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Clock, Calendar, Send, Zap, Star } from "lucide-react";
+import { useState } from "react";
 import { SectionLabel } from "@/components/shared/PagePrimitives";
+import Head from "next/head";
 import { blogPosts, getPostBySlug, categoryTone, type BlogPost } from "@/data/blog-posts";
 import {
   BlogCover0,
@@ -193,6 +195,171 @@ const CONTENT: Record<string, Section[]> = {
   ],
 };
 
+/* ─── In-article conversion CTA ────────────────────────────── */
+
+function ConversionCTA() {
+  return (
+    <div
+      className="mt-16 md:mt-20 rounded-2xl overflow-hidden"
+      style={{ border: "1px solid var(--color-border)" }}
+    >
+      {/* Header strip */}
+      <div
+        className="px-8 md:px-10 py-6 border-b"
+        style={{ background: "var(--color-panel)", borderColor: "var(--color-border)" }}
+      >
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] mb-1" style={{ color: "var(--color-muted-fg)" }}>
+          What&apos;s your next move?
+        </p>
+        <h3 className="font-display text-2xl md:text-3xl leading-tight" style={{ color: "var(--color-fg)" }}>
+          Put it into practice.
+        </h3>
+      </div>
+
+      {/* Dual-path cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2" style={{ background: "var(--color-bg)" }}>
+        {/* Brand path */}
+        <Link
+          href="/brief-builder"
+          className="group flex flex-col gap-4 p-8 md:p-10 border-b sm:border-b-0 sm:border-r transition-colors duration-200"
+          style={{
+            borderColor: "var(--color-border)",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-panel)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "")}
+        >
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: "var(--color-accent)", color: "#000" }}
+          >
+            <Zap className="w-4 h-4" />
+          </div>
+          <div className="flex-1">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] mb-1" style={{ color: "var(--color-muted-fg)" }}>
+              For brands
+            </p>
+            <h4 className="font-display text-xl md:text-2xl leading-tight mb-2" style={{ color: "var(--color-fg)" }}>
+              Build a campaign brief
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted-fg)" }}>
+              Describe your product and goals. We match you with vetted creators — campaigns live in 48 hours.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-2 text-sm font-medium" style={{ color: "var(--color-accent)" }}>
+            Start your brief
+            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </div>
+        </Link>
+
+        {/* Creator path */}
+        <Link
+          href="/creators"
+          className="group flex flex-col gap-4 p-8 md:p-10 transition-colors duration-200"
+          onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-panel)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "")}
+        >
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}
+          >
+            <Star className="w-4 h-4" />
+          </div>
+          <div className="flex-1">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] mb-1" style={{ color: "var(--color-muted-fg)" }}>
+              For creators
+            </p>
+            <h4 className="font-display text-xl md:text-2xl leading-tight mb-2" style={{ color: "var(--color-fg)" }}>
+              Join the roster
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted-fg)" }}>
+              10,000+ vetted creators. No agency cut. Browse the network or apply to get your profile listed.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-2 text-sm font-medium" style={{ color: "var(--color-fg)" }}>
+            Explore creators
+            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </div>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Newsletter capture ────────────────────────────────────── */
+
+function NewsletterCapture() {
+  const [email, setEmail]       = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitted(true);
+  }
+
+  return (
+    <section className="border-t border-(--color-border) px-6 md:px-10 py-16">
+      <div className="max-w-3xl mx-auto">
+        <div
+          className="rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center gap-8"
+          style={{ background: "var(--color-panel)", border: "1px solid var(--color-border)" }}
+        >
+          {/* Copy */}
+          <div className="flex-1">
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-(--color-muted-fg) mb-2">
+              Icons Journal
+            </p>
+            <h3 className="font-display italic text-2xl md:text-3xl leading-tight mb-2">
+              The playbook, monthly.
+            </h3>
+            <p className="text-sm text-(--color-muted-fg) leading-relaxed">
+              Creator trends, campaign breakdowns, and the moves that matter — before everyone else hears about them.
+            </p>
+          </div>
+
+          {/* Form */}
+          <div className="w-full md:w-auto md:min-w-[280px]">
+            {submitted ? (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-sm font-medium" style={{ color: "var(--color-accent)" }}>
+                  <span className="text-base">✦</span> You&apos;re on the list.
+                </div>
+                <p className="font-mono text-[10px] text-(--color-muted-fg) uppercase tracking-widest">
+                  First issue drops next week.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border text-sm bg-(--color-bg) outline-none transition-colors"
+                  style={{ borderColor: "var(--color-border)", color: "var(--color-fg)" }}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--color-fg)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
+                />
+                <button
+                  type="submit"
+                  className="btn-primary w-full justify-center"
+                >
+                  Subscribe free
+                  <Send className="w-3.5 h-3.5" />
+                </button>
+                <p className="font-mono text-[9px] text-(--color-muted-fg) uppercase tracking-widest text-center">
+                  No spam · Unsubscribe any time
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Props ─────────────────────────────────────────────────── */
 
 type Props = { post: BlogPost };
@@ -204,8 +371,33 @@ export default function BlogDetailPage({ post }: Props) {
   const sections = CONTENT[post.slug] ?? [];
   const initials = post.author.split(" ").map((w) => w[0]).join("");
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    url: `https://icons.so/blog/${post.slug}`,
+    datePublished: post.date,
+    author: { "@type": "Person", name: post.author, jobTitle: post.authorRole },
+    publisher: { "@type": "Organization", name: "Icons", url: "https://icons.so", logo: "https://icons.so/logoBlack.png" },
+  };
+
   return (
     <>
+      <Head>
+        <title>{post.title} — Icons Journal</title>
+        <meta name="description" content={post.excerpt} />
+        <meta property="og:title" content={`${post.title} — Icons Journal`} />
+        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://icons.so/blog/${post.slug}`} />
+        <meta name="twitter:title" content={`${post.title} — Icons Journal`} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+      </Head>
       {/* ── Cover hero ─────────────────────────────────────────── */}
       <div className="w-full overflow-hidden">
         {Cover && <Cover />}
@@ -283,6 +475,9 @@ export default function BlogDetailPage({ post }: Props) {
             ))}
           </div>
 
+          {/* Conversion CTA */}
+          <ConversionCTA />
+
           {/* Footer */}
           <footer className="mt-16 md:mt-20 pt-10 border-t border-(--color-border) flex flex-col gap-8">
             {/* Tags */}
@@ -314,6 +509,9 @@ export default function BlogDetailPage({ post }: Props) {
           </footer>
         </div>
       </div>
+
+      {/* ── Newsletter capture ─────────────────────────────────── */}
+      <NewsletterCapture />
 
       {/* ── More articles ───────────────────────────────────────── */}
       <section className="border-t border-(--color-border) px-6 md:px-10 py-16">
