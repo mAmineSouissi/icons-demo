@@ -289,6 +289,8 @@ export const BlogPage = () => {
       {/* ── Featured post ─────────────────────────────────────── */}
       <section className="border-t border-(--color-border) px-6 md:px-10 py-14 md:py-20">
         <style>{`
+          /* Pre-hide scroll-animated elements to prevent FOUC */
+          .bl-reveal { opacity: 0; }
           .blog-featured-grid { display: grid; grid-template-columns: 1fr; }
           @media (min-width: 768px) { .blog-featured-grid { grid-template-columns: 1fr 1fr; } }
           .blog-articles-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
