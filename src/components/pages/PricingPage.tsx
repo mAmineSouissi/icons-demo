@@ -30,7 +30,7 @@ const BRAND_PLANS = [
       "48h brief-to-live",
     ],
     cta: "Start free trial",
-    href: "/brands",
+    href: "/brief-builder",
   },
   {
     name: "Growth",
@@ -50,7 +50,7 @@ const BRAND_PLANS = [
       "Custom brief templates",
     ],
     cta: "Get started",
-    href: "/brands",
+    href: "/brief-builder",
   },
   {
     name: "Enterprise",
@@ -172,7 +172,12 @@ const LOCKED_STYLES = `
   .pr-locked-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--color-border); }
   @media (min-width: 640px)  { .pr-locked-grid { grid-template-columns: repeat(4, 1fr); } }
   @media (min-width: 1024px) { .pr-locked-grid { grid-template-columns: repeat(8, 1fr); } }
-  .pr-locked-card { aspect-ratio: 1/1.4; position: relative; overflow: hidden; }
+  .pr-locked-card { aspect-ratio: 1/1.4; position: relative; overflow: hidden; opacity: 0; }
+
+  /* Pre-hide scroll-animated elements to prevent FOUC */
+  .pricing-card,
+  .pricing-faq-item,
+  .pricing-cta { opacity: 0; }
 `;
 
 /* ─── FAQ Item ───────────────────────────────────────────────────── */
@@ -182,10 +187,12 @@ const FaqItem = ({ q, a }: { q: string; a: string }) => {
     <div className="border-b-2" style={{ borderColor: "var(--color-fg)" }}>
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full flex items-center justify-between gap-4 py-5 text-left"
       >
         <span className="font-display italic text-lg md:text-xl leading-snug">{q}</span>
         <ChevronDown
+          aria-hidden
           className="shrink-0 transition-transform duration-300"
           style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
           width={20} height={20}
@@ -194,6 +201,7 @@ const FaqItem = ({ q, a }: { q: string; a: string }) => {
       <div
         className="overflow-hidden transition-all duration-300"
         style={{ maxHeight: open ? "200px" : "0px" }}
+        aria-hidden={!open}
       >
         <p className="font-sans text-base leading-relaxed pb-5 opacity-70">{a}</p>
       </div>
@@ -213,58 +221,39 @@ export const PricingPage = () => {
         { opacity: 1, y: 0, rotate: 0, duration: 0.85, ease: "power3.out", stagger: 0.07, delay: 0.1, overwrite: "auto", clearProps: "transform,opacity" },
       );
 
-      gsap.from(".pricing-sub", {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        ease: "power2.out",
-        delay: 0.55,
-      });
+      gsap.fromTo(".pricing-sub",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.55 },
+      );
 
-      gsap.from(".pricing-toggle", {
-        opacity: 0,
-        y: 16,
-        duration: 0.5,
-        ease: "power2.out",
-        delay: 0.7,
-      });
+      gsap.fromTo(".pricing-toggle",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.7 },
+      );
 
-      gsap.from(".pr-locked-card", {
-        opacity: 0,
-        y: 30,
-        duration: 0.6,
-        ease: "power2.out",
-        stagger: 0.05,
-        scrollTrigger: { trigger: ".pr-locked-section", start: "top 85%" },
-      });
+      gsap.fromTo(".pr-locked-card",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.05,
+          scrollTrigger: { trigger: ".pr-locked-section", start: "top 95%", once: true } },
+      );
 
-      gsap.from(".pricing-card", {
-        opacity: 0,
-        y: 60,
-        scale: 0.94,
-        duration: 0.75,
-        ease: "back.out(1.6)",
-        stagger: 0.1,
-        scrollTrigger: { trigger: ".pricing-cards", start: "top 80%" },
-      });
+      gsap.fromTo(".pricing-card",
+        { opacity: 0, y: 60, scale: 0.94 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "back.out(1.6)", stagger: 0.1,
+          scrollTrigger: { trigger: ".pricing-cards", start: "top 95%", once: true } },
+      );
 
-      gsap.from(".pricing-faq-item", {
-        opacity: 0,
-        y: 24,
-        duration: 0.5,
-        ease: "power2.out",
-        stagger: 0.08,
-        scrollTrigger: { trigger: ".pricing-faq", start: "top 82%" },
-      });
+      gsap.fromTo(".pricing-faq-item",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.08,
+          scrollTrigger: { trigger: ".pricing-faq", start: "top 95%", once: true } },
+      );
 
-      gsap.from(".pricing-cta", {
-        opacity: 0,
-        y: 40,
-        scale: 0.96,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".pricing-cta", start: "top 82%" },
-      });
+      gsap.fromTo(".pricing-cta",
+        { opacity: 0, y: 40, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out",
+          scrollTrigger: { trigger: ".pricing-cta", start: "top 95%", once: true } },
+      );
     },
     { scope: ref },
   );
@@ -313,6 +302,8 @@ export const PricingPage = () => {
 
           {/* Audience toggle */}
           <div
+            role="group"
+            aria-label="View pricing for"
             className="pricing-toggle inline-flex items-center gap-1 p-1 rounded-full border-2"
             style={{
               borderColor: "var(--color-fg)",
@@ -324,6 +315,7 @@ export const PricingPage = () => {
               <button
                 key={tab}
                 onClick={() => setAudience(tab)}
+                aria-pressed={audience === tab}
                 className="px-6 py-2 rounded-full font-mono text-[11px] tracking-[0.22em] uppercase transition-all duration-200"
                 style={
                   audience === tab
@@ -549,8 +541,8 @@ export const PricingPage = () => {
                     </ul>
 
                     {i === 0 && (
-                      <Link href="/creators" className="btn-primary mt-2 justify-center text-sm">
-                        Join now
+                      <Link href="/creators/apply" className="btn-primary mt-2 justify-center text-sm">
+                        Apply now
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </Link>
                     )}
@@ -617,12 +609,12 @@ export const PricingPage = () => {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/brief" className="btn-primary">
+              <Link href="/brief-builder" className="btn-primary">
                 Post a brief
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/creators"
+                href="/creators/apply"
                 className="btn-ghost"
                 style={{
                   background: "transparent",

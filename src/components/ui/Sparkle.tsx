@@ -34,11 +34,7 @@ export const Sparkle = ({
       aria-hidden="true"
     >
       <path
-        d="M50 4
-           C 52 28, 60 38, 96 50
-           C 60 62, 52 72, 50 96
-           C 48 72, 40 62, 4 50
-           C 40 38, 48 28, 50 4 Z"
+        d="M50 4 C 52 28,60 38,96 50 C 60 62,52 72,50 96 C 48 72,40 62,4 50 C 40 38,48 28,50 4 Z"
         fill={fill}
         stroke={stroke}
         strokeWidth={strokeWidth}

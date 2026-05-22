@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { CTASection, SectionLabel } from "@/components/shared/PagePrimitives";
+import { SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur, stagger } from "@/lib/motion";
 
@@ -122,10 +122,20 @@ const PAGE_STYLES = `
     --br-subtext-on-pastel: rgba(0,0,0,0.55);
   }
 
+  /* Pre-hide scroll-animated elements to prevent FOUC */
+  .br-step,
+  .br-result-row,
+  .br-benefit-row,
+  .br-benefit-icon,
+  .br-metric,
+  .br-ps-reveal,
+  .br-reveal { opacity: 0; }
+
   /* Hero */
   .br-hero-grid { display: grid; grid-template-columns: 1fr; min-height: 580px; }
   @media (min-width: 1024px) { .br-hero-grid { grid-template-columns: 1fr 420px; } }
-  .br-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 28rem; }
+  .br-stat-row { display: flex; flex-wrap: wrap; gap: 0.75rem; max-width: 28rem; }
+  .br-stat-row > * { flex: 1 1 80px; min-width: 80px; }
 
   /* Mosaic */
   .br-mosaic-top { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); }
@@ -148,7 +158,7 @@ const PAGE_STYLES = `
   @media (min-width: 768px) { .br-result-cols { grid-template-columns: 2fr 1fr 2fr; align-items: center; } }
 
   /* Creator preview */
-  .br-creators-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--color-border); }
+  .br-creators-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.08); }
   @media (min-width: 640px)  { .br-creators-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (min-width: 1024px) { .br-creators-grid { grid-template-columns: repeat(6, 1fr); } }
   .br-creator-card { aspect-ratio: 3 / 4; display: block; position: relative; overflow: hidden; }
@@ -305,7 +315,7 @@ export const BrandsPage = () => {
             delay: i * stagger.normal,
             scrollTrigger: {
               trigger: el,
-              start: "top 90%",
+              start: "top 95%",
               toggleActions: "play none none none",
               once: true,
             },
@@ -327,7 +337,7 @@ export const BrandsPage = () => {
             delay: i * 0.12,
             scrollTrigger: {
               trigger: ".br-steps-grid",
-              start: "top 88%",
+              start: "top 95%",
               toggleActions: "play none none none",
               once: true,
             },
@@ -348,7 +358,7 @@ export const BrandsPage = () => {
             delay: i * 0.1,
             scrollTrigger: {
               trigger: ".br-results-list",
-              start: "top 85%",
+              start: "top 95%",
               toggleActions: "play none none none",
               once: true,
             },
@@ -369,7 +379,7 @@ export const BrandsPage = () => {
             delay: 0.2 + i * 0.1,
             scrollTrigger: {
               trigger: ".br-results-list",
-              start: "top 85%",
+              start: "top 95%",
               toggleActions: "play none none none",
               once: true,
             },
@@ -390,7 +400,7 @@ export const BrandsPage = () => {
           stagger: stagger.cards,
           scrollTrigger: {
             trigger: ".br-creators-grid",
-            start: "top 88%",
+            start: "top 95%",
             toggleActions: "play none none none",
             once: true,
           },
@@ -410,7 +420,7 @@ export const BrandsPage = () => {
             delay: i * 0.09,
             scrollTrigger: {
               trigger: ".br-benefits-list",
-              start: "top 85%",
+              start: "top 95%",
               toggleActions: "play none none none",
               once: true,
             },
@@ -431,7 +441,7 @@ export const BrandsPage = () => {
             delay: 0.15 + i * 0.09,
             scrollTrigger: {
               trigger: ".br-benefits-list",
-              start: "top 85%",
+              start: "top 95%",
               toggleActions: "play none none none",
               once: true,
             },
@@ -517,17 +527,11 @@ export const BrandsPage = () => {
                 style={{ fontSize: "clamp(3.75rem,9vw,8rem)" }}
                 aria-label="Turn creators into revenue."
               >
-                {[
-                  { text: "Turn creators", accent: false },
-                  { text: "into", accent: false },
-                  { text: "revenue.", accent: true },
-                ].map(({ text, accent }) => (
+                {["Turn creators", "into", "revenue."].map((text) => (
                   <span key={text} className="block">
                     <span
                       className="br-word inline-block"
-                      style={
-                        accent ? { color: "var(--color-accent)" } : undefined
-                      }
+                      style={text === "revenue." ? { color: "oklch(0.7823 0.0488 220.2338)" } : undefined}
                     >
                       {text}
                     </span>
@@ -549,7 +553,7 @@ export const BrandsPage = () => {
 
               {/* CTAs */}
               <div className="br-hero-in flex flex-wrap items-center gap-4">
-                <Link href="/brief" className="btn-primary group">
+                <Link href="/brief-builder" className="btn-primary group">
                   Start a campaign
                   <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
@@ -819,7 +823,7 @@ export const BrandsPage = () => {
                 className="font-display leading-none mb-3"
                 style={{
                   fontSize: "clamp(3.5rem,7vw,6rem)",
-                  color: "var(--color-accent)",
+                  color: "var(--color-bg)",
                 }}
               >
                 {value}
@@ -1017,7 +1021,7 @@ export const BrandsPage = () => {
                       className="br-metric font-display leading-none"
                       style={{
                         fontSize: "clamp(2.5rem,5vw,4rem)",
-                        color: "var(--color-accent)",
+                        color: "var(--color-fg)",
                       }}
                     >
                       {metric}
@@ -1041,25 +1045,28 @@ export const BrandsPage = () => {
       </section>
 
       {/* ── Creator roster preview ────────────────────────────────── */}
-      <section className="border-b border-(--color-border) px-6 md:px-10 py-20 md:py-28">
+      <section
+        className="border-b border-(--color-border) px-6 md:px-10 py-20 md:py-28"
+        style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
             <div>
               <div className="br-reveal mb-5">
                 <SectionLabel>The talent</SectionLabel>
               </div>
-              <h2 className="br-reveal font-display text-4xl md:text-6xl leading-[0.95]">
+              <h2 className="br-reveal font-display text-4xl md:text-6xl leading-[0.95]" style={{ color: "var(--color-bg)" }}>
                 10K+ creators,
                 <br />
                 ready to brief.
               </h2>
             </div>
             <div className="br-reveal flex items-end gap-6 self-end">
-              <p className="font-mono text-[12px] tracking-wide text-(--color-muted-fg) max-w-xs leading-relaxed hidden md:block">
+              <p className="font-mono text-[12px] tracking-wide max-w-xs leading-relaxed hidden md:block" style={{ color: "color-mix(in srgb, var(--color-bg) 55%, transparent)" }}>
                 Beauty, fitness, food, travel, design — 40+ verticals, all
                 audited for audience quality.
               </p>
-              <Link href="/creators" className="btn-ghost group shrink-0">
+              <Link href="/creators" className="btn-ghost group shrink-0" style={{ borderColor: "color-mix(in srgb, var(--color-bg) 30%, transparent)", color: "var(--color-bg)" }}>
                 Browse roster
                 <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
@@ -1251,7 +1258,8 @@ export const BrandsPage = () => {
             className="br-reveal font-display leading-none mb-6 select-none"
             style={{
               fontSize: "clamp(5rem,12vw,10rem)",
-              color: "var(--color-accent)",
+              color: "var(--color-fg)",
+              opacity: 0.15,
               lineHeight: 0.7,
             }}
           >
@@ -1297,13 +1305,61 @@ export const BrandsPage = () => {
         </div>
       </section>
 
-      <CTASection
-        eyebrow="Start a campaign"
-        title="Brief us in 10 minutes."
-        description="Tell us your goals and budget. We'll hand-pick creators and have recommendations in your inbox within 48 hours."
-        primary={{ label: "Start a campaign", href: "/brief" }}
-        secondary={{ label: "See how it works", href: "/about" }}
-      />
+      {/* ── CTA card ─────────────────────────────────────────────── */}
+      <section
+        className="relative py-24 px-6 md:px-12 dot-grid bracket-frame border-t border-(--color-border)"
+        style={{ background: "var(--color-bg)" }}
+      >
+        <div className="max-w-4xl mx-auto relative">
+          <Sparkle
+            size={56}
+            fill="var(--accent2)"
+            className="absolute -top-4 -left-4 md:-left-10 -rotate-12 pointer-events-none"
+          />
+          <Sparkle
+            size={44}
+            fill="var(--accent4)"
+            className="absolute -bottom-4 -right-4 md:-right-10 rotate-12 pointer-events-none"
+          />
+
+          <div
+            className="sticker p-10 md:p-16 text-center flex flex-col items-center gap-8"
+            data-tone="ink"
+          >
+            <div className="font-mono text-[11px] tracking-[0.32em] uppercase opacity-60 flex items-center gap-2">
+              <span>✦</span><span>open for briefs</span><span>✦</span>
+            </div>
+
+            <h2 className="font-display italic text-[clamp(2.2rem,6vw,5rem)] leading-[0.92] tracking-[-0.03em]">
+              Brief us in 10 minutes.
+            </h2>
+
+            <p className="font-script text-2xl md:text-3xl opacity-70">
+              — hand-picked creators in your inbox within 48 hours
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link href="/brief-builder" className="btn-primary">
+                Start a campaign
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/about"
+                className="btn-ghost"
+                style={{
+                  background: "transparent",
+                  color: "var(--color-bg)",
+                  borderColor: "var(--color-bg)",
+                  boxShadow: "4px 4px 0 0 var(--color-accent)",
+                }}
+              >
+                See how it works
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
