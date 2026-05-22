@@ -20,9 +20,11 @@ const SITEMAP = [
   { label: "Home", href: "/" },
   { label: "Creators", href: "/creators" },
   { label: "Brands", href: "/brands" },
+  { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
+  { label: "Demo", href: "/demo" },
 ];
 
 const LEGAL = [
@@ -39,7 +41,8 @@ const SOCIALS = [
 ];
 
 export const Footer = () => {
-  const ref = useRef<HTMLElement>(null);
+  const ref     = useRef<HTMLElement>(null);
+  const starRef = useRef<HTMLSpanElement>(null);
   const [showFloatTop, setShowFloatTop] = useState(false);
 
   useEffect(() => {
@@ -81,13 +84,15 @@ export const Footer = () => {
         repeat: -1,
       });
 
-      gsap.to(".foot-top-star", {
-        rotate: 18,
-        duration: 1.6,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-      });
+      if (starRef.current) {
+        gsap.to(starRef.current, {
+          rotate: 18,
+          duration: 1.6,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
+      }
     },
     { scope: ref },
   );
@@ -257,7 +262,7 @@ export const Footer = () => {
         }`}
         style={{ boxShadow: "3px 3px 0 0 var(--fg)" }}
       >
-        <span className="foot-top-star absolute -top-2 -right-2 pointer-events-none">
+        <span ref={starRef} className="foot-top-star absolute -top-2 -right-2 pointer-events-none">
           <Sparkle size={20} fill="var(--accent4)" stroke="var(--fg)" strokeWidth={8} />
         </span>
         <ArrowUp
