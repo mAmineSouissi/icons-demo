@@ -20,11 +20,6 @@ const PAGE_STYLES = `
     color: var(--color-fg);
   }
 
-  /* Pre-hide scroll-animated elements to prevent FOUC */
-  .bs-strip-cell,
-  .bs-timeline-step,
-  .bs-creator-card { opacity: 0; }
-
   /* Power strip */
   .bs-strip {
     background: var(--color-fg);

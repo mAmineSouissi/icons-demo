@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { LegalPage, type LegalSection } from "@/components/pages/LegalPage";
 
 const sections: LegalSection[] = [
@@ -82,7 +83,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>We use essential cookies to keep you logged in and remember your preferences. We use analytics cookies (opt-in only) to understand how people use the platform so we can improve it.</p>
-        <p>We do not use advertising or tracking cookies. You can review and change your cookie preferences at any time via our <a href="/cookies">Cookie Policy</a>.</p>
+        <p>We do not use advertising or tracking cookies. You can review and change your cookie preferences at any time via our <Link href="/cookies">Cookie Policy</Link>.</p>
       </>
     ),
   },

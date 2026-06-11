@@ -170,6 +170,7 @@ const TextType = ({
   const shouldHideCursor =
     hideCursorWhileTyping && (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
 
+  /* eslint-disable react-hooks/refs -- ref forwarded to DOM element via createElement (same as JSX <Component ref={...}>) */
   return createElement(
     Component,
     {
@@ -189,6 +190,7 @@ const TextType = ({
       </span>
     )
   );
+  /* eslint-enable react-hooks/refs */
 };
 
 export default TextType;

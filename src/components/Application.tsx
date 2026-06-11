@@ -10,8 +10,6 @@ interface ApplicationProps {
 }
 
 function Application({ className, Component, pageProps }: ApplicationProps) {
-  // Pages can export `getLayout` to override or skip the default Layout.
-  // e.g. `MyPage.getLayout = (page) => page` opts out entirely.
   const getLayout =
     (Component as any).getLayout ??
     ((page: ReactNode) => <Layout className="relative z-10">{page}</Layout>);

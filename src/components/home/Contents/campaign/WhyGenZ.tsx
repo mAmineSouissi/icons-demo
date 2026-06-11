@@ -1,81 +1,65 @@
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { Sparkle } from "@/components/ui/Sparkle";
+import React from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
+import { Sparkle } from "@/components/ui/Sparkle";
+import { useEntrance, useIdleLoop, useWordReveal } from "@/hooks/animations";
+import { dur } from "@/lib/motion";
 
 export const WhyGenZ = () => {
-  const ref = useRef<HTMLElement>(null);
+  const ref = React.useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      const headline = ref.current?.querySelector(".why-headline");
-      if (headline) {
-        const words = headline.textContent?.split(" ") ?? [];
-        headline.innerHTML = words
-          .map(
-            (w) =>
-              `<span class="why-word inline-block align-bottom"><span class="inline-block">${w}&nbsp;</span></span>`,
-          )
-          .join("");
-      }
+  // Headline: per-word reveal (rotate mode = original feel)
+  useWordReveal({
+    scope: ref,
+    selector: ".why-headline",
+    mode: "rotate",
+    y: 48,
+    rotate: 6,
+    duration: dur.slow,
+    scrollTrigger: { start: "top 70%" },
+  });
 
-      gsap.fromTo(".why-word > span",
-        { opacity: 0, y: 48, rotate: 6 },
-        { opacity: 1, y: 0, rotate: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, overwrite: "auto", clearProps: "transform,opacity",
-          scrollTrigger: { trigger: ref.current, start: "top 70%" } },
-      );
+  // Eyebrow slide
+  useEntrance({
+    scope: ref,
+    selector: ".why-eyebrow",
+    x: -20,
+    duration: dur.fast + 0.15,
+    scrollTrigger: { start: "top 75%" },
+  });
 
-      gsap.from(".why-body", {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 60%",
-        },
-      });
+  // Body + CTA fade-up
+  useEntrance({
+    scope: ref,
+    selector: ".why-body",
+    y: 30,
+    duration: dur.base + 0.1,
+    ease: "power2.out",
+    scrollTrigger: { start: "top 60%" },
+  });
 
-      gsap.from(".why-eyebrow", {
-        opacity: 0,
-        x: -20,
-        duration: 0.5,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 75%",
-        },
-      });
+  // Big star pop
+  useEntrance({
+    scope: ref,
+    selector: ".why-star",
+    scale: 0,
+    rotate: -180,
+    duration: dur.slow,
+    ease: "back.out(1.8)",
+    scrollTrigger: { start: "top 60%" },
+    // The idle loop wants its own baseline transform — let it drive
+    // the rotate/y after entrance settles.
+    clearProps: true,
+  });
 
-      gsap.from(".why-star", {
-        opacity: 0,
-        scale: 0,
-        rotate: -180,
-        duration: 0.9,
-        ease: "back.out(1.8)",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 60%",
-        },
-      });
-
-      // Idle star wobble
-      gsap.to(".why-star", {
-        rotate: "+=8",
-        y: "+=12",
-        duration: 3,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
-    },
-    { scope: ref },
-  );
+  // Idle star wobble
+  useIdleLoop({
+    scope: ref,
+    selector: ".why-star",
+    rotate: "+=8",
+    y: "+=12",
+    duration: 3,
+  });
 
   return (
     <section
@@ -84,20 +68,16 @@ export const WhyGenZ = () => {
       style={{ background: "var(--accent)", color: "var(--fg)" }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="why-eyebrow font-mono text-[12px] tracking-[0.32em] uppercase mb-10">
-          03 · why it works
-        </div>
-
         <h2 className="why-headline font-display italic text-[clamp(2.5rem,7vw,6rem)] leading-[0.95] tracking-[-0.03em] max-w-5xl">
           Authenticity is the only ad format that scales.
         </h2>
 
         <p className="why-body mt-12 max-w-3xl text-lg md:text-xl leading-relaxed font-sans">
           Gen-Z skips every ad that feels like an ad. Icons creators are already
-          living inside the communities your brand wants to reach — their content
-          pulls 4.5× more engagement than studio-produced video, at a fraction
-          of the cost. No set, no script, no agency markup. Just real people
-          who actually use the product.
+          living inside the communities your brand wants to reach — their
+          content pulls 4.5× more engagement than studio-produced video, at a
+          fraction of the cost. No set, no script, no agency markup. Just real
+          people who actually use the product.
         </p>
 
         <div className="why-body mt-10 flex flex-wrap gap-4">
@@ -111,7 +91,6 @@ export const WhyGenZ = () => {
             style={{ borderColor: "var(--fg)", color: "var(--fg)" }}
           >
             Join as creator
-            <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

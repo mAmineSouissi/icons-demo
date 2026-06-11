@@ -26,7 +26,7 @@ export const ThemeSwitcher = ({
   const [mounted, setMounted] = useState(false);
   // Prevent hydration mismatch
   useEffect(() => {
-    setMounted(true);
+    requestAnimationFrame(() => setMounted(true));
   }, []);
   if (!mounted) {
     return null;

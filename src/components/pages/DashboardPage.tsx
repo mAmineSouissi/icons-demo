@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import gsap from "gsap";
@@ -11,9 +11,20 @@ import {
   Settings, LogOut, Bell, ChevronRight, BarChart2, Menu, X,
   CheckCircle2, Clock, Zap, Upload, Check, TrendingUp, Send,
   ExternalLink, CreditCard, Mail, Smartphone, Globe, Star, UserCheck,
+  MessageSquare, Paperclip, ArrowLeft,
 } from "lucide-react";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur, stagger } from "@/lib/motion";
+import {
+  MonoLabel,
+  Avatar,
+  Chip,
+  FileChip,
+  IconButton,
+  StickerCard,
+  EmptyState,
+  InlineToast,
+} from "@/components/shared/primitives";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -22,16 +33,18 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 /* ────────────────────────────────────────────────────────────── */
 
 const PAGE_STYLES = `
-  /* Root layout */
+  /* Root layout — viewport-locked so sidebar never scrolls */
   .db-root {
     display: grid;
     grid-template-columns: 1fr;
-    min-height: 100svh;
+    height: 100svh;
+    overflow: hidden;
     background: var(--color-bg);
     color: var(--color-fg);
   }
   @media (min-width: 1024px) {
     .db-root { grid-template-columns: 272px 1fr; }
+    .db-root[data-collapsed="true"] { grid-template-columns: 64px 1fr; }
   }
 
   /* Desktop sidebar */
@@ -39,14 +52,46 @@ const PAGE_STYLES = `
     display: none;
     flex-direction: column;
     border-right: 2px solid var(--color-fg);
-    position: sticky;
-    top: 0;
     height: 100svh;
     overflow-y: auto;
+    overflow-x: hidden;
     background: var(--color-bg);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   @media (min-width: 1024px) {
-    .db-sidebar { display: flex; }
+    .db-sidebar { display: flex; width: 272px; }
+    .db-root[data-collapsed="true"] .db-sidebar { width: 64px; }
+  }
+
+  /* Collapsed sidebar overrides */
+  .db-root[data-collapsed="true"] .db-sidebar-label { display: none; }
+  .db-root[data-collapsed="true"] .db-nav-item {
+    justify-content: center; padding: 0.7rem; gap: 0;
+  }
+  .db-root[data-collapsed="true"] .db-nav-item .db-nav-icon { margin: 0; opacity: 0.8; }
+  .db-root[data-collapsed="true"] .db-sidebar-logo { justify-content: center; padding: 0.75rem; overflow: hidden; }
+  .db-root[data-collapsed="true"] .db-sidebar-logo .db-logo-full { display: none; }
+  .db-root[data-collapsed="true"] .db-sidebar-logo .db-logo-mark { display: block; }
+  .db-root[data-collapsed="true"] .db-sidebar-user { justify-content: center; padding: 0.75rem; }
+  .db-root[data-collapsed="true"] .db-sidebar-user .db-user-details { display: none; }
+  .db-root[data-collapsed="true"] .db-sidebar-user .sticker { padding: 0; background: transparent; border: none; box-shadow: none; }
+  .db-root[data-collapsed="true"] .db-sidebar-nav { padding: 0.75rem 0.5rem; }
+  .db-root[data-collapsed="true"] .db-sidebar-signout { padding: 0.75rem 0.5rem; }
+
+  /* Scrollable main column */
+  .db-main {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Unified sidebar button: hamburger on mobile, chevron on desktop */
+  .db-sidebar-btn-chevron { display: none; }
+  @media (min-width: 1024px) {
+    .db-sidebar-btn-menu { display: none; }
+    .db-sidebar-btn-chevron { display: block; }
   }
 
   /* Mobile overlay */
@@ -287,6 +332,176 @@ const PAGE_STYLES = `
     box-shadow: 3px 3px 0 0 var(--color-fg); transition: transform 0.15s, box-shadow 0.15s;
   }
   .db-shortlist-card:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 0 var(--color-fg); }
+
+  /* ── Messages / Chat ── */
+  .db-chat-layout {
+    display: flex; flex-direction: column; flex: 1; min-height: 0;
+  }
+  @media (min-width: 768px) {
+    .db-chat-layout { flex-direction: row; }
+  }
+
+  .db-chat-threads {
+    border-bottom: 2px solid var(--color-fg);
+    overflow-y: auto; flex-shrink: 0;
+  }
+  @media (min-width: 768px) {
+    .db-chat-threads {
+      width: 340px; min-width: 280px; border-bottom: none;
+      border-right: 2px solid var(--color-fg); height: 100%;
+    }
+  }
+  .db-chat-thread {
+    display: flex; align-items: center; gap: 0.875rem;
+    padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border);
+    cursor: pointer; transition: background 0.12s;
+    border: none; background: none; width: 100%; text-align: left;
+    color: inherit; font: inherit;
+  }
+  .db-chat-thread:hover { background: var(--color-panel); }
+  .db-chat-thread:focus-visible {
+    outline: 2px solid var(--color-accent); outline-offset: -2px;
+  }
+  .db-chat-thread[data-active="true"] { background: var(--color-panel); }
+
+  .db-chat-avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--color-fg); display: flex; align-items: center;
+    justify-content: center; font-family: var(--font-display);
+    font-style: italic; font-size: 1rem; font-weight: 700;
+    background: var(--color-accent);
+  }
+
+  .db-chat-view {
+    flex: 1; display: flex; flex-direction: column;
+    min-height: 0; position: relative;
+  }
+
+  .db-chat-header {
+    padding: 0.75rem 1.25rem; border-bottom: 2px solid var(--color-fg);
+    display: flex; align-items: center; gap: 1rem; flex-shrink: 0;
+    background: var(--color-bg);
+  }
+  .db-chat-back { display: inline-flex; }
+  @media (min-width: 768px) { .db-chat-back { display: none; } }
+
+  /* Milestone strip */
+  .db-chat-milestones {
+    display: flex; align-items: center; gap: 0; padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--color-border); overflow-x: auto;
+    flex-shrink: 0; background: var(--color-bg);
+  }
+  .db-chat-ms-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--color-fg); position: relative; z-index: 1;
+  }
+  .db-chat-ms-dot[data-done="true"] { background: var(--color-accent); border-color: var(--color-accent); }
+  .db-chat-ms-dot[data-active="true"] { background: var(--color-fg); animation: db-pulse 2s ease-in-out infinite; }
+  .db-chat-ms-line {
+    width: 24px; height: 2px; background: var(--color-border); flex-shrink: 0;
+  }
+  .db-chat-ms-line[data-done="true"] { background: var(--color-accent); }
+  .db-chat-ms-label {
+    font-family: var(--font-mono); font-size: 9px; text-transform: uppercase;
+    letter-spacing: 0.15em; opacity: 0.5; white-space: nowrap; margin-left: 0.75rem;
+  }
+  .db-chat-ms-dot[data-active="true"] + .db-chat-ms-label { opacity: 1; font-weight: 600; }
+
+  .db-chat-messages {
+    flex: 1; overflow-y: auto; padding: 1.25rem; display: flex;
+    flex-direction: column; gap: 0.5rem;
+  }
+
+  .db-chat-bubble {
+    max-width: 75%; padding: 0.65rem 0.9rem; font-size: 13px;
+    line-height: 1.55; border: 1.5px solid var(--color-fg);
+    position: relative; word-break: break-word;
+  }
+  .db-chat-bubble[data-self="true"] {
+    background: var(--color-fg); color: var(--color-bg);
+    border-radius: var(--radius-md) var(--radius-md) 4px var(--radius-md); align-self: flex-end;
+  }
+  .db-chat-bubble[data-self="false"] {
+    background: var(--color-bg);
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 4px; align-self: flex-start;
+  }
+
+  .db-chat-system {
+    display: flex; align-items: center; gap: 0.5rem;
+    justify-content: center; padding: 0.65rem 1rem; margin: 0.5rem 0;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .db-chat-milestone-card {
+    border: 2px solid var(--color-fg); border-radius: var(--radius-md);
+    padding: 1rem 1.25rem; background: var(--color-panel);
+    box-shadow: 3px 3px 0 0 var(--color-accent);
+    margin: 0.5rem 0; align-self: stretch;
+  }
+
+  .db-chat-file-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.35rem 0.65rem; border-radius: var(--radius-sm);
+    background: var(--color-panel); border: 1.5px solid var(--color-border);
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; transition: border-color 0.15s;
+    margin-top: 0.4rem;
+  }
+  .db-chat-file-chip:hover { border-color: var(--color-fg); }
+
+  .db-chat-composer {
+    display: flex; align-items: flex-end; gap: 0.5rem;
+    padding: 0.75rem 1.25rem; border-top: 2px solid var(--color-fg);
+    background: var(--color-bg); flex-shrink: 0;
+  }
+  .db-chat-input {
+    flex: 1; resize: none; border: 2px solid var(--color-border);
+    border-radius: 10px; padding: 0.6rem 0.85rem;
+    font-family: var(--font-mono); font-size: 12px;
+    background: var(--color-bg); color: var(--color-fg);
+    max-height: 100px; min-height: 38px; line-height: 1.5;
+  }
+  .db-chat-input:focus { outline: none; border-color: var(--color-fg); }
+  .db-chat-input::placeholder { opacity: 0.4; }
+
+  .db-chat-send {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--color-fg); display: flex;
+    align-items: center; justify-content: center;
+    background: var(--color-fg); color: var(--color-bg);
+    cursor: pointer; transition: opacity 0.12s;
+  }
+  .db-chat-send:hover { opacity: 0.85; }
+
+  .db-chat-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; border-radius: 999px;
+    background: var(--color-accent); color: var(--color-fg);
+    font-family: var(--font-mono); font-size: 9px;
+    font-weight: 700; padding: 0 5px;
+  }
+
+  .db-chat-empty {
+    flex: 1; display: none; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1rem;
+    padding: 3rem; opacity: 0.5;
+  }
+  @media (min-width: 768px) {
+    .db-chat-empty { display: flex; }
+  }
+
+  /* Toast feedback handled by <InlineToast> primitive */
+
+  /* Mobile: when a thread is open, hide list and show chat full-screen */
+  @media (max-width: 767px) {
+    .db-chat-layout[data-thread-open="true"] .db-chat-threads { display: none; }
+    .db-chat-layout[data-thread-open="true"] .db-chat-view { height: 100%; }
+    .db-chat-layout[data-thread-open="false"] .db-chat-view { display: none; }
+    .db-chat-layout[data-thread-open="false"] .db-chat-empty { display: none; }
+    .db-chat-bubble { max-width: 85%; }
+  }
 `;
 
 /* ────────────────────────────────────────────────────────────── */
@@ -493,6 +708,7 @@ function SidebarContent({ mode, active, onNav, onClose, onSignOut }: {
   const creatorNav = [
     { id: "overview",  label: "Overview",  icon: LayoutDashboard },
     { id: "campaigns", label: "Campaigns", icon: FileText        },
+    { id: "messages",  label: "Messages",  icon: MessageSquare   },
     { id: "earnings",  label: "Earnings",  icon: DollarSign      },
     { id: "profile",   label: "Profile",   icon: Users           },
     { id: "settings",  label: "Settings",  icon: Settings        },
@@ -500,6 +716,7 @@ function SidebarContent({ mode, active, onNav, onClose, onSignOut }: {
   const brandNav = [
     { id: "overview",  label: "Overview",  icon: LayoutDashboard },
     { id: "campaigns", label: "Campaigns", icon: FileText        },
+    { id: "messages",  label: "Messages",  icon: MessageSquare   },
     { id: "creators",  label: "Creators",  icon: Users           },
     { id: "analytics", label: "Analytics", icon: BarChart2       },
     { id: "settings",  label: "Settings",  icon: Settings        },
@@ -509,26 +726,27 @@ function SidebarContent({ mode, active, onNav, onClose, onSignOut }: {
   return (
     <>
       {/* Logo */}
-      <div className="flex items-center justify-between px-6 py-5 border-b-2 border-(--color-fg)">
-        <Link href="/" className="font-display italic text-3xl leading-none tracking-tight">
-          Icons.
+      <div className="db-sidebar-logo flex items-center justify-between px-6 py-5 border-b-2 border-(--color-fg)">
+        <Link href="/" className="font-display italic leading-none tracking-tight">
+          <span className="db-logo-full text-3xl">Icons.</span>
+          <span className="db-logo-mark text-2xl" style={{ display: "none" }}>I.</span>
         </Link>
         {onClose && (
           <button onClick={onClose}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors">
+            className="db-sidebar-label inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors">
             <X className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
 
       {/* User card */}
-      <div className="px-4 py-4 border-b-2 border-(--color-fg)">
+      <div className="db-sidebar-user px-4 py-4 border-b-2 border-(--color-fg)">
         <div className="sticker flex items-center gap-3 p-3" data-tone="cream" style={{ boxShadow: "none" }}>
           <div className="db-ring w-10 h-10 rounded-full shrink-0 flex items-center justify-center font-display italic text-lg border-2 border-(--color-fg)"
             style={{ background: "var(--color-accent)", color: "var(--color-fg)" }}>
             {data.user.avatar}
           </div>
-          <div className="min-w-0">
+          <div className="db-user-details min-w-0">
             <p className="font-display italic text-base leading-tight truncate">{data.user.name}</p>
             <p className="font-mono font-semibold text-[9px] uppercase tracking-[0.22em] opacity-65 mt-0.5">{data.user.tier}</p>
           </div>
@@ -536,23 +754,24 @@ function SidebarContent({ mode, active, onNav, onClose, onSignOut }: {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-5 flex flex-col gap-0.5">
-        <p className="font-mono font-semibold text-[9px] uppercase tracking-[0.32em] opacity-60 px-3 pb-3">Navigation</p>
+      <nav className="db-sidebar-nav flex-1 px-3 py-5 flex flex-col gap-0.5">
+        <p className="db-sidebar-label font-mono font-semibold text-[9px] uppercase tracking-[0.32em] opacity-60 px-3 pb-3">Navigation</p>
         {nav.map(({ id, label, icon: Icon }) => (
           <button key={id} className="db-nav-item"
             data-active={active === id ? "true" : "false"}
-            onClick={() => { onNav(id); onClose?.(); }}>
-            <Icon className="w-4 h-4 opacity-55 shrink-0" />
-            {label}
+            onClick={() => { onNav(id); onClose?.(); }}
+            title={label}>
+            <Icon className="db-nav-icon w-4 h-4 opacity-55 shrink-0" />
+            <span className="db-sidebar-label">{label}</span>
           </button>
         ))}
       </nav>
 
       {/* Sign out */}
-      <div className="px-3 py-4 border-t-2 border-(--color-fg)">
-        <button onClick={onSignOut} className="db-nav-item w-full text-left">
-          <LogOut className="w-4 h-4 opacity-55 shrink-0" />
-          Sign out
+      <div className="db-sidebar-signout px-3 py-4 border-t-2 border-(--color-fg)">
+        <button onClick={onSignOut} className="db-nav-item w-full text-left" title="Sign out">
+          <LogOut className="db-nav-icon w-4 h-4 opacity-55 shrink-0" />
+          <span className="db-sidebar-label">Sign out</span>
         </button>
       </div>
     </>
@@ -605,9 +824,9 @@ function StatusChip({ status }: { status: string }) {
 
 /* Creator — Campaigns */
 function CreatorCampaignsPanel({ data }: { data: typeof creatorData }) {
-  const [uploadFor, setUploadFor] = useState<string | null>(null);
-  const [link, setLink] = useState("");
-  const [submitted, setSubmitted] = useState<string[]>([]);
+  const [uploadFor, setUploadFor] = React.useState<string | null>(null);
+  const [link, setLink] = React.useState("");
+  const [submitted, setSubmitted] = React.useState<string[]>([]);
   const allCampaigns = [data.featured, ...data.campaigns];
 
   return (
@@ -779,7 +998,7 @@ function CreatorEarningsPanel() {
 
 /* Brand — Campaigns with content review */
 function BrandCampaignsPanel({ data }: { data: typeof brandData }) {
-  const [decisions, setDecisions] = useState<Record<string, "approved" | "revision">>({});
+  const [decisions, setDecisions] = React.useState<Record<string, "approved" | "revision">>({});
   const submissions = [
     { name: "Maya R.",    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80", campaign: "Summer Glow Collection", match: "98", status: "submitted", link: "#" },
     { name: "Priya N.",   photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=120&q=80", campaign: "Summer Glow Collection", match: "96", status: "submitted", link: "#" },
@@ -1001,7 +1220,7 @@ function CreatorProfilePanel({ data }: { data: typeof creatorData }) {
 
 /* ── Brand Creators Panel (shortlist) ────────────────────────── */
 function BrandCreatorsPanel() {
-  const [saved, setSaved] = useState<string[]>(["mayareads", "priyaedits"]);
+  const [saved, setSaved] = React.useState<string[]>(["mayareads", "priyaedits"]);
   return (
     <div className="db-tab-section">
       <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
@@ -1070,8 +1289,8 @@ function BrandCreatorsPanel() {
 
 /* ── Settings Panel ──────────────────────────────────────────── */
 function SettingsPanel({ isCreator }: { isCreator: boolean }) {
-  const [notifs, setNotifs] = useState({ email: true, push: true, weekly: false });
-  const [danger, setDanger] = useState(false);
+  const [notifs, setNotifs] = React.useState({ email: true, push: true, weekly: false });
+  const [danger, setDanger] = React.useState(false);
 
   return (
     <div className="db-tab-section">
@@ -1181,22 +1400,391 @@ function SettingsPanel({ isCreator }: { isCreator: boolean }) {
 }
 
 /* ────────────────────────────────────────────────────────────── */
+/* MESSAGES / CHAT                                                */
+/* ────────────────────────────────────────────────────────────── */
+
+type ChatMsg = {
+  id: string;
+  sender: "brand" | "creator" | "system";
+  type: "text" | "file" | "system" | "milestone";
+  content: string;
+  time: string;
+  file?: { name: string; type: "image" | "video" | "document" };
+  milestoneActions?: ("approve" | "revise")[];
+};
+
+type ChatThread = {
+  id: string;
+  name: string;           // brand/creator name
+  initial: string;        // avatar letter
+  campaign: string;       // campaign name
+  lastMessage: string;
+  lastTime: string;
+  unread: number;
+  milestones: { label: string; status: "done" | "active" | "pending" }[];
+  messages: ChatMsg[];
+};
+
+const CHAT_THREADS: ChatThread[] = [
+  {
+    id: "t1",
+    name: "Chamberlain Coffee",
+    initial: "C",
+    campaign: "Summer Cold Brew UGC",
+    lastMessage: "Content approved — payout triggered!",
+    lastTime: "2h ago",
+    unread: 2,
+    milestones: [
+      { label: "Brief", status: "done" },
+      { label: "Matched", status: "done" },
+      { label: "Draft", status: "done" },
+      { label: "Approved", status: "active" },
+      { label: "Live", status: "pending" },
+      { label: "Paid", status: "pending" },
+    ],
+    messages: [
+      { id: "m1", sender: "system", type: "system", content: "Brief approved", time: "May 20, 10:32am" },
+      { id: "m2", sender: "system", type: "system", content: "Creator matched: @mayareads", time: "May 20, 2:15pm" },
+      { id: "m3", sender: "brand", type: "text", content: "Hey Maya! Excited to work together. The main thing is a strong hook in the first 3 seconds — we want that scroll-stopping energy.", time: "10:45am" },
+      { id: "m3b", sender: "brand", type: "file", content: "Brief attached", time: "10:45am", file: { name: "summer-brief-v2.pdf", type: "document" } },
+      { id: "m4", sender: "creator", type: "text", content: "Love it! I have so many ideas already. Quick Q — are you shipping the product to me or do I use my own?", time: "11:02am" },
+      { id: "m5", sender: "brand", type: "text", content: "We'll ship it! DM us your address and we'll get a box out tomorrow. Should arrive by Thursday.", time: "11:18am" },
+      { id: "m6", sender: "creator", type: "text", content: "Perfect, just sent it. I'll start shooting as soon as it arrives!", time: "11:24am" },
+      { id: "m7", sender: "system", type: "milestone", content: "Draft submitted", time: "May 22, 3:45pm", file: { name: "chamberlain-draft1.mp4", type: "video" }, milestoneActions: ["approve", "revise"] },
+      { id: "m8", sender: "brand", type: "text", content: "This is great! The hook is perfect. One small note — can you add the discount code overlay at 0:42?", time: "4:10pm" },
+      { id: "m9", sender: "creator", type: "text", content: "Done! Updated version uploading now.", time: "5:30pm" },
+      { id: "m10", sender: "creator", type: "file", content: "Updated draft", time: "5:32pm", file: { name: "chamberlain-final.mp4", type: "video" } },
+      { id: "m11", sender: "system", type: "system", content: "Content approved by Chamberlain Coffee", time: "May 22, 6:01pm" },
+      { id: "m12", sender: "system", type: "system", content: "Payout of $850 triggered — arrives in 48h", time: "May 22, 6:01pm" },
+    ],
+  },
+  {
+    id: "t2",
+    name: "Nike Running",
+    initial: "N",
+    campaign: "Morning Ritual Series",
+    lastMessage: "Uploaded the revised cut — check when you can!",
+    lastTime: "1d ago",
+    unread: 1,
+    milestones: [
+      { label: "Brief", status: "done" },
+      { label: "Matched", status: "done" },
+      { label: "Draft", status: "active" },
+      { label: "Approved", status: "pending" },
+      { label: "Live", status: "pending" },
+      { label: "Paid", status: "pending" },
+    ],
+    messages: [
+      { id: "n1", sender: "system", type: "system", content: "Brief approved", time: "May 18, 9:00am" },
+      { id: "n2", sender: "system", type: "system", content: "Creator matched: @mayareads", time: "May 18, 11:30am" },
+      { id: "n3", sender: "brand", type: "text", content: "Welcome aboard! We're looking for an authentic morning run vibe — nothing too polished, real energy.", time: "12:15pm" },
+      { id: "n4", sender: "creator", type: "text", content: "That's literally my entire brand. I'll capture my actual morning routine this week.", time: "12:42pm" },
+      { id: "n5", sender: "system", type: "milestone", content: "Draft submitted", time: "May 21, 8:20am", file: { name: "nike-morning-v1.mp4", type: "video" }, milestoneActions: ["approve", "revise"] },
+      { id: "n6", sender: "brand", type: "text", content: "Love the energy! Could you try a version where the product appears earlier — within the first 5 seconds?", time: "2:30pm" },
+      { id: "n7", sender: "creator", type: "text", content: "Uploaded the revised cut — check when you can!", time: "May 22, 9:15am" },
+      { id: "n8", sender: "creator", type: "file", content: "Revised draft", time: "May 22, 9:15am", file: { name: "nike-morning-v2.mp4", type: "video" } },
+    ],
+  },
+  {
+    id: "t3",
+    name: "Penguin Random House",
+    initial: "P",
+    campaign: "Summer Reading List",
+    lastMessage: "Brief details attached. Let us know if you have questions!",
+    lastTime: "3d ago",
+    unread: 0,
+    milestones: [
+      { label: "Brief", status: "done" },
+      { label: "Matched", status: "done" },
+      { label: "Draft", status: "pending" },
+      { label: "Approved", status: "pending" },
+      { label: "Live", status: "pending" },
+      { label: "Paid", status: "pending" },
+    ],
+    messages: [
+      { id: "p1", sender: "system", type: "system", content: "Brief approved", time: "May 19, 3:00pm" },
+      { id: "p2", sender: "system", type: "system", content: "Creator matched: @mayareads", time: "May 19, 4:45pm" },
+      { id: "p3", sender: "brand", type: "text", content: "Hi Maya! We loved your BookTok content. For this campaign, we want a \"summer reading stack\" format — casual, cozy, aspirational.", time: "5:10pm" },
+      { id: "p4", sender: "brand", type: "file", content: "Brief details attached. Let us know if you have questions!", time: "5:10pm", file: { name: "prh-summer-brief.pdf", type: "document" } },
+    ],
+  },
+];
+
+function MessagesPanel({ isCreator }: { isCreator: boolean }) {
+  const [activeThread, setActiveThread] = React.useState<string | null>(null);
+  const [inputValue, setInputValue] = React.useState("");
+  const [toast, setToast] = React.useState<string | null>(null);
+  const messagesRef = React.useRef<HTMLDivElement>(null);
+  const thread = CHAT_THREADS.find((t) => t.id === activeThread);
+
+  // Scroll to bottom when thread opens
+  React.useEffect(() => {
+    if (activeThread && messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [activeThread]);
+
+  // Auto-clear toast
+  React.useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 1600);
+    return () => clearTimeout(id);
+  }, [toast]);
+
+  const showToast = (msg: string) => setToast(msg);
+
+  const handleSend = () => {
+    if (!inputValue.trim()) return;
+    setInputValue("");
+    showToast("Message sent");
+  };
+
+  const totalUnread = CHAT_THREADS.reduce((n, t) => n + t.unread, 0);
+
+  return (
+    <div className="db-chat-layout" data-thread-open={activeThread ? "true" : "false"}>
+      {/* ── Thread list ───────────────────────────────────── */}
+      <div className="db-chat-threads" role="listbox" aria-label="Message threads">
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-(--color-border)">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="font-display italic text-2xl leading-none">Messages</h2>
+            {totalUnread > 0 && (
+              <Chip asSpan variant="solid" size="xs" aria-label={`${totalUnread} unread`}>{totalUnread}</Chip>
+            )}
+          </div>
+          <MonoLabel size="sm" opacity={50}>✦ {CHAT_THREADS.length} campaign conversations</MonoLabel>
+        </div>
+        {/* Threads */}
+        {CHAT_THREADS.map((t) => (
+          <button
+            key={t.id}
+            className="db-chat-thread"
+            role="option"
+            aria-selected={activeThread === t.id}
+            aria-label={`${t.name} — ${t.campaign}${t.unread > 0 ? `, ${t.unread} unread` : ""}`}
+            data-active={activeThread === t.id ? "true" : "false"}
+            onClick={() => setActiveThread(t.id)}
+          >
+            <Avatar initial={t.initial} size="md" />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2 mb-0.5">
+                <MonoLabel size="md" weight="semibold" className="truncate">{t.name}</MonoLabel>
+                <MonoLabel size="xs" opacity={45} className="shrink-0">{t.lastTime}</MonoLabel>
+              </div>
+              <p className="font-sans text-[12px] opacity-60 truncate leading-snug">{t.lastMessage}</p>
+              {/* Milestone chips */}
+              <div className="flex items-center gap-1 mt-1.5 flex-wrap">
+                {t.milestones.filter((m) => m.status === "done" || m.status === "active").map((m) => (
+                  <Chip
+                    key={m.label}
+                    asSpan
+                    size="xs"
+                    variant={m.status === "active" ? "active" : "done"}
+                  >
+                    {m.status === "done" ? "✓ " : "● "}{m.label}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+            {t.unread > 0 && (
+              <Chip asSpan variant="solid" size="xs" aria-hidden="true" className="shrink-0">{t.unread}</Chip>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Chat view ─────────────────────────────────────── */}
+      {thread ? (
+        <div className="db-chat-view" role="log" aria-label={`Conversation with ${thread.name}`}>
+          {/* Chat header */}
+          <div className="db-chat-header">
+            <IconButton
+              icon={<ArrowLeft className="w-3.5 h-3.5" />}
+              aria-label="Back to thread list"
+              size="sm"
+              variant="outline"
+              className="db-chat-back"
+              onClick={() => setActiveThread(null)}
+            />
+            <Avatar initial={thread.initial} size="sm" />
+            <div className="flex-1 min-w-0">
+              <MonoLabel size="md" weight="semibold" as="p" className="truncate">{thread.name}</MonoLabel>
+              <MonoLabel size="xs" opacity={45} as="p" className="truncate">{thread.campaign}</MonoLabel>
+            </div>
+          </div>
+
+          {/* Milestone strip */}
+          <div className="db-chat-milestones" role="progressbar" aria-label="Campaign milestones" aria-valuenow={thread.milestones.filter((m) => m.status === "done").length} aria-valuemax={thread.milestones.length}>
+            {thread.milestones.map((m, i) => (
+              <div key={m.label} className="flex items-center" title={m.label}>
+                <div
+                  className="db-chat-ms-dot"
+                  data-done={m.status === "done" ? "true" : "false"}
+                  data-active={m.status === "active" ? "true" : "false"}
+                  aria-label={`${m.label}: ${m.status}`}
+                />
+                {i < thread.milestones.length - 1 && (
+                  <div className="db-chat-ms-line" data-done={m.status === "done" ? "true" : "false"} />
+                )}
+              </div>
+            ))}
+            <span className="db-chat-ms-label">
+              {thread.milestones.find((m) => m.status === "active")?.label ?? "Complete"}
+            </span>
+          </div>
+
+          {/* Messages */}
+          <div className="db-chat-messages" ref={messagesRef}>
+            {thread.messages.map((msg) => {
+              if (msg.type === "system") {
+                return (
+                  <div key={msg.id} className="db-chat-system" role="status">
+                    <Check className="w-3 h-3" />
+                    <span>{msg.content}</span>
+                    <span style={{ opacity: 0.6 }}>· {msg.time}</span>
+                  </div>
+                );
+              }
+              if (msg.type === "milestone") {
+                return (
+                  <StickerCard
+                    key={msg.id}
+                    radius="md"
+                    padding="md"
+                    className="my-2 self-stretch"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkle size={16} fill="var(--color-accent)" />
+                      <MonoLabel size="sm" weight="semibold">✦ {msg.content}</MonoLabel>
+                      <MonoLabel size="xs" opacity={45} className="ml-auto">{msg.time}</MonoLabel>
+                    </div>
+                    {msg.file && (
+                      <FileChip name={msg.file.name} type={msg.file.type} onOpen={() => showToast(`Opening ${msg.file?.name}`)} />
+                    )}
+                    {msg.milestoneActions && (
+                      <div className="flex items-center gap-2 mt-3">
+                        {msg.milestoneActions.includes("approve") && (
+                          <button
+                            className="btn-primary"
+                            style={{ fontSize: "10px", padding: "0.4rem 0.85rem" }}
+                            onClick={() => showToast("Content approved ✓")}
+                          >
+                            <Check className="w-3 h-3" /> Approve
+                          </button>
+                        )}
+                        {msg.milestoneActions.includes("revise") && (
+                          <button
+                            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] px-3 py-1.5 rounded-full border-2 border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors"
+                            onClick={() => showToast("Revision requested")}
+                          >
+                            Request revision
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </StickerCard>
+                );
+              }
+              // text or file message
+              const isSelf = (isCreator && msg.sender === "creator") || (!isCreator && msg.sender === "brand");
+              return (
+                <div key={msg.id} className="flex flex-col" style={{ alignItems: isSelf ? "flex-end" : "flex-start" }}>
+                  <div className="db-chat-bubble" data-self={isSelf ? "true" : "false"}>
+                    <p>{msg.content}</p>
+                    {msg.file && (
+                      <div className="mt-2">
+                        <FileChip name={msg.file.name} type={msg.file.type} onOpen={() => showToast(`Opening ${msg.file?.name}`)} />
+                      </div>
+                    )}
+                  </div>
+                  <MonoLabel size="xs" opacity={35} className="mt-1 px-1">{msg.time}</MonoLabel>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Toast — using InlineToast primitive */}
+          <InlineToast message={toast} onDismiss={() => setToast(null)} position="bottom-center" />
+
+          {/* Composer */}
+          <div className="db-chat-composer">
+            <IconButton
+              icon={<Paperclip className="w-3.5 h-3.5 opacity-60" />}
+              aria-label="Attach file"
+              size="md"
+              variant="ghost"
+            />
+            <textarea
+              className="db-chat-input"
+              placeholder="Type a message..."
+              aria-label="Message input"
+              rows={1}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+            />
+            <button className="db-chat-send" aria-label="Send message" onClick={handleSend}>
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Empty state — no thread selected (desktop only via CSS) */
+        <div className="db-chat-empty">
+          <EmptyState
+            icon={<MessageSquare className="w-full h-full" />}
+            title="Select a conversation"
+            caption={`${CHAT_THREADS.length} active campaign threads`}
+            size="md"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────── */
 /* PAGE                                                           */
 /* ────────────────────────────────────────────────────────────── */
 
 export default function DashboardPage() {
   const router  = useRouter();
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = React.useRef<HTMLDivElement>(null);
 
-  const [authed,     setAuthed]     = useState(false);
-  const [mode,       setMode]       = useState<"creator" | "brand">("creator");
-  const [activeNav,  setActiveNav]  = useState("overview");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [bellOpen,   setBellOpen]   = useState(false);
-  const bellRef = useRef<HTMLDivElement>(null);
+  const [authed,          setAuthed]          = React.useState(false);
+  const [mode,            setMode]            = React.useState<"creator" | "brand">("creator");
+  const [activeNav,       setActiveNav]       = React.useState("overview");
+  const [mobileOpen,      setMobileOpen]      = React.useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const [bellOpen,        setBellOpen]        = React.useState(false);
+  const bellRef = React.useRef<HTMLDivElement>(null);
+
+  // Sync activeNav with ?tab= query param on mount (deep-linking)
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    if (tab) requestAnimationFrame(() => setActiveNav(tab));
+  }, []);
+
+  const navigateTab = (id: string) => {
+    setActiveNav(id);
+    // Update URL without triggering Next.js router events (avoids page transition)
+    const params = new URLSearchParams(window.location.search);
+    if (id === "overview") params.delete("tab");
+    else params.set("tab", id);
+    const qs = params.toString();
+    const url = `/dashboard${qs ? `?${qs}` : ""}`;
+    window.history.replaceState(window.history.state, "", url);
+  };
 
   // Close bell flyout on outside click
-  useEffect(() => {
+  React.useEffect(() => {
     if (!bellOpen) return;
     function handle(e: MouseEvent) {
       if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
@@ -1208,18 +1796,20 @@ export default function DashboardPage() {
   }, [bellOpen]);
 
   // Auth gate — redirect to /login if no session exists; read role from session
-  useEffect(() => {
+  React.useEffect(() => {
     const raw = localStorage.getItem("icons-session");
     if (!raw) {
       router.replace("/login");
     } else {
-      try {
-        const session = JSON.parse(raw) as { role?: string };
-        setMode(session.role === "brand" ? "brand" : "creator");
-      } catch {
-        setMode("creator");
-      }
-      setAuthed(true);
+      requestAnimationFrame(() => {
+        try {
+          const session = JSON.parse(raw) as { role?: string };
+          setMode(session.role === "brand" ? "brand" : "creator");
+        } catch {
+          setMode("creator");
+        }
+        setAuthed(true);
+      });
     }
   }, [router]);
 
@@ -1234,7 +1824,7 @@ export default function DashboardPage() {
     if (next === mode) return;
     localStorage.setItem("icons-session", JSON.stringify({ role: next }));
     setMode(next);
-    setActiveNav("overview");
+    navigateTab("overview");
   }
 
   /* ── Animations (must be before any early return) ───────────── */
@@ -1341,12 +1931,12 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div ref={rootRef} className="db-root">
+    <div ref={rootRef} className="db-root" data-collapsed={sidebarCollapsed ? "true" : "false"}>
       <style>{PAGE_STYLES}</style>
 
       {/* ── Desktop sidebar ─────────────────────────────────────── */}
       <aside className="db-sidebar">
-        <SidebarContent mode={mode} active={activeNav} onNav={setActiveNav} onSignOut={handleSignOut} />
+        <SidebarContent mode={mode} active={activeNav} onNav={navigateTab} onSignOut={handleSignOut} />
       </aside>
 
       {/* ── Mobile overlay ──────────────────────────────────────── */}
@@ -1354,23 +1944,30 @@ export default function DashboardPage() {
         <div className="db-sidebar-mobile">
           <div className="w-72 max-w-[85vw] flex flex-col h-full overflow-y-auto border-r-2 border-(--color-fg)"
             style={{ background: "var(--color-bg)" }}>
-            <SidebarContent mode={mode} active={activeNav} onNav={setActiveNav} onClose={() => setMobileOpen(false)} onSignOut={handleSignOut} />
+            <SidebarContent mode={mode} active={activeNav} onNav={navigateTab} onClose={() => setMobileOpen(false)} onSignOut={handleSignOut} />
           </div>
           <div className="flex-1 bg-black/50" onClick={() => setMobileOpen(false)} />
         </div>
       )}
 
-      {/* ── Main column ─────────────────────────────────────────── */}
-      <div className="flex flex-col min-h-svh">
+      {/* ── Main column (this is the scroll container) ──────────── */}
+      <div className="db-main" data-lenis-prevent style={activeNav === "messages" ? { overflow: "hidden" } : undefined}>
 
         {/* ── Sticky top bar ──────────────────────────────────── */}
         <header className="sticky top-0 z-30 flex items-center justify-between px-6 md:px-10 py-3.5 border-b-2 border-(--color-fg)"
           style={{ background: "var(--color-bg)" }}>
           <div className="flex items-center gap-4">
+            {/* Sidebar toggle — opens mobile overlay on small screens, collapses sidebar on desktop */}
             <button
-              className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-2 border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors"
-              onClick={() => setMobileOpen(true)}>
-              <Menu className="w-4 h-4" />
+              className="db-sidebar-btn inline-flex items-center justify-center w-9 h-9 rounded-full border-2 border-(--color-fg) hover:bg-(--color-fg) hover:text-(--color-bg) transition-colors"
+              onClick={() => {
+                // < 1024px → mobile overlay; >= 1024px → collapse/expand
+                if (window.innerWidth < 1024) setMobileOpen(true);
+                else setSidebarCollapsed(!sidebarCollapsed);
+              }}
+              aria-label={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}>
+              <Menu className="w-4 h-4 db-sidebar-btn-menu" />
+              <ChevronRight className="w-4 h-4 db-sidebar-btn-chevron" style={{ transform: sidebarCollapsed ? "none" : "rotate(180deg)", transition: "transform 0.3s" }} />
             </button>
             {/* Live indicator */}
             <div className="flex items-center gap-2">
@@ -1465,20 +2062,21 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* ── Welcome section ─────────────────────────────────── */}
+        {/* ── Content ─────────────────────────────────────────── */}
+        <main className="flex-1" style={activeNav === "messages" ? { display: "flex", flexDirection: "column", minHeight: 0, overflow: "hidden" } : undefined}>
+
+        {/* ── Overview tab (welcome + stats + priority content) ─ */}
+        {activeNav === "overview" && (<>
+        {/* Welcome section */}
         <section className="relative px-6 md:px-10 pt-10 pb-10 border-b-2 border-(--color-fg) bracket-frame dot-grid"
           style={{ background: "var(--color-bg)" }}>
-          {/* Accent orb */}
           <div aria-hidden
             className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 rounded-full blur-[100px] opacity-15 z-0"
             style={{ background: "var(--accent)" }} />
           <Sparkle size={40} fill="var(--accent2)" className="absolute top-6 right-[8%] rotate-12 opacity-40 pointer-events-none" />
 
           <div className="max-w-7xl mx-auto relative z-10">
-            {/* Date eyebrow */}
             <p className="font-mono font-semibold text-[11px] tracking-[0.32em] uppercase opacity-70 mb-5">{today}</p>
-
-            {/* Greeting */}
             <h1 className="font-display italic leading-[0.9] tracking-[-0.03em] mb-6"
               style={{ fontSize: "clamp(2.4rem,6vw,5.5rem)" }}>
               {[greeting + ",", data.user.name.split(" ")[0] + "."].map((word, i) => (
@@ -1491,8 +2089,6 @@ export default function DashboardPage() {
                 </span>
               ))}
             </h1>
-
-            {/* Focus strip */}
             <div className="db-focus-strip sticker inline-flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3 max-w-full" data-tone="ink">
               <Zap className="w-4 h-4 shrink-0" style={{ color: "var(--color-accent)" }} />
               <div className="flex items-baseline gap-2">
@@ -1509,7 +2105,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* ── Stats strip ─────────────────────────────────────── */}
+        {/* Stats strip */}
         <section style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}>
           <div className="db-stats-grid max-w-7xl mx-auto">
             {data.stats.map((s) => (
@@ -1531,9 +2127,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* ── Content ─────────────────────────────────────────── */}
-        <main className="flex-1">
-        {activeNav === "overview" && (<div className="px-6 md:px-10 py-12 max-w-7xl mx-auto w-full">
+        <div className="px-6 md:px-10 py-12 max-w-7xl mx-auto w-full">
 
           {/* ── Featured (priority) campaign ──────────────────── */}
           <section className="mb-14">
@@ -1718,12 +2312,16 @@ export default function DashboardPage() {
               </div>
             </section>
           </div>
-        </div>)}
+        </div>
+        </>)}
 
         {/* ── Campaigns tab ───────────────────────────────────── */}
         {activeNav === "campaigns" && (
           isCreator ? <CreatorCampaignsPanel data={creatorData} /> : <BrandCampaignsPanel data={brandData} />
         )}
+
+        {/* ── Messages tab ────────────────────────────────────── */}
+        {activeNav === "messages" && <MessagesPanel isCreator={isCreator} />}
 
         {/* ── Earnings tab (creator) ───────────────────────────── */}
         {activeNav === "earnings" && isCreator && <CreatorEarningsPanel />}
@@ -1743,7 +2341,7 @@ export default function DashboardPage() {
         </main>
 
         {/* ── Footer ──────────────────────────────────────────── */}
-        <footer className="px-6 md:px-10 py-5 border-t-2 border-(--color-fg) mt-8">
+        <footer className="px-6 md:px-10 py-5 border-t-2 border-(--color-fg) mt-8" style={activeNav === "messages" ? { display: "none" } : undefined}>
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <p className="font-display italic text-xl opacity-50">Icons.</p>
             <div className="flex items-center gap-6">

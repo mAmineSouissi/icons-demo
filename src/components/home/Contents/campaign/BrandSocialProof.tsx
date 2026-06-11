@@ -1,23 +1,80 @@
 "use client";
 
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { ease, dur, stagger } from "@/lib/motion";
-
-gsap.registerPlugin(ScrollTrigger);
+import React from "react";
+import { useEntrance } from "@/hooks/animations";
+import { dur, ease } from "@/lib/motion";
 
 /* ─── Brand wordmarks ─────────────────────────────────────────── */
 const LOGOS = [
-  { name: "Patagonia",            style: { fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.15rem" } },
-  { name: "Glossier",             style: { fontFamily: "var(--font-sans)", fontWeight: "700", fontSize: "1rem", letterSpacing: "0.08em" } },
-  { name: "Gymshark",             style: { fontFamily: "var(--font-sans)", fontWeight: "800", fontSize: "0.95rem", letterSpacing: "0.04em", textTransform: "uppercase" as const } },
-  { name: "Chamberlain Coffee",   style: { fontFamily: "var(--font-script)", fontSize: "1.4rem" } },
-  { name: "Paula's Choice",       style: { fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.9rem", letterSpacing: "0.06em" } },
-  { name: "Away",                 style: { fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.4rem", letterSpacing: "-0.02em" } },
-  { name: "Penguin Random House", style: { fontFamily: "var(--font-mono)", fontWeight: "700", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase" as const } },
-  { name: "LUSH",                 style: { fontFamily: "var(--font-sans)", fontWeight: "900", fontSize: "1.1rem", letterSpacing: "0.18em", textTransform: "uppercase" as const } },
+  {
+    name: "Patagonia",
+    style: {
+      fontFamily: "var(--font-display)",
+      fontStyle: "italic",
+      fontSize: "1.15rem",
+    },
+  },
+  {
+    name: "Glossier",
+    style: {
+      fontFamily: "var(--font-sans)",
+      fontWeight: "700",
+      fontSize: "1rem",
+      letterSpacing: "0.08em",
+    },
+  },
+  {
+    name: "Gymshark",
+    style: {
+      fontFamily: "var(--font-sans)",
+      fontWeight: "800",
+      fontSize: "0.95rem",
+      letterSpacing: "0.04em",
+      textTransform: "uppercase" as const,
+    },
+  },
+  {
+    name: "Chamberlain Coffee",
+    style: { fontFamily: "var(--font-script)", fontSize: "1.4rem" },
+  },
+  {
+    name: "Paula's Choice",
+    style: {
+      fontFamily: "var(--font-sans)",
+      fontWeight: "600",
+      fontSize: "0.9rem",
+      letterSpacing: "0.06em",
+    },
+  },
+  {
+    name: "Away",
+    style: {
+      fontFamily: "var(--font-display)",
+      fontStyle: "italic",
+      fontSize: "1.4rem",
+      letterSpacing: "-0.02em",
+    },
+  },
+  {
+    name: "Penguin Random House",
+    style: {
+      fontFamily: "var(--font-mono)",
+      fontWeight: "700",
+      fontSize: "0.7rem",
+      letterSpacing: "0.12em",
+      textTransform: "uppercase" as const,
+    },
+  },
+  {
+    name: "LUSH",
+    style: {
+      fontFamily: "var(--font-sans)",
+      fontWeight: "900",
+      fontSize: "1.1rem",
+      letterSpacing: "0.18em",
+      textTransform: "uppercase" as const,
+    },
+  },
 ];
 
 const STYLES = `
@@ -43,47 +100,28 @@ const STYLES = `
 `;
 
 export const BrandSocialProof = () => {
-  const ref = useRef<HTMLElement>(null);
+  const ref = React.useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      // Logos fade in staggered
-      gsap.fromTo(
-        ".bsp-logo",
-        { opacity: 0, y: 16 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: dur.base,
-          ease: ease.out,
-          stagger: stagger.normal,
-          scrollTrigger: {
-            trigger: ".bsp-logo-row",
-            start: "top 85%",
-            once: true,
-          },
-        },
-      );
+  // Logos: staggered fade-up
+  useEntrance({
+    scope: ref,
+    selector: ".bsp-logo",
+    y: 16,
+    duration: dur.base,
+    ease: ease.out,
+    scrollTrigger: { start: "top 85%", once: true },
+  });
 
-      // Quote card wipe up
-      gsap.fromTo(
-        ".bsp-quote-card",
-        { clipPath: "inset(0 0 100% 0)", y: 24 },
-        {
-          clipPath: "inset(0 0 0% 0)",
-          y: 0,
-          duration: dur.slow,
-          ease: ease.cinematic,
-          scrollTrigger: {
-            trigger: ".bsp-quote-card",
-            start: "top 88%",
-            once: true,
-          },
-        },
-      );
-    },
-    { scope: ref },
-  );
+  // Quote card: cinematic clip-path wipe up
+  useEntrance({
+    scope: ref,
+    selector: ".bsp-quote-card",
+    y: 24,
+    clipPath: "inset(0 0 100% 0)",
+    duration: dur.slow,
+    ease: ease.cinematic,
+    scrollTrigger: { start: "top 88%", once: true },
+  });
 
   return (
     <section
@@ -94,10 +132,12 @@ export const BrandSocialProof = () => {
       <style>{STYLES}</style>
 
       {/* ── Logos strip ────────────────────────────────────────── */}
-      <div className="px-8 md:px-14 pt-14 pb-10 border-b border-(--color-bg)/10">
+      <div className="px-8 md:px-14 pt-14 pb-10 border-b border-bg/10">
         <p
           className="font-mono font-semibold text-[10px] uppercase tracking-[0.32em] mb-10 text-center"
-          style={{ color: "color-mix(in srgb, var(--color-bg) 45%, transparent)" }}
+          style={{
+            color: "color-mix(in srgb, var(--color-bg) 45%, transparent)",
+          }}
         >
           Trusted by category-defining brands
         </p>
@@ -129,12 +169,20 @@ export const BrandSocialProof = () => {
 
       {/* ── Featured brand quote ────────────────────────────────── */}
       <div className="px-6 md:px-14 py-16">
-        <div className="bsp-quote-card" style={{ background: "var(--color-bg)", color: "var(--color-fg)" }}>
+        <div
+          className="bsp-quote-card"
+          style={{ background: "var(--color-bg)", color: "var(--color-fg)" }}
+        >
           {/* Opening quotation mark */}
           <span
             aria-hidden
             className="absolute -top-6 left-8 font-display leading-none select-none"
-            style={{ fontSize: "8rem", color: "var(--color-fg)", opacity: 0.07, lineHeight: 1 }}
+            style={{
+              fontSize: "8rem",
+              color: "var(--color-fg)",
+              opacity: 0.07,
+              lineHeight: 1,
+            }}
           >
             "
           </span>
@@ -145,9 +193,13 @@ export const BrandSocialProof = () => {
                 className="font-display italic leading-[1.1] mb-6"
                 style={{ fontSize: "clamp(1.35rem, 2.8vw, 2rem)" }}
               >
-                Icons delivered <span style={{ color: "var(--color-accent)" }}>3× our normal engagement rate</span> in the first
-                week. Zero agency overhead, zero ambiguity on who owns the creative.
-                We briefed on Monday — content was live by Wednesday.
+                Icons delivered{" "}
+                <span style={{ color: "var(--color-accent)" }}>
+                  3× our normal engagement rate
+                </span>{" "}
+                in the first week. Zero agency overhead, zero ambiguity on who
+                owns the creative. We briefed on Monday — content was live by
+                Wednesday.
               </p>
 
               <div className="flex items-center gap-3">
@@ -163,7 +215,7 @@ export const BrandSocialProof = () => {
                   <p className="font-mono font-semibold text-[12px] tracking-wide">
                     Emma W.
                   </p>
-                  <p className="font-mono text-[10px] opacity-50 tracking-wide mt-0.5">
+                  <p className="font-mono text-[12px] opacity-30 tracking-wide mt-0.5">
                     VP Marketing · Glossier
                   </p>
                 </div>
@@ -173,18 +225,21 @@ export const BrandSocialProof = () => {
             {/* Stats sidebar */}
             <div className="flex md:flex-col gap-8 md:gap-4 shrink-0 md:text-right">
               {[
-                { value: "3×",   label: "engagement lift" },
-                { value: "48h",  label: "campaign go-live" },
-                { value: "$0",   label: "agency markup" },
+                { value: "3×", label: "engagement lift" },
+                { value: "48h", label: "campaign go-live" },
+                { value: "$0", label: "agency markup" },
               ].map(({ value, label }) => (
                 <div key={label}>
                   <p
                     className="font-display italic leading-none"
-                    style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", color: "var(--color-accent)" }}
+                    style={{
+                      fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+                      color: "var(--color-accent)",
+                    }}
                   >
                     {value}
                   </p>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-50 mt-0.5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] opacity-30 mt-0.5">
                     {label}
                   </p>
                 </div>

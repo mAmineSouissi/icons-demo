@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import React from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -14,47 +14,33 @@ import { CtaSticker } from "@/components/home/Contents/campaign/CtaSticker";
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export const HomePage = () => {
-  const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = React.useState(false);
+  const [loading, setLoading] = React.useState(() =>
+    typeof window !== "undefined" && sessionStorage.getItem("icons-intro-seen") ? false : true,
+  );
 
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => {
-      setMounted(true);
-      // Skip preloader on return visits within the same browser session
-      if (sessionStorage.getItem("icons-intro-seen")) {
-        setLoading(false);
-      }
-    });
-    return () => cancelAnimationFrame(raf);
+  React.useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
   }, []);
 
-  const handlePreloaderComplete = useCallback(() => {
+  const handlePreloaderComplete = React.useCallback(() => {
     sessionStorage.setItem("icons-intro-seen", "1");
     setLoading(false);
   }, []);
 
-  /* Before mount: render an invisible full-height placeholder so the
-     Layout footer doesn't flash at the top of the viewport. */
   if (!mounted) {
     return <div className="min-h-[300svh]" style={{ background: "var(--color-bg)" }} />;
   }
 
   return (
-    <>
+    <React.Fragment>
       {loading && <Preloader onComplete={handlePreloaderComplete} />}
-
-      {/* Pre-hide hero entrance-animated elements via CSS to prevent FOUC
-          on return visits (GSAP .from() sets opacity 0 *after* first paint). */}
-      <style id="hero-prehide">{`
-        .hero-mono, .hero-card, .hero-letter, .hero-star,
-        .hero-star-glow, .hero-script, .hero-cta, .hero-floater { opacity: 0; }
-      `}</style>
 
       <div
         className="relative bg-(--color-bg) text-(--color-fg)"
         style={{ visibility: loading ? "hidden" : "visible" }}
       >
-        <HeroCampaign />
+        <HeroCampaign ready={!loading} />
         <AppTilesScene />
         <WhyGenZ />
         <BrandSocialProof />
@@ -62,6 +48,6 @@ export const HomePage = () => {
         <HowSticker />
         <CtaSticker />
       </div>
-    </>
+    </React.Fragment>
   );
 };

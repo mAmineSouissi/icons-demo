@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lock } from "lucide-react";
 import { SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur, stagger } from "@/lib/motion";
@@ -122,15 +122,6 @@ const PAGE_STYLES = `
     --br-subtext-on-pastel: rgba(0,0,0,0.55);
   }
 
-  /* Pre-hide scroll-animated elements to prevent FOUC */
-  .br-step,
-  .br-result-row,
-  .br-benefit-row,
-  .br-benefit-icon,
-  .br-metric,
-  .br-ps-reveal,
-  .br-reveal { opacity: 0; }
-
   /* Hero */
   .br-hero-grid { display: grid; grid-template-columns: 1fr; min-height: 580px; }
   @media (min-width: 1024px) { .br-hero-grid { grid-template-columns: 1fr 420px; } }
@@ -163,6 +154,19 @@ const PAGE_STYLES = `
   @media (min-width: 1024px) { .br-creators-grid { grid-template-columns: repeat(6, 1fr); } }
   .br-creator-card { aspect-ratio: 3 / 4; display: block; position: relative; overflow: hidden; }
   .br-creator-card:hover { outline: 2.5px solid var(--color-accent); outline-offset: -2px; z-index: 2; }
+  .br-creator-card[data-locked="true"] img { filter: blur(20px) saturate(0.4) brightness(0.7); }
+  .br-creator-card[data-locked="true"]:hover { outline: none; cursor: default; }
+  .br-lock-overlay {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.75rem; text-align: center; padding: 1.5rem;
+  }
+  .br-lock-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35); backdrop-filter: blur(8px);
+  }
   .br-platform-badge { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 999px; background: rgba(255,255,255,0.72); backdrop-filter: blur(6px); color: rgba(0,0,0,0.65); }
   .br-avail-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .br-avail-dot.avail { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.7); }
@@ -1074,59 +1078,106 @@ export const BrandsPage = () => {
           </div>
 
           <div className="br-creators-grid rounded-lg">
-            {previewCreators.map((c, i) => (
-              <Link key={c.name} href={`/creators/${c.slug}`} className="br-creator-card group rounded-lg">
-                {/* Photo */}
-                <img
-                  src={c.img}
-                  alt={c.name}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                />
+            {previewCreators.map((c, i) => {
+              const locked = i >= 2;
+              const anonName = c.name.split(" ")[0].charAt(0) + ".";
 
-                {/* Subtle grain overlay */}
-                <div aria-hidden className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+              const cardContent = (
+                <>
+                  {/* Photo */}
+                  <img
+                    src={c.img}
+                    alt={locked ? "Creator" : c.name}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                  />
 
-                {/* Index */}
-                <span className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.25em]"
-                  style={{ color: "rgba(0,0,0,0.3)" }}>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                  {/* Subtle grain overlay */}
+                  <div aria-hidden className="absolute inset-0 pointer-events-none"
+                    style={{ backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
 
-                {/* Stacked badges — top right */}
-                <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5">
-                  <span className="br-platform-badge">{c.platform}</span>
-                  <span className="font-mono text-[11px] font-semibold tracking-[0.1em] px-3 py-1 rounded-full"
-                    style={{ background: "rgba(255,255,255,0.8)", backdropFilter: "blur(8px)", color: "rgba(0,0,0,0.8)" }}>
-                    {c.followers}
-                  </span>
-                  <span className="font-mono text-[9px] tracking-[0.15em] px-2.5 py-0.5 rounded-full"
-                    style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(4px)", color: "rgba(0,0,0,0.55)" }}>
-                    {c.engagement} eng.
-                  </span>
-                </div>
-
-                {/* Bottom panel */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-400"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)" }}>
-                  <div className="flex items-end justify-between gap-3">
-                    <div>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] mb-1.5"
-                        style={{ color: "rgba(255,255,255,0.7)" }}>{c.niche}</p>
-                      <h3 className="font-display text-2xl leading-none text-white flex items-center gap-2">
-                        {c.name}
-                        <span className={`br-avail-dot ${c.available ? "avail" : "busy"}`} />
-                      </h3>
+                  {/* Lock overlay */}
+                  {locked && (
+                    <div className="br-lock-overlay">
+                      <div className="br-lock-icon">
+                        <Lock className="w-4 h-4 text-white" />
+                      </div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/70">
+                        Premium creator
+                      </p>
+                      <Link
+                        href="/pricing"
+                        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 rounded-full transition-all"
+                        style={{
+                          background: "var(--color-accent)",
+                          color: "rgba(0,0,0,0.85)",
+                          border: "1.5px solid rgba(255,255,255,0.2)",
+                        }}
+                      >
+                        Unlock profile <ArrowUpRight className="w-3 h-3" />
+                      </Link>
                     </div>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                      style={{ background: "var(--color-accent)", color: "rgba(0,0,0,0.85)" }}>
-                      <ArrowUpRight className="w-4 h-4" />
+                  )}
+
+                  {/* Index */}
+                  <span className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.25em]"
+                    style={{ color: "rgba(0,0,0,0.3)" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  {/* Stacked badges — top right */}
+                  <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5">
+                    <span className="br-platform-badge">{c.platform}</span>
+                    {!locked && (
+                      <>
+                        <span className="font-mono text-[11px] font-semibold tracking-[0.1em] px-3 py-1 rounded-full"
+                          style={{ background: "rgba(255,255,255,0.8)", backdropFilter: "blur(8px)", color: "rgba(0,0,0,0.8)" }}>
+                          {c.followers}
+                        </span>
+                        <span className="font-mono text-[9px] tracking-[0.15em] px-2.5 py-0.5 rounded-full"
+                          style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(4px)", color: "rgba(0,0,0,0.55)" }}>
+                          {c.engagement} eng.
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Bottom panel */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-400"
+                    style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)" }}>
+                    <div className="flex items-end justify-between gap-3">
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.25em] mb-1.5"
+                          style={{ color: "rgba(255,255,255,0.7)" }}>{locked ? c.niche.split(" ")[0] : c.niche}</p>
+                        <h3 className="font-display text-2xl leading-none text-white flex items-center gap-2">
+                          {locked ? anonName : c.name}
+                          {!locked && <span className={`br-avail-dot ${c.available ? "avail" : "busy"}`} />}
+                        </h3>
+                      </div>
+                      {!locked && (
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                          style={{ background: "var(--color-accent)", color: "rgba(0,0,0,0.85)" }}>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </>
+              );
+
+              if (locked) {
+                return (
+                  <div key={c.name} className="br-creator-card group rounded-lg" data-locked="true">
+                    {cardContent}
+                  </div>
+                );
+              }
+              return (
+                <Link key={c.name} href={`/creators/${c.slug}`} className="br-creator-card group rounded-lg">
+                  {cardContent}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

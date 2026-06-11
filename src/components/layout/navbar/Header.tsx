@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
@@ -10,9 +10,9 @@ import { IconsLogo, StarMark } from "@/components/shared/IconsLogo";
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const [spinning, setSpinning] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  const [mounted, setMounted] = React.useState(false);
+  const [spinning, setSpinning] = React.useState(false);
+  React.useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
   if (!mounted) return <div className="w-9 h-9" />;
   const isDark = theme === "dark";
   return (
@@ -61,31 +61,31 @@ const TICKER = [
 
 const Header = () => {
   const router = useRouter();
-  const headerRef = useRef<HTMLElement>(null);
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const headerRef = React.useRef<HTMLElement>(null);
+  const [scrolled, setScrolled] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
   // Client-only: check session after mount to avoid SSR mismatch
-  useEffect(() => {
-    setLoggedIn(!!localStorage.getItem("icons-session"));
+  React.useEffect(() => {
+    requestAnimationFrame(() => setLoggedIn(!!localStorage.getItem("icons-session")));
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handle = () => setMobileOpen(false);
     router.events.on("routeChangeStart", handle);
     return () => router.events.off("routeChangeStart", handle);

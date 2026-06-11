@@ -1,4 +1,4 @@
-import { useState, useRef, useId } from "react";
+import React from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Loader2 } from "lucide-react";
 import { Sparkle } from "@/components/ui/Sparkle";
@@ -70,21 +70,32 @@ const PAGE_STYLES = `
 /* ────────────────────────────────────────────────────────────── */
 
 export default function ForgotPasswordPage() {
-  const ref     = useRef<HTMLDivElement>(null);
-  const emailId = useId();
+  const ref = React.useRef<HTMLDivElement>(null);
+  const emailId = React.useId();
 
-  const [email,   setEmail]   = useState("");
-  const [error,   setError]   = useState("");
-  const [loading, setLoading] = useState(false);
-  const [sent,    setSent]    = useState(false);
+  const [email, setEmail] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [sent, setSent] = React.useState(false);
 
   /* ── Entrance animation ─────────────────────────────────────── */
-  useGSAP(() => {
-    gsap.fromTo(".fp-in",
-      { y: 22, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.65, ease: ease.out, stagger: 0.07, delay: 0.1 },
-    );
-  }, { scope: ref, dependencies: [sent] });
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ".fp-in",
+        { y: 22, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.65,
+          ease: ease.out,
+          stagger: 0.07,
+          delay: 0.1,
+        },
+      );
+    },
+    { scope: ref, dependencies: [sent] },
+  );
 
   /* ── Submit ─────────────────────────────────────────────────── */
   async function handleSubmit(e: React.FormEvent) {
@@ -106,13 +117,17 @@ export default function ForgotPasswordPage() {
   }
 
   /* ── Left panel (shared between both states) ─────────────────── */
-  const LeftPanel = () => (
+  const leftPanel = (
     <div className="fp-left">
       {/* Watermark */}
       <span
         aria-hidden
         className="absolute inset-0 flex items-center justify-center font-display italic leading-none select-none pointer-events-none"
-        style={{ fontSize: "clamp(8rem,18vw,16rem)", color: "rgba(255,255,255,0.04)", zIndex: 0 }}
+        style={{
+          fontSize: "clamp(8rem,18vw,16rem)",
+          color: "rgba(255,255,255,0.04)",
+          zIndex: 0,
+        }}
       >
         ✦
       </span>
@@ -125,23 +140,43 @@ export default function ForgotPasswordPage() {
 
       {/* Top — brand mark */}
       <div className="relative flex items-center gap-2.5" style={{ zIndex: 1 }}>
-        <span className="font-display italic text-2xl leading-none" style={{ color: "var(--color-bg)" }}>Icons</span>
-        <span className="font-mono text-[9px] uppercase tracking-[0.28em]" style={{ color: "rgba(255,255,255,0.35)" }}>Studio</span>
+        <span
+          className="font-display italic text-2xl leading-none"
+          style={{ color: "var(--color-bg)" }}
+        >
+          Icons
+        </span>
+        <span
+          className="font-mono text-[9px] uppercase tracking-[0.28em]"
+          style={{ color: "rgba(255,255,255,0.35)" }}
+        >
+          Studio
+        </span>
       </div>
 
       {/* Middle — reassurance copy */}
       <div className="relative flex flex-col gap-5" style={{ zIndex: 1 }}>
         <h2
           className="font-display italic leading-[1.0]"
-          style={{ fontSize: "clamp(2rem,3.5vw,3rem)", color: "var(--color-bg)" }}
+          style={{
+            fontSize: "clamp(2rem,3.5vw,3rem)",
+            color: "var(--color-bg)",
+          }}
         >
-          Forgotten passwords happen.<br />Your account hasn&apos;t<br />gone anywhere.
+          Forgotten passwords happen.
+          <br />
+          Your account hasn&apos;t
+          <br />
+          gone anywhere.
         </h2>
         <p
           className="font-mono text-[11px] leading-[1.8]"
-          style={{ color: "color-mix(in srgb, var(--color-bg) 55%, transparent)" }}
+          style={{
+            color: "color-mix(in srgb, var(--color-bg) 55%, transparent)",
+          }}
         >
-          We&apos;ll send a secure link to your inbox.<br />
+          We&apos;ll send a secure link to your inbox.
+          <br />
           Valid for 15 minutes. No guessing required.
         </p>
         {/* Trust row */}
@@ -158,7 +193,9 @@ export default function ForgotPasswordPage() {
               />
               <span
                 className="font-mono text-[10px] uppercase tracking-[0.18em]"
-                style={{ color: "color-mix(in srgb, var(--color-bg) 50%, transparent)" }}
+                style={{
+                  color: "color-mix(in srgb, var(--color-bg) 50%, transparent)",
+                }}
               >
                 {line}
               </span>
@@ -172,9 +209,13 @@ export default function ForgotPasswordPage() {
         className="relative font-mono text-[10px] leading-[1.7]"
         style={{ color: "rgba(255,255,255,0.28)", zIndex: 1 }}
       >
-        © Icons Studio, Inc. · icons.studio<br />
+        © Icons Studio, Inc. · icons.studio
+        <br />
         Questions?{" "}
-        <Link href="mailto:help@icons.studio" className="underline underline-offset-2 hover:text-white transition-colors">
+        <Link
+          href="mailto:help@icons.studio"
+          className="underline underline-offset-2 hover:text-white transition-colors"
+        >
           help@icons.studio
         </Link>
       </p>
@@ -186,7 +227,7 @@ export default function ForgotPasswordPage() {
     return (
       <div ref={ref} className="fp-root">
         <style>{PAGE_STYLES}</style>
-        <LeftPanel />
+        {leftPanel}
 
         <div className="flex flex-col min-h-svh bg-(--color-bg) dot-grid">
           {/* Top bar */}
@@ -207,7 +248,11 @@ export default function ForgotPasswordPage() {
           <div className="flex-1 flex items-center justify-center px-6 py-14">
             <div className="w-full max-w-sm flex flex-col gap-8 text-center">
               <div className="fp-in flex justify-center">
-                <Sparkle size={52} fill="var(--color-accent)" className="-rotate-12" />
+                <Sparkle
+                  size={52}
+                  fill="var(--color-accent)"
+                  className="-rotate-12"
+                />
               </div>
               <div className="fp-in flex flex-col gap-3">
                 <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-(--color-muted-fg)">
@@ -221,7 +266,10 @@ export default function ForgotPasswordPage() {
                 </h1>
                 <p className="font-mono text-[12px] leading-[1.8] text-(--color-muted-fg)">
                   We sent a password reset link to{" "}
-                  <span className="text-(--color-fg) font-semibold">{email.trim()}</span>.
+                  <span className="text-(--color-fg) font-semibold">
+                    {email.trim()}
+                  </span>
+                  .
                   <br />
                   It expires in 15 minutes.
                 </p>
@@ -232,13 +280,19 @@ export default function ForgotPasswordPage() {
                   <button
                     type="button"
                     className="underline underline-offset-2 hover:text-(--color-fg) transition-colors"
-                    onClick={() => { setSent(false); setLoading(false); }}
+                    onClick={() => {
+                      setSent(false);
+                      setLoading(false);
+                    }}
                   >
                     try a different email
                   </button>
                   .
                 </p>
-                <Link href="/login" className="btn-ghost w-full justify-center group">
+                <Link
+                  href="/login"
+                  className="btn-ghost w-full justify-center group"
+                >
                   Back to login
                   <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
@@ -254,7 +308,7 @@ export default function ForgotPasswordPage() {
   return (
     <div ref={ref} className="fp-root">
       <style>{PAGE_STYLES}</style>
-      <LeftPanel />
+      {leftPanel}
 
       {/* ── Right panel ─────────────────────────────────────── */}
       <div className="flex flex-col min-h-svh bg-(--color-bg) dot-grid">
@@ -275,7 +329,6 @@ export default function ForgotPasswordPage() {
         {/* Center — form */}
         <div className="flex-1 flex items-center justify-center px-6 py-14">
           <div className="w-full max-w-sm flex flex-col gap-8">
-
             {/* Headline */}
             <div className="fp-in flex flex-col gap-3">
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-(--color-muted-fg)">
@@ -288,12 +341,17 @@ export default function ForgotPasswordPage() {
                 Forgot your password?
               </h1>
               <p className="font-mono text-[12px] leading-[1.8] text-(--color-muted-fg)">
-                No problem. Enter the email tied to your account and we&apos;ll send a reset link. Takes 30 seconds.
+                No problem. Enter the email tied to your account and we&apos;ll
+                send a reset link. Takes 30 seconds.
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} noValidate className="fp-in flex flex-col gap-5">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="fp-in flex flex-col gap-5"
+            >
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor={emailId}
@@ -310,10 +368,18 @@ export default function ForgotPasswordPage() {
                   className="fp-input"
                   aria-invalid={!!error}
                   value={email}
-                  onChange={(e) => { setEmail(e.target.value); setError(""); }}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setError("");
+                  }}
                 />
                 {error && (
-                  <p className="font-mono text-[10px]" style={{ color: "#ef4444" }}>{error}</p>
+                  <p
+                    className="font-mono text-[10px]"
+                    style={{ color: "#ef4444" }}
+                  >
+                    {error}
+                  </p>
                 )}
               </div>
 
@@ -346,7 +412,6 @@ export default function ForgotPasswordPage() {
                 Return to login
               </Link>
             </div>
-
           </div>
         </div>
 
@@ -354,7 +419,10 @@ export default function ForgotPasswordPage() {
         <div className="px-6 py-5 border-t border-(--color-border) md:hidden">
           <p className="font-mono text-[10px] leading-[1.7] text-(--color-muted-fg)">
             Questions?{" "}
-            <Link href="mailto:help@icons.studio" className="underline underline-offset-2 hover:text-(--color-fg) transition-colors">
+            <Link
+              href="mailto:help@icons.studio"
+              className="underline underline-offset-2 hover:text-(--color-fg) transition-colors"
+            >
               help@icons.studio
             </Link>
           </p>

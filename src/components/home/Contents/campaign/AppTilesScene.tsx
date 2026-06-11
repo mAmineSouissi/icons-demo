@@ -1,10 +1,7 @@
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
+import React from "react";
 import ProfileCard from "@/components/ui/ProfileCard";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useEntrance, useMarquee, useWordReveal } from "@/hooks/animations";
+import { dur } from "@/lib/motion";
 
 type Creator = {
   name: string;
@@ -23,7 +20,8 @@ const CREATORS: Creator[] = [
     title: "Study / GRWM · 412K",
     status: "Available for collabs",
     avatarUrl: "https://i.pravatar.cc/400?img=44",
-    innerGradient: "linear-gradient(145deg, rgba(197,255,61,0.22) 0%, rgba(8,8,8,0.96) 100%)",
+    innerGradient:
+      "linear-gradient(145deg, rgba(197,255,61,0.22) 0%, rgba(8,8,8,0.96) 100%)",
     behindGlowColor: "rgba(197,255,61,0.45)",
   },
   {
@@ -32,7 +30,8 @@ const CREATORS: Creator[] = [
     title: "Food / One-pot · 1.1M",
     status: "Booking Q3 2026",
     avatarUrl: "https://i.pravatar.cc/400?img=12",
-    innerGradient: "linear-gradient(145deg, rgba(255,61,139,0.22) 0%, rgba(8,8,8,0.96) 100%)",
+    innerGradient:
+      "linear-gradient(145deg, rgba(255,61,139,0.22) 0%, rgba(8,8,8,0.96) 100%)",
     behindGlowColor: "rgba(255,61,139,0.45)",
   },
   {
@@ -41,7 +40,8 @@ const CREATORS: Creator[] = [
     title: "Streetwear · 286K",
     status: "Open to brands",
     avatarUrl: "https://i.pravatar.cc/400?img=29",
-    innerGradient: "linear-gradient(145deg, rgba(61,187,255,0.22) 0%, rgba(8,8,8,0.96) 100%)",
+    innerGradient:
+      "linear-gradient(145deg, rgba(61,187,255,0.22) 0%, rgba(8,8,8,0.96) 100%)",
     behindGlowColor: "rgba(61,187,255,0.45)",
   },
   {
@@ -50,7 +50,8 @@ const CREATORS: Creator[] = [
     title: "DIY / Crafts · 528K",
     status: "Available for collabs",
     avatarUrl: "https://i.pravatar.cc/400?img=53",
-    innerGradient: "linear-gradient(145deg, rgba(255,218,61,0.22) 0%, rgba(8,8,8,0.96) 100%)",
+    innerGradient:
+      "linear-gradient(145deg, rgba(255,218,61,0.22) 0%, rgba(8,8,8,0.96) 100%)",
     behindGlowColor: "rgba(255,218,61,0.45)",
   },
 ];
@@ -59,49 +60,31 @@ const CREATORS: Creator[] = [
 const MARQUEE_CREATORS = [...CREATORS, ...CREATORS];
 
 export const AppTilesScene = () => {
-  const ref = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const ref = React.useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      // Headline word reveal on scroll
-      gsap.from(".aptsection-word", {
-        yPercent: 110,
-        duration: 1.0,
-        ease: "power4.out",
-        stagger: 0.08,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 78%",
-        },
-      });
+  // Headline: per-word curtain reveal (mask mode = the original yPercent 110 feel)
+  useWordReveal({
+    scope: ref,
+    selector: ".aptsection-headline",
+    mode: "mask",
+    duration: dur.slow,
+    stagger: 0.08,
+    scrollTrigger: { start: "top 78%" },
+  });
 
-      gsap.from(".aptsection-sub", {
-        opacity: 0,
-        y: 18,
-        duration: 0.7,
-        ease: "power3.out",
-        delay: 0.45,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 78%",
-        },
-      });
+  // Sub-eyebrow fade
+  useEntrance({
+    scope: ref,
+    selector: ".aptsection-sub",
+    y: 18,
+    duration: dur.base + 0.1,
+    ease: "power3.out",
+    delay: 0.45,
+    scrollTrigger: { start: "top 78%" },
+  });
 
-      // Marquee: scroll left infinitely
-      if (trackRef.current) {
-        gsap.to(trackRef.current, {
-          xPercent: -50,
-          ease: "none",
-          duration: 36,
-          repeat: -1,
-        });
-      }
-    },
-    { scope: ref },
-  );
-
-  const words = ["One", "platform.", "Creators.", "Brands.", "Results."];
+  // Marquee track — runs infinitely
+  const trackRef = useMarquee<HTMLDivElement>({ duration: 36 });
 
   return (
     <section
@@ -113,44 +96,53 @@ export const AppTilesScene = () => {
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(circle, rgba(245,241,234,0.06) 1.5px, transparent 1.5px)",
+          backgroundImage:
+            "radial-gradient(circle, rgba(245,241,234,0.06) 1.5px, transparent 1.5px)",
           backgroundSize: "28px 28px",
         }}
       />
 
       {/* Ambient glows */}
-      <div aria-hidden className="absolute pointer-events-none" style={{ top: "10%", left: "-10%", width: "500px", height: "500px", background: "radial-gradient(circle, rgba(197,255,61,0.1), transparent 70%)", filter: "blur(80px)" }} />
-      <div aria-hidden className="absolute pointer-events-none" style={{ top: "30%", right: "-8%", width: "420px", height: "420px", background: "radial-gradient(circle, rgba(255,61,139,0.08), transparent 70%)", filter: "blur(70px)" }} />
+      <div
+        aria-hidden
+        className="absolute pointer-events-none"
+        style={{
+          top: "10%",
+          left: "-10%",
+          width: "500px",
+          height: "500px",
+          background:
+            "radial-gradient(circle, rgba(197,255,61,0.1), transparent 70%)",
+          filter: "blur(80px)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute pointer-events-none"
+        style={{
+          top: "30%",
+          right: "-8%",
+          width: "420px",
+          height: "420px",
+          background:
+            "radial-gradient(circle, rgba(255,61,139,0.08), transparent 70%)",
+          filter: "blur(70px)",
+        }}
+      />
 
       {/* Headline */}
       <div className="px-6 max-w-7xl mx-auto">
-        <div className="font-mono text-[11px] tracking-[0.28em] uppercase text-(--color-bg)/40 mb-10 md:mb-14">
-          02 · platform
-        </div>
-
         <h2
-          className="font-display leading-[0.88] tracking-tight"
+          className="aptsection-headline font-display leading-[0.88] tracking-tight"
           style={{ fontSize: "clamp(2.8rem, 9vw, 10rem)" }}
         >
-          {words.map((word, i) => (
-            <span key={i} className="inline-block overflow-hidden align-bottom mr-[0.2em] last:mr-0">
-              <span
-                className="aptsection-word inline-block"
-                style={{ color: word === "UGC" ? "oklch(0.7823 0.0488 220.2338)" : undefined }}
-              >
-                {word}
-              </span>
-            </span>
-          ))}
+          One platform. Creators. Brands. Results.
         </h2>
 
-        <p
-          className="aptsection-sub font-mono text-[11px] tracking-[0.28em] uppercase mt-14 md:mt-20 text-(--color-bg)/45"
-          style={{ maxWidth: "38ch" }}
-        >
-          creators · brands · campaigns · payments · analytics — all in one place.
+        <p className="aptsection-sub font-mono text-[11px] tracking-[0.28em] uppercase mt-14 md:mt-20 text-bg/45">
+          creators · brands · campaigns · payments · analytics — all in one
+          place.
         </p>
-
       </div>
 
       {/* Creator cards marquee */}
@@ -159,12 +151,20 @@ export const AppTilesScene = () => {
         <div
           aria-hidden
           className="absolute inset-y-0 left-0 z-10 pointer-events-none"
-          style={{ width: "120px", background: "linear-gradient(to right, var(--color-fg), transparent)" }}
+          style={{
+            width: "120px",
+            background:
+              "linear-gradient(to right, var(--color-fg), transparent)",
+          }}
         />
         <div
           aria-hidden
           className="absolute inset-y-0 right-0 z-10 pointer-events-none"
-          style={{ width: "120px", background: "linear-gradient(to left, var(--color-fg), transparent)" }}
+          style={{
+            width: "120px",
+            background:
+              "linear-gradient(to left, var(--color-fg), transparent)",
+          }}
         />
 
         {/* Scrolling track */}
