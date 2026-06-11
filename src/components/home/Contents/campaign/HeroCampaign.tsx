@@ -1,98 +1,94 @@
-import { useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { Sparkle } from "@/components/ui/Sparkle";
+import { useTimelineEntrance } from "@/hooks/animations";
 
-export const HeroCampaign = () => {
-  const ref = useRef<HTMLElement>(null);
+interface HeroCampaignProps {
+  ready?: boolean;
+}
 
-  useGSAP(
-    () => {
-      // Remove the CSS pre-hide rule BEFORE creating tweens so GSAP's
-      // from() reads the natural opacity (1) as the target end-state.
-      document.getElementById("hero-prehide")?.remove();
+export const HeroCampaign = ({ ready = true }: HeroCampaignProps) => {
+  const { ref } = useTimelineEntrance<HTMLElement>(
+    ({ tl }) => {
+      const heroEls =
+        ".hero-mono, .hero-card, .hero-letter, .hero-star, .hero-star-glow, .hero-script, .hero-cta, .hero-floater";
+      gsap.set(heroEls, { opacity: 0 });
 
-      const tl = gsap.timeline({ delay: 0.15 });
-
-      tl.from(".hero-mono", {
-        opacity: 0,
-        y: -8,
-        duration: 0.5,
-        ease: "power2.out",
-      })
-        .from(
+      // ── Entrance sequence ──────────────────────────────────────
+      tl.fromTo(
+        ".hero-mono",
+        { opacity: 0, y: -8 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+      )
+        .fromTo(
           ".hero-card",
+          { opacity: 0, scale: 0.9, rotate: -3, y: 40 },
           {
-            opacity: 0,
-            scale: 0.9,
-            rotate: -3,
-            y: 40,
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+            y: 0,
             duration: 0.9,
             ease: "back.out(1.7)",
           },
           "-=0.2",
         )
-        .from(
+        .fromTo(
           ".hero-letter",
+          { opacity: 0, y: 30 },
           {
-            opacity: 0,
-            y: 30,
+            opacity: 1,
+            y: 0,
             duration: 0.55,
             ease: "back.out(2)",
             stagger: 0.06,
           },
           "-=0.5",
         )
-        .from(
+        .fromTo(
           ".hero-star",
+          { opacity: 0, scale: 0, rotate: -180 },
           {
-            opacity: 0,
-            scale: 0,
-            rotate: -180,
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
             duration: 0.7,
             ease: "back.out(2)",
           },
           "-=0.35",
         )
-        .from(
+        .fromTo(
           ".hero-star-glow",
-          {
-            opacity: 0,
-            scale: 0.3,
-            duration: 0.6,
-            ease: "power2.out",
-          },
+          { opacity: 0, scale: 0.3 },
+          { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" },
           "-=0.5",
         )
-        .from(
+        .fromTo(
           ".hero-script",
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            ease: "power2.out",
-          },
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
           "-=0.3",
         )
-        .from(
+        .fromTo(
           ".hero-cta",
+          { opacity: 0, y: 20 },
           {
-            opacity: 0,
-            y: 20,
+            opacity: 1,
+            y: 0,
             duration: 0.5,
             ease: "power2.out",
             stagger: 0.08,
           },
           "-=0.2",
         )
-        .from(
+        .fromTo(
           ".hero-floater",
+          { opacity: 0, scale: 0, rotate: -90 },
           {
-            opacity: 0,
-            scale: 0,
-            rotate: -90,
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
             duration: 0.6,
             ease: "back.out(2)",
             stagger: 0.1,
@@ -100,17 +96,16 @@ export const HeroCampaign = () => {
           "-=0.8",
         );
 
-      // ── Hero star: continuous personality (kick in after intro) ──
+      // ── Post-entrance: star personality + twinkles ────────────
       tl.add(() => {
-        // 1. Slow infinite spin
+        // Slow infinite spin
         gsap.to(".hero-star-spin", {
           rotate: 360,
           duration: 14,
           ease: "none",
           repeat: -1,
         });
-
-        // 2. Breathing pulse on the wrapper
+        // Breathing pulse on the wrapper
         gsap.to(".hero-star", {
           scale: 1.08,
           duration: 1.6,
@@ -118,8 +113,7 @@ export const HeroCampaign = () => {
           repeat: -1,
           yoyo: true,
         });
-
-        // 3. Halo breath
+        // Halo breath
         gsap.to(".hero-star-glow", {
           scale: 1.25,
           opacity: 0.6,
@@ -128,8 +122,7 @@ export const HeroCampaign = () => {
           repeat: -1,
           yoyo: true,
         });
-
-        // 4. Periodic twinkle bursts
+        // Periodic twinkle bursts
         gsap
           .timeline({ repeat: -1, repeatDelay: 2.4 })
           .to(".hero-twinkle", {
@@ -150,27 +143,27 @@ export const HeroCampaign = () => {
           });
       }, ">-0.1");
 
-      // Idle wobble on floaters
-      gsap.to(".hero-floater", {
-        y: "+=14",
-        rotate: "+=6",
-        duration: 2.4,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-        stagger: { each: 0.3, from: "random" },
-      });
-
-      // Big card subtle drift
-      gsap.to(".hero-card", {
-        rotate: "-=0.6",
-        duration: 3.2,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
+      // ── Post-entrance: floater wobble + card drift ────────────
+      tl.add(() => {
+        gsap.to(".hero-floater", {
+          y: "+=14",
+          rotate: "+=6",
+          duration: 2.4,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+          stagger: { each: 0.3, from: "random" },
+        });
+        gsap.to(".hero-card", {
+          rotate: "-=0.6",
+          duration: 3.2,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
       });
     },
-    { scope: ref },
+    { ready, dependencies: [] },
   );
 
   return (
@@ -179,7 +172,7 @@ export const HeroCampaign = () => {
       className="relative min-h-screen flex flex-col items-center justify-center px-6 py-28 dot-grid overflow-hidden bracket-frame"
     >
       {/* Top eyebrow */}
-      <div className="hero-mono absolute top-8 left-8 right-8 flex items-center justify-between font-mono text-[11px] tracking-[0.28em] uppercase opacity-50">
+      <div className="hero-mono absolute top-8 left-8 right-8 flex items-center justify-between font-mono text-[14px] tracking-[0.28em] uppercase opacity-50">
         <span>ugc creator platform</span>
         <span className="hidden sm:inline">est. 2026</span>
       </div>
@@ -209,7 +202,7 @@ export const HeroCampaign = () => {
       {/* Main sticker card */}
       <div className="hero-card relative z-10 inline-flex flex-col items-center gap-6 max-w-3xl">
         {/* Tiny eyebrow inside */}
-        <div className="font-mono text-[11px] tracking-[0.32em] uppercase text-(--color-fg) flex items-center gap-2 opacity-60">
+        <div className="font-mono text-[15px] tracking-[0.32em] uppercase text-(--color-fg) flex items-center gap-2 opacity-60">
           <span>✦</span>
           <span>where creators get paid & brands get results</span>
           <span>✦</span>
@@ -262,11 +255,15 @@ export const HeroCampaign = () => {
         </p>
 
         {/* Trust metrics */}
-        <div className="hero-cta flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-[10px] tracking-[0.22em] uppercase opacity-55">
+        <div className="hero-cta flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-[12px] tracking-[0.22em] uppercase opacity-55">
           <span>2,847 creators paid</span>
-          <span aria-hidden className="hidden sm:inline">·</span>
+          <span aria-hidden className="hidden sm:inline">
+            ·
+          </span>
           <span>143 brands</span>
-          <span aria-hidden className="hidden sm:inline">·</span>
+          <span aria-hidden className="hidden sm:inline">
+            ·
+          </span>
           <span>$1.4M+ paid out</span>
         </div>
 
@@ -286,7 +283,9 @@ export const HeroCampaign = () => {
       {/* Bottom mono caption */}
       <div className="hero-mono absolute bottom-8 left-8 right-8 flex items-center justify-between font-mono text-[11px] tracking-[0.28em] uppercase">
         <span>scroll ↓</span>
-        <span className="hidden sm:inline">creators · brands · payments · analytics</span>
+        <span className="hidden sm:inline">
+          creators · brands · payments · analytics
+        </span>
       </div>
     </section>
   );
