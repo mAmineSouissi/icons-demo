@@ -1,10 +1,8 @@
 import { useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import { Sparkle } from "@/components/ui/Sparkle";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useEntrance } from "@/hooks/animations";
+import { dur, ease } from "@/lib/motion";
 
 type Creator = {
   handle: string;
@@ -26,36 +24,37 @@ const CREATORS: Creator[] = [
 export const CreatorRoster = () => {
   const ref = useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      gsap.from(".roster-eyebrow", {
-        opacity: 0,
-        x: -20,
-        duration: 0.5,
-        scrollTrigger: { trigger: ref.current, start: "top 80%" },
-      });
+  useEntrance({
+    scope: ref,
+    selector: ".roster-eyebrow",
+    x: -20,
+    duration: dur.fast + 0.15,
+    ease: ease.out,
+    scrollTrigger: { start: "top 80%" },
+  });
 
-      gsap.from(".roster-headline", {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 75%" },
-      });
+  useEntrance({
+    scope: ref,
+    selector: ".roster-headline",
+    y: 30,
+    duration: dur.base + 0.1,
+    ease: "power3.out",
+    scrollTrigger: { start: "top 75%" },
+  });
 
-      gsap.from(".roster-card", {
-        opacity: 0,
-        y: 50,
-        scale: 0.9,
-        rotate: () => gsap.utils.random(-5, 5),
-        duration: 0.75,
-        ease: "back.out(1.7)",
-        stagger: { each: 0.08, from: "start" },
-        scrollTrigger: { trigger: ref.current, start: "top 65%" },
-      });
-    },
-    { scope: ref },
-  );
+  useEntrance({
+    scope: ref,
+    selector: ".roster-card",
+    y: 50,
+    scale: 0.9,
+    rotate: () => gsap.utils.random(-5, 5),
+    duration: 0.75,
+    ease: "back.out(1.7)",
+    stagger: 0.08,
+    scrollTrigger: { start: "top 65%" },
+    // Let the inline base rotation from JSX take over after entrance.
+    clearProps: false,
+  });
 
   return (
     <section

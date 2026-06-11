@@ -1,12 +1,10 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArrowUpRight, ArrowLeft, Check } from "lucide-react";
-import { SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur } from "@/lib/motion";
 
@@ -270,25 +268,25 @@ function TagButton({ label, selected, onToggle }: { label: string; selected: boo
 /* ─── Page ───────────────────────────────────────────────────────── */
 
 export const BriefBuilderPage = () => {
-  const ref     = useRef<HTMLDivElement>(null);
-  const stepRef = useRef<HTMLDivElement>(null);
+  const ref     = React.useRef<HTMLDivElement>(null);
+  const stepRef = React.useRef<HTMLDivElement>(null);
   const router  = useRouter();
-  const [step,       setStep]       = useState(0);
-  const [dir,        setDir]        = useState<1 | -1>(1);
-  const [brief,      setBrief]      = useState<Brief>(INITIAL);
-  const [error,      setError]      = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [step,       setStep]       = React.useState(0);
+  const [dir,        setDir]        = React.useState<1 | -1>(1);
+  const [brief,      setBrief]      = React.useState<Brief>(INITIAL);
+  const [error,      setError]      = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
 
   // Pre-selected creator from /creators/[handle] CTA
   const creatorHandle = typeof router.query.creator === "string" ? router.query.creator : null;
 
   // Jump to the Creators step when arriving with a pre-selected creator
-  useEffect(() => {
-    if (creatorHandle) setStep(2);
+  React.useEffect(() => {
+    if (creatorHandle) requestAnimationFrame(() => setStep(2));
   }, [creatorHandle]);
 
   // Animate step in on change
-  useEffect(() => {
+  React.useEffect(() => {
     if (!stepRef.current) return;
     gsap.fromTo(stepRef.current,
       { x: dir * 48, opacity: 0 },
@@ -599,7 +597,7 @@ export const BriefBuilderPage = () => {
                 {creatorHandle && (
                   <div className="mb-8 flex items-center gap-3 px-4 py-3 rounded-xl border-2"
                     style={{ borderColor: "var(--color-accent)", background: "color-mix(in srgb, var(--color-accent) 10%, transparent)" }}>
-                    <Check className="w-4 h-4 flex-shrink-0" style={{ color: "var(--color-accent)" }} />
+                    <Check className="w-4 h-4 shrink-0" style={{ color: "var(--color-accent)" }} />
                     <div>
                       <p className="font-mono text-[10px] uppercase tracking-widest opacity-60 mb-0.5">Creator pre-selected</p>
                       <p className="text-sm font-medium">@{creatorHandle} · We'll prioritise this creator in your match list.</p>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
-import { ArrowUpRight, Sparkles, Search, X } from "lucide-react";
+import { ArrowUpRight, Sparkles, Search, X, Lock } from "lucide-react";
 import { SectionShell, SectionLabel } from "@/components/shared/PagePrimitives";
 import { Sparkle } from "@/components/ui/Sparkle";
 import { ease, dur, stagger } from "@/lib/motion";
@@ -267,16 +267,6 @@ const PAGE_STYLES = `
     --cr-yellow: rgba(248,232,184,0.14); --cr-yellow-ink: #f8e8b8;
   }
 
-  /* Pre-hide scroll-animated elements to prevent FOUC */
-  .creator-card,
-  .step-num,
-  .benefit-row,
-  .benefit-icon,
-  .earnings-row,
-  .earnings-value,
-  .cr-reveal,
-  .ps-reveal { opacity: 0; }
-
   /* Hero */
   .cr-hero-grid { display: grid; grid-template-columns: 1fr; min-height: 580px; }
   @media (min-width: 1024px) { .cr-hero-grid { grid-template-columns: 1fr 400px; } }
@@ -353,23 +343,43 @@ const PAGE_STYLES = `
     background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg);
     box-shadow: 2px 2px 0 0 var(--color-accent);
   }
+
+  /* Locked / anonymous creator cards */
+  .creator-card[data-locked="true"] img { filter: blur(20px) saturate(0.4) brightness(0.7); }
+  .creator-card[data-locked="true"]:hover { outline: none; cursor: default; }
+  .creator-card[data-locked="true"] .cr-lock-overlay {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.75rem; text-align: center; padding: 1.5rem;
+  }
+  .cr-lock-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35); backdrop-filter: blur(8px);
+  }
 `;
 
 /* ─── Creator card ───────────────────────────────────────────────── */
 
-function CreatorCard({
+function CreatorCardInner({
   c,
   index,
+  locked,
 }: {
   c: (typeof featuredCreators)[0];
   index: number;
+  locked: boolean;
 }) {
+  const anonName = c.name.split(" ")[0].charAt(0) + ".";
+  const anonNiche = c.category;
+
   return (
-    <Link href={`/creators/${c.slug}`} className="creator-card group">
+    <>
       {/* Photo */}
       <img
         src={c.img}
-        alt={c.name}
+        alt={locked ? "Creator" : c.name}
         loading="lazy"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
       />
@@ -385,6 +395,29 @@ function CreatorCard({
         }}
       />
 
+      {/* Lock overlay — visible only when locked */}
+      {locked && (
+        <div className="cr-lock-overlay">
+          <div className="cr-lock-icon">
+            <Lock className="w-4 h-4 text-white" />
+          </div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/70">
+            Premium creator
+          </p>
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 rounded-full transition-all"
+            style={{
+              background: "var(--color-accent)",
+              color: "rgba(0,0,0,0.85)",
+              border: "1.5px solid rgba(255,255,255,0.2)",
+            }}
+          >
+            Unlock profile <ArrowUpRight className="w-3 h-3" />
+          </Link>
+        </div>
+      )}
+
       {/* Index */}
       <span
         className="absolute top-4 left-4 font-mono text-[10px] tracking-[0.25em]"
@@ -396,26 +429,42 @@ function CreatorCard({
       {/* Badges */}
       <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5">
         <span className="cr-platform-badge">{c.platform}</span>
-        <span
-          className="font-mono text-[11px] font-semibold tracking-[0.1em] px-3 py-1 rounded-full"
-          style={{
-            background: "rgba(255,255,255,0.8)",
-            backdropFilter: "blur(8px)",
-            color: "rgba(0,0,0,0.8)",
-          }}
-        >
-          {c.followers}
-        </span>
-        <span
-          className="font-mono text-[9px] tracking-[0.15em] px-2.5 py-0.5 rounded-full"
-          style={{
-            background: "rgba(255,255,255,0.55)",
-            backdropFilter: "blur(4px)",
-            color: "rgba(0,0,0,0.55)",
-          }}
-        >
-          {c.engagement} eng.
-        </span>
+        {!locked && (
+          <>
+            <span
+              className="font-mono text-[11px] font-semibold tracking-[0.1em] px-3 py-1 rounded-full"
+              style={{
+                background: "rgba(255,255,255,0.8)",
+                backdropFilter: "blur(8px)",
+                color: "rgba(0,0,0,0.8)",
+              }}
+            >
+              {c.followers}
+            </span>
+            <span
+              className="font-mono text-[9px] tracking-[0.15em] px-2.5 py-0.5 rounded-full"
+              style={{
+                background: "rgba(255,255,255,0.55)",
+                backdropFilter: "blur(4px)",
+                color: "rgba(0,0,0,0.55)",
+              }}
+            >
+              {c.engagement} eng.
+            </span>
+          </>
+        )}
+        {locked && (
+          <span
+            className="font-mono text-[9px] tracking-[0.15em] px-2.5 py-0.5 rounded-full"
+            style={{
+              background: "rgba(255,255,255,0.45)",
+              backdropFilter: "blur(4px)",
+              color: "rgba(0,0,0,0.45)",
+            }}
+          >
+            {c.tier}
+          </span>
+        )}
       </div>
 
       {/* Bottom panel */}
@@ -432,26 +481,53 @@ function CreatorCard({
               className="font-mono text-[10px] uppercase tracking-[0.25em] mb-1.5"
               style={{ color: "rgba(255,255,255,0.7)" }}
             >
-              {c.niche}
+              {locked ? anonNiche : c.niche}
             </p>
             <h3 className="font-display text-2xl leading-none text-white flex items-center gap-2">
-              {c.name}
-              <span
-                className={`cr-avail-dot ${c.available ? "avail" : "busy"}`}
-              />
+              {locked ? anonName : c.name}
+              {!locked && (
+                <span
+                  className={`cr-avail-dot ${c.available ? "avail" : "busy"}`}
+                />
+              )}
             </h3>
           </div>
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
-            style={{
-              background: "var(--color-accent)",
-              color: "rgba(0,0,0,0.85)",
-            }}
-          >
-            <ArrowUpRight className="w-4 h-4" />
-          </div>
+          {!locked && (
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
+              style={{
+                background: "var(--color-accent)",
+                color: "rgba(0,0,0,0.85)",
+              }}
+            >
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          )}
         </div>
       </div>
+    </>
+  );
+}
+
+function CreatorCard({
+  c,
+  index,
+  locked = false,
+}: {
+  c: (typeof featuredCreators)[0];
+  index: number;
+  locked?: boolean;
+}) {
+  if (locked) {
+    return (
+      <div className="creator-card group" data-locked="true">
+        <CreatorCardInner c={c} index={index} locked />
+      </div>
+    );
+  }
+  return (
+    <Link href={`/creators/${c.slug}`} className="creator-card group">
+      <CreatorCardInner c={c} index={index} locked={false} />
     </Link>
   );
 }
@@ -535,14 +611,15 @@ const CommunityMark = ({ color }: { color: string }) => (
 /* ─── Page ───────────────────────────────────────────────────────── */
 
 const PREVIEW_COUNT = 8;
+const FREE_PREVIEW = 2; // first N cards shown unlocked, rest are anonymous/blurred
 const CATEGORIES = ["All", "Lifestyle", "Travel", "Beauty", "Fitness", "Fashion", "Food", "Tech", "Wellness"];
 
 export const CreatorsPage = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const ref = React.useRef<HTMLDivElement>(null);
+  const gridRef = React.useRef<HTMLDivElement>(null);
+  const searchRef = React.useRef<HTMLInputElement>(null);
+  const [activeCategory, setActiveCategory] = React.useState("All");
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const q = searchQuery.trim().toLowerCase();
   const filteredCreators = featuredCreators
@@ -560,7 +637,7 @@ export const CreatorsPage = () => {
     .slice(0, q || activeCategory !== "All" ? undefined : PREVIEW_COUNT);
 
   // Animate cards in whenever the filter or search changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (!gridRef.current) return;
     const cards = gridRef.current.querySelectorAll<HTMLElement>(".creator-card");
     gsap.fromTo(
@@ -1178,7 +1255,7 @@ export const CreatorsPage = () => {
           <div className="creators-grid">
             {filteredCreators.length > 0 ? (
               filteredCreators.map((c, i) => (
-                <CreatorCard key={c.slug} c={c} index={i} />
+                <CreatorCard key={c.slug} c={c} index={i} locked={i >= FREE_PREVIEW} />
               ))
             ) : (
               <div className="col-span-full py-28 flex flex-col items-center gap-6 text-center px-6">
@@ -1200,6 +1277,31 @@ export const CreatorsPage = () => {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Unlock CTA banner */}
+        <div className="px-6 md:px-10 py-12 border-t-2 border-(--color-fg)" style={{ background: "var(--color-fg)", color: "var(--color-bg)" }}>
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2">
+                <Lock className="w-3 h-3 inline-block mr-1.5 -mt-0.5" />
+                {filteredCreators.length - FREE_PREVIEW}+ profiles locked
+              </p>
+              <h3 className="font-display italic text-2xl md:text-3xl leading-tight">
+                Unlock the full roster.
+              </h3>
+              <p className="font-sans text-[13px] leading-relaxed opacity-60 mt-2 max-w-md">
+                Subscribe to access full creator profiles, engagement stats, contact details, and direct booking.
+              </p>
+            </div>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] px-6 py-3 rounded-full shrink-0 transition-all"
+              style={{ background: "var(--color-accent)", color: "var(--color-fg)", border: "2px solid var(--color-accent)" }}
+            >
+              View plans <ArrowUpRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
 
