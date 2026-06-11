@@ -107,11 +107,6 @@ const PAGE_STYLES = `
     clip-path: inset(0 100% 0 0);
   }
 
-  /* Pre-hide scroll-animated elements to prevent FOUC */
-  .cp-tile,
-  .cp-audience-cell,
-  .cp-similar-card,
-  .cp-reveal { opacity: 0; }
 `;
 
 /* ────────────────────────────────────────────────────────────── */

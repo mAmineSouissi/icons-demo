@@ -172,12 +172,7 @@ const LOCKED_STYLES = `
   .pr-locked-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--color-border); }
   @media (min-width: 640px)  { .pr-locked-grid { grid-template-columns: repeat(4, 1fr); } }
   @media (min-width: 1024px) { .pr-locked-grid { grid-template-columns: repeat(8, 1fr); } }
-  .pr-locked-card { aspect-ratio: 1/1.4; position: relative; overflow: hidden; opacity: 0; }
-
-  /* Pre-hide scroll-animated elements to prevent FOUC */
-  .pricing-card,
-  .pricing-faq-item,
-  .pricing-cta { opacity: 0; }
+  .pr-locked-card { aspect-ratio: 1/1.4; position: relative; overflow: hidden; }
 `;
 
 /* ─── FAQ Item ───────────────────────────────────────────────────── */

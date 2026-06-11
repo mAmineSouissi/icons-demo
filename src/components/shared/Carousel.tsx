@@ -70,6 +70,57 @@ const SPRING_OPTIONS: Transition = {
   damping: 30,
 } as const;
 
+function CarouselCard({
+  item,
+  index,
+  x,
+  trackItemOffset,
+  itemWidth,
+  round,
+  effectiveTransition,
+}: {
+  item: CarouselItem;
+  index: number;
+  x: ReturnType<typeof useMotionValue<number>>;
+  trackItemOffset: number;
+  itemWidth: number;
+  round: boolean;
+  effectiveTransition: Transition;
+}) {
+  const range = [
+    -(index + 1) * trackItemOffset,
+    -index * trackItemOffset,
+    -(index - 1) * trackItemOffset,
+  ];
+  const outputRange = [90, 0, -90];
+  const rotateY = useTransform(x, range, outputRange, { clamp: false });
+
+  return (
+    <motion.div
+      className={`relative shrink-0 flex flex-col ${
+        round
+          ? "items-center justify-center text-center bg-(--color-panel)"
+          : "items-start justify-between bg-(--color-panel) rounded-md"
+      } overflow-hidden cursor-grab active:cursor-grabbing`}
+      style={{
+        width: itemWidth,
+        height: round ? itemWidth : "100%",
+        rotateY,
+        ...(round && { borderRadius: "50%" }),
+      }}
+      transition={effectiveTransition}
+    >
+      <div className={`${round ? "p-0 m-0" : "p-5"}`}>
+        <span className="items-center justify-center">{item.icon}</span>
+      </div>
+      <div className="p-4">
+        <div className="mb-1 text-xl text-[1.2rem] text-fg">{item.title}</div>
+        <p className="text-sm text-fg/60">{item.description}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Carousel({
   items = DEFAULT_ITEMS,
   baseWidth = 300,
@@ -201,44 +252,18 @@ export default function Carousel({
         transition={effectiveTransition}
         onAnimationComplete={handleAnimationComplete}
       >
-        {carouselItems.map((item, index) => {
-          const range = [
-            -(index + 1) * trackItemOffset,
-            -index * trackItemOffset,
-            -(index - 1) * trackItemOffset,
-          ];
-          const outputRange = [90, 0, -90];
-          const rotateY = useTransform(x, range, outputRange, { clamp: false });
-          return (
-            <motion.div
-              key={index}
-              className={`relative shrink-0 flex flex-col ${
-                round
-                  ? "items-center justify-center text-center bg-(--color-panel)"
-                  : "items-start justify-between bg-(--color-panel) rounded-md"
-              } overflow-hidden cursor-grab active:cursor-grabbing`}
-              style={{
-                width: itemWidth,
-                height: round ? itemWidth : "100%",
-                rotateY: rotateY,
-                ...(round && { borderRadius: "50%" }),
-              }}
-              transition={effectiveTransition}
-            >
-              <div className={`${round ? "p-0 m-0" : "p-5"}`}>
-                <span className="items-center justify-center">
-                  {item.icon}
-                </span>
-              </div>
-              <div className="p-4">
-                <div className="mb-1 text-xl text-[1.2rem] text-fg">
-                  {item.title}
-                </div>
-                <p className="text-sm text-fg/60">{item.description}</p>
-              </div>
-            </motion.div>
-          );
-        })}
+        {carouselItems.map((item, index) => (
+          <CarouselCard
+            key={index}
+            item={item}
+            index={index}
+            x={x}
+            trackItemOffset={trackItemOffset}
+            itemWidth={itemWidth}
+            round={round}
+            effectiveTransition={effectiveTransition}
+          />
+        ))}
       </motion.div>
       <div
         className={`flex w-full justify-center ${

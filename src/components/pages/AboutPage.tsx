@@ -114,10 +114,6 @@ const manifestoLines = [
 /* ─── Styles ─────────────────────────────────────────────────────── */
 
 const PAGE_STYLES = `
-  /* Pre-hide scroll-animated elements to prevent FOUC */
-  .ab-ps-cell,
-  .ab-belief-row { opacity: 0; }
-
   /* Power strip — full-bleed section, constrained inner grid */
   .ab-ps-grid { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; display: grid; grid-template-columns: minmax(0,1fr); }
   @media (min-width: 640px)  { .ab-ps-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
