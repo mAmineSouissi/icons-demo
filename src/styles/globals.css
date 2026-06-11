@@ -137,9 +137,14 @@ body {
   min-height: 100%;
 }
 
-/* Future Cursor Arrow — https://www.cursors-4u.com/cursor/future-cursor-arrow */
-* {
-  cursor: url('https://cdn.cursors-4u.net/previews/normal-9e607e2c-64.webp') 22 20, auto !important;
+/* Future Cursor Arrow — self-hosted from cursors-4u.com */
+*,
+*::before,
+*::after,
+*:hover,
+*:focus,
+*:active {
+  cursor: url('/cursors/custom-arrow.webp') 22 20, auto !important;
 }
 body {
   background: var(--bg);
@@ -764,6 +769,15 @@ a:focus-visible {
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* Toast / InlineToast entrance + exit */
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes toast-out {
+  to { opacity: 0; transform: translate(-50%, -8px); }
 }
 
 /* Custom animations */
